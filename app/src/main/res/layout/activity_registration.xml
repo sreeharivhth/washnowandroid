@@ -35,7 +35,9 @@
                     android:imeOptions="actionNext"
                     android:inputType="textAutoComplete"
                     android:maxLength="30"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:text="FN"
+                    />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -48,12 +50,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorAccent"
-                    android:focusedByDefault="true"
                     android:hint="@string/last_name"
                     android:imeOptions="actionNext"
                     android:inputType="textAutoComplete"
                     android:maxLength="30"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:text="LN"
+                    />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -66,13 +69,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorAccent"
-                    android:focusedByDefault="true"
                     android:hint="@string/phone"
                     android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLines="1"
                     android:maxLength="13"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:text="88888888"
+                    />
             </android.support.design.widget.TextInputLayout>
 
 
@@ -86,12 +90,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorAccent"
-                    android:focusedByDefault="true"
                     android:hint="@string/email"
                     android:imeOptions="actionNext"
                     android:inputType="textEmailAddress"
                     android:maxLength="30"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:text="a@amail.com"
+                    />
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -103,12 +108,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/colorAccent"
-                    android:focusedByDefault="true"
                     android:hint="@string/password"
                     android:imeOptions="actionNext"
                     android:inputType="textPassword"
                     android:maxLength="12"
-                    android:textColor="@color/text_color" />
+                    android:textColor="@color/text_color"
+                    android:text="A1a#msksksksk"
+                    />
             </android.support.design.widget.TextInputLayout>
 
             <Button

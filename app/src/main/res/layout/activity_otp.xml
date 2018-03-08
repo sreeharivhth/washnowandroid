@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="wash.midest.com.mrwashapp.screens.OtpActivity">
+
+    <LinearLayout
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginRight="@dimen/screen_margin"
+        android:layout_marginLeft="@dimen/screen_margin"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_10"
+            android:textColor="@color/text_color_gray_light"
+            android:lineSpacingExtra="6.7sp"
+            android:layout_gravity="center"
+            android:text="@string/otp_text"
+            />
+
+        <wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cursorVisible="false"
+            android:digits="1234567890"
+            android:inputType="number"
+            android:maxLength="4"
+            android:textIsSelectable="false"
+            android:textSize="20sp"
+            android:focusedByDefault="true"
+            android:layout_marginLeft="@dimen/component_margin_16"
+            android:layout_marginRight="@dimen/component_margin_16"
+            />
+
+        <Button
+            android:id="@+id/verify_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppButtonTheme"
+            android:background="@drawable/button_bg_rounded_corners"
+            android:text="@string/verify"
+            android:layout_gravity="center"
+            android:textSize="@dimen/text_size_13"
+            android:layout_marginTop="90dp"
+            android:layout_marginLeft="@dimen/component_margin_25"
+            android:layout_marginRight="@dimen/component_margin_25"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/resend_otp"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="32dp"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/text_size_10"
+            android:padding="@dimen/component_margin_10"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/change_email_id"
+            android:textColor="@color/colorAccent"
+            android:layout_marginTop="@dimen/component_margin_16"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/text_size_10"
+            android:padding="@dimen/component_margin_10"
+            />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

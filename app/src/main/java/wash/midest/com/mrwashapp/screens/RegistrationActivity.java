@@ -27,7 +27,6 @@ public class RegistrationActivity extends BaseActivity {
     @BindView(R.id.registration_btn) Button mBtnReg;
     private final String mMobileInitial ="+974 ";
     private final int mMobileMax =13;
-    private AppUtils mAppUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,7 +52,6 @@ public class RegistrationActivity extends BaseActivity {
                 }
             }
         });
-        mAppUtils=new AppUtils();
     }
 
     @OnClick(R.id.registration_btn)
@@ -90,20 +88,18 @@ public class RegistrationActivity extends BaseActivity {
             doRegAction();
         }
     }
-    private boolean isValidPassword(){
-        boolean isValid=true;
-        if(!TextUtils.isEmpty(mPassword.getText().toString().trim())){
 
-            
-            String passwordEntered=mPassword.getText().toString().trim();
-            isValid = mAppUtils.isValidPassword(passwordEntered);
-            return isValid;
+    private boolean isValidPassword(){
+        String passwordEntered=mPassword.getText().toString().trim();
+        if(!TextUtils.isEmpty(passwordEntered)){
+            return mAppUtils.isValidPassword(passwordEntered);
         }else{
             return false;
         }
     }
+
     private void doRegAction(){
-        Intent i = new Intent(RegistrationActivity.this, LandingActivity.class);
+        Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
         startActivity(i);
     }
 }

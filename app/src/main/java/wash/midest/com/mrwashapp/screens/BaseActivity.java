@@ -14,19 +14,21 @@ import butterknife.ButterKnife;
 import butterknife.Optional;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener{
 
 
     private TextView mActionBarTitle;
     private ImageView mBackBtn;
+    protected AppUtils mAppUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
-
+        mAppUtils= new AppUtils();
     }
 
     protected void setActionBarTitleInCenter(String title,boolean displayBackButton){

@@ -9,14 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".screens.LandingActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".screens.RegistrationActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".screens.SplashActivity"
             android:screenOrientation="portrait"
@@ -27,22 +20,27 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
-            android:name=".screens.LoginActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".screens.VerifyEmailActivity"
-            android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
+            android:name=".screens.LandingActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <activity android:name=".screens.RegistrationActivity"/>
+        <activity android:name=".screens.LoginActivity" />
+        <activity android:name=".screens.VerifyEmailActivity"/>
+
         <activity
             android:name=".screens.BaseActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".screens.SubSplashActivity"
-            android:theme="@style/AppTheme.NoActionBar"
-            ></activity>
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme"
+            />
+        <activity
+            android:name=".screens.SubSplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".screens.OtpActivity"></activity>
     </application>
 
 </manifest>

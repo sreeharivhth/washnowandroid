@@ -7,6 +7,7 @@
     <string name="password_criteria">Password should contain one alphabet,number and special character.Min 8 and Max 12 characters.</string>
     <string name="first_name_error">Please enter First Name</string>
     <string name="last_name_error">Please enter Last Name</string>
+    <string name="otp_error">Please enter OTP received</string>
     <string name="phone_error">Please enter valid Phone Number</string>
 
     <!--Error messages end-->
@@ -33,7 +34,8 @@
     <string name="register">Register</string>
     <string name="login">Login</string>
     <string name="forgot_password">Forgot Password ? </string>
-    <string name="otp_text">An OTP has been sent your Email ID \n Please enter the 4 digit OTP"</string>
+    <string name="otp_text1">An OTP has been sent your Email ID</string>
+    <string name="otp_text2">Please enter the 4 digit OTP</string>
     <string name="verify">Verify</string>
     <string name="resend_otp">Resend OTP</string>
     <string name="change_email_id">Change Email ID</string>

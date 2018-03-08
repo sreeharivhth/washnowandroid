@@ -24,10 +24,22 @@
             android:textColor="@color/text_color_gray_light"
             android:lineSpacingExtra="6.7sp"
             android:layout_gravity="center"
-            android:text="@string/otp_text"
+            android:text="@string/otp_text1"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text_size_10"
+            android:textColor="@color/text_color_gray_light"
+            android:lineSpacingExtra="6.7sp"
+            android:layout_gravity="center"
+            android:text="@string/otp_text2"
+            android:layout_marginTop="@dimen/component_margin_5"
             />
 
         <wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText
+            android:id="@+id/otpView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:cursorVisible="false"
@@ -39,6 +51,8 @@
             android:focusedByDefault="true"
             android:layout_marginLeft="@dimen/component_margin_16"
             android:layout_marginRight="@dimen/component_margin_16"
+            android:layout_marginTop="50dp"
+            android:focusableInTouchMode="true"
             />
 
         <Button
@@ -56,6 +70,7 @@
             />
 
         <TextView
+            android:id="@+id/resendOTP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/resend_otp"
@@ -67,6 +82,7 @@
             />
 
         <TextView
+            android:id="@+id/changeEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/change_email_id"

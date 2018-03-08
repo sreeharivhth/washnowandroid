@@ -49,7 +49,7 @@ public class OtpActivity extends BaseActivity {
                                       int count) {}
             @Override
             public void afterTextChanged(Editable s) {
-                if (s.length() == "1234".length()) {
+                if (s.length() == 4) {
                     mInputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
                 }
             }

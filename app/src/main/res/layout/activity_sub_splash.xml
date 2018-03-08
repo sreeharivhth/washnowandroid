@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
+    tools:context="wash.midest.com.mrwashapp.screens.SubSplashActivity">
+
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/splashImg"
+        android:src="@drawable/splashimg"
+        android:layout_marginTop="86dp"
+        android:layout_centerHorizontal="true"
+        android:contentDescription="@string/app_title"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/btnRegister"
+        android:layout_below="@id/splashImg"
+        android:text="@string/register"
+        android:layout_marginTop="76dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:background="@drawable/button_bg_rounded_pale"
+        android:theme="@style/AppButtonTheme"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_13"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnLogin"
+        android:text="@string/login"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_bg_rounded_pale"
+        android:layout_marginTop="15dp"
+        android:layout_marginLeft="25dp"
+        android:layout_marginRight="25dp"
+        android:layout_below="@id/btnRegister"
+        android:theme="@style/AppButtonTheme"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_13"
+        />
+
+</RelativeLayout>

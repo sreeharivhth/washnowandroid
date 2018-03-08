@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    tools:context="wash.midest.com.mrwashapp.screens.LoginActivity"
+    >
+
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/component_margin_10"
+            android:layout_marginTop="106dp"
+            android:layout_marginLeft="@dimen/component_margin_16"
+            android:layout_marginRight="@dimen/component_margin_16"
+            >
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:focusedByDefault="true"
+                android:hint="@string/email"
+                android:imeOptions="actionNext"
+                android:inputType="textEmailAddress"
+                android:textColor="@color/text_color" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/component_margin_16"
+            android:layout_marginRight="@dimen/component_margin_16"
+            >
+            <android.support.design.widget.TextInputEditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorAccent"
+                android:focusedByDefault="true"
+                android:hint="@string/password"
+                android:imeOptions="actionNext"
+                android:inputType="textPassword"
+                android:textColor="@color/text_color" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/login_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/component_margin_50"
+            android:layout_marginRight="@dimen/component_margin_50"
+            android:layout_marginTop="63dp"
+            android:theme="@style/AppButtonTheme"
+            android:background="@drawable/button_bg_rounded_corners"
+            android:text="@string/login"
+            android:layout_gravity="center"
+            android:textSize="@dimen/text_size_13"
+            />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/forgot_password"
+        android:textColor="@color/colorAccent"
+        android:layout_marginTop="@dimen/component_margin_16"
+        android:layout_gravity="center_horizontal"
+        android:textSize="@dimen/text_size_10"
+        android:padding="@dimen/component_margin_10"
+        />
+</LinearLayout>

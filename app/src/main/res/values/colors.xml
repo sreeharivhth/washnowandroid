@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="colorPrimary">#00ccff</color>
+    <color name="colorPrimaryDark">#04bbe4</color>
+    <color name="colorAccent">#164a87</color>
+    <color name="colorDrawerStart">#616161</color>
+    <color name="colorDrawerEnd">#616161</color>
+    <color name="colorDrawerCenter">#616161</color>
+    <color name="colorButtonStylePlane">#F2F2F2</color>
+    <color name="text_color">#616161</color>
+
+
+</resources>

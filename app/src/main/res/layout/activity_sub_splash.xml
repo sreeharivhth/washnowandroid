@@ -7,13 +7,16 @@
     android:background="@color/colorPrimary"
     tools:context="wash.midest.com.mrwashapp.screens.SubSplashActivity">
 
-
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
+    >
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/splashImg"
         android:src="@drawable/splashimg"
-        android:layout_marginTop="86dp"
         android:layout_centerHorizontal="true"
         android:contentDescription="@string/app_title"
         />
@@ -42,6 +45,7 @@
         android:layout_centerHorizontal="true"
         android:background="@drawable/button_bg_rounded_pale"
         android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:layout_below="@id/btnRegister"
@@ -49,5 +53,8 @@
         android:textColor="@color/colorPrimary"
         android:textSize="@dimen/text_size_13"
         />
+
+</RelativeLayout>
+
 
 </RelativeLayout>

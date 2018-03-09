@@ -9,10 +9,12 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/backbtn"
+        android:src="@drawable/back_button"
         android:id="@+id/back_btn_title"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_margin="@dimen/component_margin_5"
+        android:padding="@dimen/component_margin_10"
+        android:contentDescription="@string/coming_soon"
         >
     </ImageView>
     <TextView
@@ -20,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/component_margin_5"
         android:layout_centerInParent="true"
-        android:text="Title"
+        android:text="@string/title"
         android:textColor="#ffffff"
         android:id="@+id/action_bar_title"
         android:textSize="18sp"

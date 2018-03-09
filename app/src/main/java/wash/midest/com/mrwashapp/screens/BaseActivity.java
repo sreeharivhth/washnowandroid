@@ -1,13 +1,16 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +32,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_base);
         mAppUtils= new AppUtils();
+
     }
 
     protected void setActionBarTitleInCenter(String title,boolean displayBackButton){
@@ -49,6 +53,21 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         }else{
             mBackBtn.setVisibility(View.GONE);
         }
+    }
+
+    protected void showToast(final String msg){
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getApplicationContext(),msg,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        });
+    }
+
+    protected Context getAppContext(){
+        return getApplicationContext();
     }
 
     @Override

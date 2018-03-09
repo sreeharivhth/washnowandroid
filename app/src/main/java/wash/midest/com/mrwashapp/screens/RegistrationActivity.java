@@ -1,5 +1,6 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +28,7 @@ public class RegistrationActivity extends BaseActivity {
     @BindView(R.id.registration_btn) Button mBtnReg;
     private final String mMobileInitial ="+974 ";
     private final int mMobileMax =13;
+    private final int CHANGE_DETAILS = 220;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +101,25 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void doRegAction(){
+
+        //Net connection and data retrieval
+        showOTPScreen();
+    }
+
+    private void showOTPScreen(){
         Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
-        startActivity(i);
+        startActivityForResult(i,CHANGE_DETAILS);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode==CHANGE_DETAILS){
+            if (resultCode == Activity.RESULT_OK) {
+                mEmail.requestFocus();
+            }else{
+                mFName.requestFocus();
+            }
+        }
     }
 }

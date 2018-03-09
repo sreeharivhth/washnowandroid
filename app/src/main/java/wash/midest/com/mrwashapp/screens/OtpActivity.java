@@ -1,5 +1,6 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -23,8 +24,8 @@ public class OtpActivity extends BaseActivity {
     @BindView(R.id.verify_btn) Button mBtnVerify;
     @BindView(R.id.changeEmail) TextView mChangeEmail;
     @BindView(R.id.resendOTP) TextView mResendOTP;
-
     private InputMethodManager mInputMethodManager;
+    private final int CHANGE_DETAILS = 220;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +59,7 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.verify_btn)
     protected void onVerifyAction(){
-        if(!TextUtils.isEmpty(mOtpEditText.getText())){
+        if(!TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4){
             doLandingAction();
         }else{
             mOtpEditText.setError(getString(R.string.otp_error));
@@ -68,16 +69,31 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.resendOTP)
     protected void onResend(){
-
+        //TODO
+        showToast(getResources().getString(R.string.coming_soon));
     }
 
     @OnClick(R.id.changeEmail)
     protected void onChangeEmail(){
+        Intent i = new Intent();
+        setResult(Activity.RESULT_OK,i);
         finish();
     }
 
     private void doLandingAction(){
         Intent i = new Intent(OtpActivity.this, LandingActivity.class);
         startActivity(i);
+        finish();
+    }
+
+    @Override
+    protected void onDestroy() {
+        try {
+            mInputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+        super.onDestroy();
     }
 }

@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Build;
+import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -22,18 +23,15 @@ import wash.midest.com.mrwashapp.R;
  * Created by Sreehari.KV on 3/8/2018.
  */
 
-public class PinEntryEditText extends EditText {
+public class PinEntryEditText extends AppCompatEditText {
 
     public static final String XML_NAMESPACE_ANDROID = "http://schemas.android.com/apk/res/android";
-
     private float mSpace = 24; //24 dp by default, space between the lines
     private float mCharSize;
     private float mNumChars = 4;
     private float mLineSpacing = 8; //8dp by default, height of the text from our lines
     private int mMaxLength = 4;
-
     private OnClickListener mClickListener;
-
     private float mLineStroke = 1; //1dp by default
     private float mLineStrokeSelected = 2; //2dp by default
     private Paint mLinesPaint;
@@ -42,7 +40,6 @@ public class PinEntryEditText extends EditText {
             new int[]{android.R.attr.state_focused}, // focused
             new int[]{-android.R.attr.state_focused}, // unfocused
     };
-
     int[] mColors = new int[]{
             Color.GREEN,
             Color.BLACK,
@@ -65,11 +62,11 @@ public class PinEntryEditText extends EditText {
         init(context, attrs);
     }
 
-    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+    /*@TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public PinEntryEditText(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
-    }
+    }*/
 
     private void init(Context context, AttributeSet attrs) {
         float multi = context.getResources().getDisplayMetrics().density;

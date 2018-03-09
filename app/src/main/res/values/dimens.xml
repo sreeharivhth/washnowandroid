@@ -11,12 +11,16 @@
 
     <dimen name="component_margin_5">5dp</dimen>
     <dimen name="component_margin_10">10dp</dimen>
+    <dimen name="component_margin_14">14dp</dimen>
     <dimen name="component_margin_16">16dp</dimen>
     <dimen name="component_margin_50">50dp</dimen>
     <dimen name="component_margin_25">25dp</dimen>
 
     <dimen name="text_size_8">8sp</dimen>
+    <dimen name="text_size_9">9sp</dimen>
     <dimen name="text_size_10">10sp</dimen>
+    <dimen name="text_size_12">12sp</dimen>
     <dimen name="text_size_13">13sp</dimen>
+
 
 </resources>

@@ -15,14 +15,14 @@ import android.view.MenuItem;
 
 import wash.midest.com.mrwashapp.R;
 
-public class LandingActivity extends AppCompatActivity
+public class LandingActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -82,17 +82,17 @@ public class LandingActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_profile) {
             // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_orders) {
 
-        } else if (id == R.id.nav_slideshow) {
+        } else if (id == R.id.nav_price) {
 
-        } else if (id == R.id.nav_manage) {
+        } else if (id == R.id.nav_offers) {
 
-        } else if (id == R.id.nav_share) {
+        } else if (id == R.id.nav_faq) {
 
-        } else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_contact) {
 
         }
 

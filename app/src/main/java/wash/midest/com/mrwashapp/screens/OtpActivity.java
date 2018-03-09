@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
@@ -87,13 +88,21 @@ public class OtpActivity extends BaseActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        try {
-            mInputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+    public void onClick(View v) {
+        if(v.getId() == R.id.back_btn_title){
+                //close keyboard if visible
+                try {
+                    mInputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally { }
+                //close the screen
+                finish();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
         super.onDestroy();
     }
 }

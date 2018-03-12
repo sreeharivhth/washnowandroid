@@ -13,6 +13,9 @@
     <color name="pager_selected">#fbae2c</color>
     <color name="pager_un_selected">#d8d8d8</color>
 
+    <color name="pager_back_one">#3023ae</color>
+    <color name="pager_back_two">#c86dd7</color>
+
 
     <color name="text_color_gray_light">#61000000</color>
 

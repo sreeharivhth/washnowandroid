@@ -130,13 +130,13 @@ public class LandingActivity extends AppCompatActivity
 
             switch (position){
                 case 0:
-                    return ViewPagerFrag.newInstance("AAAA","AAAA");
+                    return ViewPagerFrag.newInstance("20% OFF","ON FIRST ORDER");
                 case 1:
-                    return ViewPagerFrag.newInstance("BBBB","BBBB");
+                    return ViewPagerFrag.newInstance("30% OFF","ON SECOND ORDER");
                 case 2:
-                    return ViewPagerFrag.newInstance("CCCC","CCCC");
+                    return ViewPagerFrag.newInstance("40% OFF","ON THIRD ORDER");
                 case 3:
-                    return ViewPagerFrag.newInstance("DDDD","DDDD");
+                    return ViewPagerFrag.newInstance("50% OFF","ON FOURTH ORDER");
                 default:
                     return ViewPagerFrag.newInstance("def","def");
             }

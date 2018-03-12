@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent=".2" />
+        app:layout_constraintGuide_percent=".3" />
 
     <wash.midest.com.mrwashapp.uiwidgets.WrapContentHeightViewPager
         android:background="@drawable/pager_background"
@@ -28,7 +28,7 @@
         android:id="@+id/pageIndicatorView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:piv_animationType="scale"
+        app:piv_animationType="thinWorm"
         app:piv_dynamicCount="true"
         app:piv_interactiveAnimation="true"
         app:piv_selectedColor="@color/pager_selected"

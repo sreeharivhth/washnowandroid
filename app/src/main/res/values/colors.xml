@@ -10,6 +10,9 @@
     <color name="colorDrawerCenter">#616161</color>
     <color name="colorButtonStylePlane">#F2F2F2</color>
     <color name="text_color">#616161</color>
+    <color name="pager_selected">#fbae2c</color>
+    <color name="pager_un_selected">#d8d8d8</color>
+
 
     <color name="text_color_gray_light">#61000000</color>
 

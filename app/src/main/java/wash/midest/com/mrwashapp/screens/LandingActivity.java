@@ -3,6 +3,10 @@ package wash.midest.com.mrwashapp.screens;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -50,6 +54,9 @@ public class LandingActivity extends AppCompatActivity
         //Set custom title in center of screen
         mTitleText=findViewById(R.id.toolbar_title);
         mTitleText.setText(getString(R.string.app_title));
+
+        ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
+        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
     }
 
     /*protected void setTitle(String title){
@@ -111,5 +118,34 @@ public class LandingActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private class ViewPagerAdapter extends FragmentPagerAdapter{
+
+        public ViewPagerAdapter(FragmentManager fragmentManager){
+            super(fragmentManager);
+        }
+        @Override
+        public Fragment getItem(int position) {
+
+            switch (position){
+                case 0:
+                    return ViewPagerFrag.newInstance("AAAA","AAAA");
+                case 1:
+                    return ViewPagerFrag.newInstance("BBBB","BBBB");
+                case 2:
+                    return ViewPagerFrag.newInstance("CCCC","CCCC");
+                case 3:
+                    return ViewPagerFrag.newInstance("DDDD","DDDD");
+                default:
+                    return ViewPagerFrag.newInstance("def","def");
+            }
+
+        }
+
+        @Override
+        public int getCount() {
+            return 4;
+        }
     }
 }

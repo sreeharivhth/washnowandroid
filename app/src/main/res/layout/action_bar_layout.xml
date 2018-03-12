@@ -15,6 +15,7 @@
         android:layout_margin="@dimen/component_margin_5"
         android:padding="@dimen/component_margin_10"
         android:contentDescription="@string/coming_soon"
+        android:visibility="gone"
         >
     </ImageView>
     <TextView

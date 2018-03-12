@@ -8,13 +8,49 @@
     tools:context="wash.midest.com.mrwashapp.screens.LandingActivity"
     tools:showIn="@layout/app_bar_landing">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Hello World!"
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".2" />
+
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/viewpager_home"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:background="@android:color/holo_green_light"
+        app:layout_constraintBottom_toTopOf="@id/guideline"
+        ></android.support.v4.view.ViewPager>
+
+
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@android:color/holo_purple"
+        app:layout_constraintTop_toBottomOf="@id/guideline"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintLeft_toLeftOf="parent"
+
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="asdasdasdas"
+
+                />
+
+        </LinearLayout>
+
+
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

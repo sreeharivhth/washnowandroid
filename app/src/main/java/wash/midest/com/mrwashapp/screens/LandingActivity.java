@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.screens;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,12 +13,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 import wash.midest.com.mrwashapp.R;
 
-public class LandingActivity extends BaseActivity
+public class LandingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    private TextView mTitleText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,7 +45,16 @@ public class LandingActivity extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //Disable default title which will be near to navigation drawer icon
+        setTitle("");
+        //Set custom title in center of screen
+        mTitleText=findViewById(R.id.toolbar_title);
+        mTitleText.setText(getString(R.string.app_title));
     }
+
+    /*protected void setTitle(String title){
+        mTitleText.setText(title);
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -54,7 +66,7 @@ public class LandingActivity extends BaseActivity
         }
     }
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.landing, menu);
@@ -74,7 +86,7 @@ public class LandingActivity extends BaseActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override

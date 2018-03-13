@@ -17,7 +17,10 @@
     <color name="pager_back_two">#c86dd7</color>
 
 
+    <color name="text_color_light_blue">#00a7cc</color>
+
     <color name="text_color_gray_light">#61000000</color>
+    <color name="text_color_gray_dark">#666666</color>
 
 
 </resources>

@@ -17,14 +17,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private TextView mTitleText;
+    private LinearLayout mScrollLinearView;
+    //LandingHorizontalView
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,11 +62,19 @@ public class LandingActivity extends AppCompatActivity
 
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
         pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+        mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
+
+        addHorizontalViews(50);
     }
 
-    /*protected void setTitle(String title){
-        mTitleText.setText(title);
-    }*/
+    private void addHorizontalViews(int viewCount){
+
+        for(int count=0;count<viewCount;count++){
+            LandingHorizontalView horizontalView=new LandingHorizontalView(this);
+            mScrollLinearView.addView(horizontalView);
+        }
+
+    }
 
     @Override
     public void onBackPressed() {

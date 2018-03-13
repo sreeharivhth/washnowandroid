@@ -22,13 +22,19 @@
 
         <activity
             android:name=".screens.LandingActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" >
 
         </activity>
 
-        <activity android:name=".screens.RegistrationActivity"/>
-        <activity android:name=".screens.LoginActivity" />
-        <activity android:name=".screens.VerifyEmailActivity"/>
+        <activity android:name=".screens.RegistrationActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".screens.LoginActivity"
+            android:screenOrientation="portrait"
+            />
+        <activity android:name=".screens.VerifyEmailActivity"
+            android:screenOrientation="portrait"
+            />
 
         <activity
             android:name=".screens.BaseActivity"

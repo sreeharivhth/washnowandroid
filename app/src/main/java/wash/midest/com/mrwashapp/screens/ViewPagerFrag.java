@@ -49,11 +49,16 @@ public class ViewPagerFrag extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_view_pager, container, false);
 
-        TextView txtView1 = view.findViewById(R.id.textViewOne);
-        txtView1.setText(getArguments().getString(ARG_PARAM1));
+        TextView txtViewMain = view.findViewById(R.id.textViewOne);
+        txtViewMain.setText(getArguments().getString(ARG_PARAM1));
 
-        TextView txtView2 = view.findViewById(R.id.textViewTwo);
-        txtView2.setText(getArguments().getString(ARG_PARAM2));
+        TextView txtViewSub = view.findViewById(R.id.subtextcontent);
+        txtViewSub.setText(getArguments().getString(ARG_PARAM2));
+
+        TextView txtViewMini = view.findViewById(R.id.minitextcontent);
+        txtViewMini.setText(getActivity().getResources().getString(R.string.offer_validity));
+
+
 
         Log.d(TAG,"PARAM = "+ getArguments().getString(ARG_PARAM1));
         return view;

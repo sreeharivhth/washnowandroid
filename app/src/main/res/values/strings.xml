@@ -25,7 +25,6 @@
     <string name="action_offers">Offers</string>
     <string name="action_faq">FAQ</string>
     <string name="action_contact_us">Contact Us</string>
-
     <string name="first_name">First Name</string>
     <string name="last_name">Last Name</string>
     <string name="phone">Phone</string>
@@ -41,6 +40,8 @@
     <string name="change_email_id">Change Email ID</string>
     <string name="title">Title</string>
 
+    <string name="percentage">%</string>
+    <string name="off">OFF</string>
     <string name="offer_validity">OFFER VALID FOR FIRST TWO MONTHS</string>
 
 

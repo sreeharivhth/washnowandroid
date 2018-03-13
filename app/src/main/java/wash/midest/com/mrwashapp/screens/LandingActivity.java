@@ -71,6 +71,9 @@ public class LandingActivity extends AppCompatActivity
 
         for(int count=0;count<viewCount;count++){
             LandingHorizontalView horizontalView=new LandingHorizontalView(this);
+            if(count%2==0){
+                horizontalView.setBackgroundColor(getResources().getColor(R.color.landing_hori_back_two));
+            }
             mScrollLinearView.addView(horizontalView);
         }
 

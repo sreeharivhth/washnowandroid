@@ -22,5 +22,8 @@
     <color name="text_color_gray_light">#61000000</color>
     <color name="text_color_gray_dark">#666666</color>
 
+    <color name="landing_hori_back_two">#fdf7e9</color>
+
+
 
 </resources>

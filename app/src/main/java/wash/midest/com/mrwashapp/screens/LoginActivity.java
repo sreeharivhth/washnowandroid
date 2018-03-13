@@ -68,7 +68,7 @@ public class LoginActivity extends BaseActivity {
     }
 
     private void proceedWithLogin(){
-        Intent i = new Intent(LoginActivity.this, RegistrationActivity.class);
+        Intent i = new Intent(LoginActivity.this, LandingActivity.class);
         startActivity(i);
     }
 }

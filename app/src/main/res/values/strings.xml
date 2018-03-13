@@ -45,5 +45,10 @@
     <string name="off">OFF</string>
     <string name="offer_validity">OFFER VALID FOR FIRST TWO MONTHS</string>
 
+    <string name="dummy_name">Mr Farook</string>
+
+    <string name="dummy_phone">83903815</string>
+
+    <string name="dummy_email">farook@gmail.com</string>
 
 </resources>

@@ -30,25 +30,27 @@
         />
 
     <Button
-        android:id="@+id/place_order"
+        android:id="@+id/btn_place_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_bg_rounded_corners"
-        android:text="@string/phone"
+        android:text="@string/place_order"
         android:layout_alignParentRight="true"
         android:layout_below="@id/txt_washtype"
         android:theme="@style/AppButtonTheme"
+        android:paddingLeft="@dimen/component_margin_10"
+        android:paddingRight="@dimen/component_margin_10"
         />
 
     <TextView
         android:id="@+id/txt_price_list"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/phone"
+        android:text="@string/price_list"
         android:textSize="@dimen/text_size_14"
         android:layout_below="@id/txt_washtype"
         android:textColor="@color/text_color_light_blue"
-        android:layout_alignBaseline="@id/place_order"
+        android:layout_alignBaseline="@id/btn_place_order"
         />
 
 

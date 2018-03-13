@@ -39,7 +39,8 @@
     <string name="resend_otp">Resend OTP</string>
     <string name="change_email_id">Change Email ID</string>
     <string name="title">Title</string>
-
+    <string name="place_order">PLACE ORDER</string>
+    <string name="price_list">PRICE LIST</string>
     <string name="percentage">%</string>
     <string name="off">OFF</string>
     <string name="offer_validity">OFFER VALID FOR FIRST TWO MONTHS</string>

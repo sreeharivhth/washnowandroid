@@ -21,7 +21,10 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends AppCompatActivity
@@ -37,14 +40,7 @@ public class LandingActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -64,19 +60,47 @@ public class LandingActivity extends AppCompatActivity
         pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
 
-        addHorizontalViews(50);
+        ArrayList<WashTypes> washTypes=getWashTypes();
+
+        addHorizontalViews(washTypes.size(),washTypes);
     }
 
-    private void addHorizontalViews(int viewCount){
+    private ArrayList<WashTypes> getWashTypes(){
+
+        ArrayList<WashTypes> types = new ArrayList<>();
+        WashTypes washType1=new WashTypes();
+        washType1.setTime("@24hrs");
+        washType1.setWashType("QUICK WASH");
+
+        WashTypes washType2=new WashTypes();
+        washType2.setTime("@48hrs");
+        washType2.setWashType("NORMAL WASH");
+
+        WashTypes washType3=new WashTypes();
+        washType3.setTime("@24hrs");
+        washType3.setWashType("QUICK IRON");
+
+        WashTypes washType4=new WashTypes();
+        washType4.setTime("@48hrs");
+        washType4.setWashType("NORMAL IRON");
+
+        types.add(washType1);
+        types.add(washType2);
+        types.add(washType3);
+        types.add(washType4);
+
+        return types;
+    }
+
+    private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
 
         for(int count=0;count<viewCount;count++){
-            LandingHorizontalView horizontalView=new LandingHorizontalView(this);
-            if(count%2==0){
+            LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
+            if(count%2!=0){
                 horizontalView.setBackgroundColor(getResources().getColor(R.color.landing_hori_back_two));
             }
             mScrollLinearView.addView(horizontalView);
         }
-
     }
 
     @Override

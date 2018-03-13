@@ -33,7 +33,7 @@ public class WrapContentHeightViewPager extends ViewPager {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //SET 2
-        int height = 0;
+        /*int height = 0;
         for(int i = 0; i < getChildCount(); i++) {
             View child = getChildAt(i);
             child.measure(widthMeasureSpec, MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -45,10 +45,10 @@ public class WrapContentHeightViewPager extends ViewPager {
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
 
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);*/
 
         //SET 3
-        /*int mode = MeasureSpec.getMode(heightMeasureSpec);
+        int mode = MeasureSpec.getMode(heightMeasureSpec);
         // Unspecified means that the ViewPager is in a ScrollView WRAP_CONTENT.
         // At Most means that the ViewPager is not in a ScrollView WRAP_CONTENT.
         if (mode == MeasureSpec.UNSPECIFIED || mode == MeasureSpec.AT_MOST) {
@@ -64,7 +64,7 @@ public class WrapContentHeightViewPager extends ViewPager {
             heightMeasureSpec = MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY);
         }
         // super has to be called again so the new specs are treated as exact measurements
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);*/
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
 
     /**

@@ -1,11 +1,9 @@
 package wash.midest.com.mrwashapp.screens;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Rect;
+import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.Selection;
@@ -13,13 +11,12 @@ import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
+import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ProgressBar;
 
-import java.util.Map;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,9 +25,10 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APIConfiguration;
+import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.RegistrationPojo;
-import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class RegistrationActivity extends BaseActivity {
 
@@ -44,6 +42,9 @@ public class RegistrationActivity extends BaseActivity {
     private final String mMobileInitial ="+974 ";
     private final int mMobileMax =13;
     private final int CHANGE_DETAILS = 220;
+    @BindView(R.id.progressBar) ProgressBar mProgressBar;
+
+    private boolean mIsProgressShown =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,7 +119,24 @@ public class RegistrationActivity extends BaseActivity {
     private void doRegAction(){
 
         //Net connection and data retrieval
-        showOTPScreen();
+        //showOTPScreen();
+        alterProgressBar();
+        connectToService();
+    }
+
+    void alterProgressBar(){
+        if(mIsProgressShown)
+        {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mIsProgressShown =false;
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        }else{
+            mProgressBar.setVisibility(View.VISIBLE);
+            mIsProgressShown =true;
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
     }
 
     private void showOTPScreen(){
@@ -138,15 +156,39 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
     private void connectToService(){
+        String fn = mFName.getText().toString().trim();
+        String ln = mLName.getText().toString().trim();
+        String email = mEmail.getText().toString().trim();
+        String pass = mPassword.getText().toString().trim();
+        String mob = mPhone.getText().toString().trim();
+        String imei = "112233";
+        String appid = APIConfiguration.APPID;
+
+        APIConstants apiConstants=new APIConstants();
+
+        HashMap<String,String> params=new HashMap<>();
+        params.put(apiConstants.API_FIRSTNAME,fn);
+        params.put(apiConstants.API_LASTNAME,ln);
+        params.put(apiConstants.API_EMAIL,email);
+        params.put(apiConstants.API_PASSWORD,pass);
+        params.put(apiConstants.API_MOBILE,mob);
+        params.put(apiConstants.API_IMEI,imei);
+        params.put(apiConstants.API_APPID,appid);
+
         APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
-        serviceFactory.getAPIConfiguration().fetchRegistrationInformation()
+        serviceFactory.getAPIConfiguration().fetchRegistrationInformation( params )
                 .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
                 .observeOn(AndroidSchedulers.mainThread()) // To perform its emissions and response on UiThread(or)MainThread.
                 .subscribe(new DisposableObserver<RegistrationPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
-                    public void onNext(RegistrationPojo gist) {
-                        StringBuilder sb = new StringBuilder();
+                    public void onNext(RegistrationPojo registrationPojo) {
+                        //StringBuilder sb = new StringBuilder();
+
+                        Log.d(TAG,TAG+"### registrationPojo.getStatus() = "+registrationPojo.getStatus());
+
+                        Log.d(TAG,TAG+"### registrationPojo.getData().getEmail() = "+registrationPojo.getData().getEmail());
+                        alterProgressBar();
                         // Output
                         /*for (Map.Entry<String, GistRepo> entry : gist.files.entrySet()) {
                             sb.append(entry.getKey());
@@ -165,10 +207,12 @@ public class RegistrationActivity extends BaseActivity {
                         Log.e(TAG, e.getMessage());
                         e.printStackTrace(); // Just to see complete log information. we can comment if not necessary!
                         */
+                        Log.e(TAG,TAG+"### Error in network ="+e.toString());
+                        alterProgressBar();
                     }
                     @Override
                     public void onComplete() {
-                        Log.e(TAG, "The Gist service Observable has ended!");
+                        Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
                 });
     }

@@ -1,15 +1,21 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

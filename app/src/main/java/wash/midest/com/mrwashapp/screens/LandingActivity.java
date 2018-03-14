@@ -28,15 +28,13 @@ public class LandingActivity extends AppCompatActivity
 
     private TextView mTitleText;
     private LinearLayout mScrollLinearView;
-    //LandingHorizontalView
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_landing);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -115,8 +113,8 @@ public class LandingActivity extends AppCompatActivity
     private void onExit(){
         AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(this);
         alertDialog2.setTitle("");
-        alertDialog2.setMessage("Are you sure you want to exit the application?");
-        alertDialog2.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        alertDialog2.setMessage(R.string.exit_confirm);
+        alertDialog2.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 finishAffinity();
             }
@@ -152,7 +150,6 @@ public class LandingActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_profile) {
             // Handle the camera action
         } else if (id == R.id.nav_orders) {
@@ -166,20 +163,17 @@ public class LandingActivity extends AppCompatActivity
         } else if (id == R.id.nav_contact) {
 
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter{
-
         public ViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);
         }
         @Override
         public Fragment getItem(int position) {
-
             switch (position){
                 case 0:
                     return ViewPagerFrag.newInstance("20","ON FIRST ORDER");
@@ -192,9 +186,7 @@ public class LandingActivity extends AppCompatActivity
                 default:
                     return ViewPagerFrag.newInstance("def","def");
             }
-
         }
-
         @Override
         public int getCount() {
             return 4;

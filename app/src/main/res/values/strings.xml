@@ -50,10 +50,13 @@
     <string name="address">Address</string>
     <string name="promo_code">Promo Code</string>
     <string name="confirm">Confirm</string>
+    <string name="exit_confirm">Do you want to exit MrWash?</string>
+    <string name="ok">OK</string>
 
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>
     <string name="dummy_phone">83903815</string>
     <string name="dummy_email">farook@gmail.com</string>
+
 
 </resources>

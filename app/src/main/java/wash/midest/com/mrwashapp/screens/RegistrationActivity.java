@@ -11,6 +11,7 @@ import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.MotionEvent;
 import android.view.View;
@@ -18,14 +19,22 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import java.util.Map;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.RegistrationPojo;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class RegistrationActivity extends BaseActivity {
 
+    private static final String TAG = RegistrationActivity.class.getName();
     @BindView(R.id.first_name) TextInputEditText mFName;
     @BindView(R.id.last_name) TextInputEditText mLName;
     @BindView(R.id.phone) TextInputEditText mPhone;
@@ -127,5 +136,40 @@ public class RegistrationActivity extends BaseActivity {
                 mFName.requestFocus();
             }
         }
+    }
+    private void connectToService(){
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        // start service call using RxJava2
+        serviceFactory.getAPIConfiguration().fetchRegistrationInformation()
+                .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
+                .observeOn(AndroidSchedulers.mainThread()) // To perform its emissions and response on UiThread(or)MainThread.
+                .subscribe(new DisposableObserver<RegistrationPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
+                    @Override
+                    public void onNext(RegistrationPojo gist) {
+                        StringBuilder sb = new StringBuilder();
+                        // Output
+                        /*for (Map.Entry<String, GistRepo> entry : gist.files.entrySet()) {
+                            sb.append(entry.getKey());
+                            sb.append(" - ");
+                            sb.append("Length of file ");
+                            sb.append(entry.getValue().content.length());
+                            sb.append("\n");
+                        }
+                        hideProgress();
+                        responseView.setText(sb.toString());*/
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        /*hideProgress();
+                        responseView.setText("Error occurred! Check your Logcat!");
+                        Log.e(TAG, e.getMessage());
+                        e.printStackTrace(); // Just to see complete log information. we can comment if not necessary!
+                        */
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.e(TAG, "The Gist service Observable has ended!");
+                    }
+                });
     }
 }

@@ -27,6 +27,7 @@
         android:paddingRight="@dimen/component_margin_10"
         android:paddingTop="@dimen/component_margin_5"
         android:paddingBottom="@dimen/component_margin_5"
+        android:textColor="@color/colorAccent"
         />
 
     <Button

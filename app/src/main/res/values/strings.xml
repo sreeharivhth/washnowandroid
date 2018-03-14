@@ -43,6 +43,13 @@
     <string name="percentage">%</string>
     <string name="off">OFF</string>
     <string name="offer_validity">OFFER VALID FOR FIRST TWO MONTHS</string>
+    <string name="place_order_title">Place Order</string>
+    <string name="service_type">Service Type</string>
+    <string name="pickup_time">Pickup time</string>
+    <string name="delivery_time">Delivery time</string>
+    <string name="address">Address</string>
+    <string name="promo_code">Promo Code</string>
+    <string name="confirm">Confirm</string>
 
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>

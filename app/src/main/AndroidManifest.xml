@@ -9,7 +9,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
         <activity
             android:name=".screens.SplashActivity"
             android:screenOrientation="portrait"
@@ -19,34 +18,31 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".screens.LandingActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" >
-
+            android:theme="@style/AppTheme.NoActionBar">
         </activity>
-
-        <activity android:name=".screens.RegistrationActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".screens.LoginActivity"
-            android:screenOrientation="portrait"
-            />
-        <activity android:name=".screens.VerifyEmailActivity"
-            android:screenOrientation="portrait"
-            />
-
+        <activity
+            android:name=".screens.RegistrationActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".screens.VerifyEmailActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".screens.BaseActivity"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
             android:theme="@style/AppTheme"
-            />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".screens.SubSplashActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".screens.OtpActivity"></activity>
+        <activity android:name=".screens.OtpActivity" />
+        <activity android:name=".screens.PlaceOrderActivity"></activity>
     </application>
 
 </manifest>

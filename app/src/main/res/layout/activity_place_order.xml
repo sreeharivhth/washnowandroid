@@ -7,6 +7,17 @@
     tools:context="wash.midest.com.mrwashapp.screens.PlaceOrderActivity">
 
 
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/place_order_fields"
+        android:layout_marginRight="@dimen/screen_margin"
+        android:layout_marginLeft="@dimen/screen_margin"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -35,8 +46,6 @@
             android:layout_height="1dp"
             android:layout_marginBottom="10dp"
             android:background="@color/colorAccent" />
-
-
-
     </LinearLayout>
+    </ScrollView>
 </android.support.constraint.ConstraintLayout>

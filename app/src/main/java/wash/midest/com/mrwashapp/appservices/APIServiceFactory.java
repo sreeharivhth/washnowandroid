@@ -32,8 +32,8 @@ public class APIServiceFactory {
      */
     private OkHttpClient getOkHttpClient() {
         return new OkHttpClient.Builder()
-                .connectTimeout(30, TimeUnit.SECONDS) // 30 seconds Connection Timeout
-                .readTimeout(30, TimeUnit.SECONDS) // 60 seconds Read Timeout
+                .connectTimeout(45, TimeUnit.SECONDS) // 30 seconds Connection Timeout
+                .readTimeout(45, TimeUnit.SECONDS) // 60 seconds Read Timeout
                 .addInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)) // Logger for Api call
                 .build();
     }

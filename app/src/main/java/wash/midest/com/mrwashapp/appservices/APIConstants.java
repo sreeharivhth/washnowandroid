@@ -13,5 +13,6 @@ public class APIConstants {
     public String API_MOBILE = "mobile";
     public String API_IMEI = "imei";
     public String API_APPID = "appId";
+    public String API_DIALINGCODE = "dialingCode";
 
 }

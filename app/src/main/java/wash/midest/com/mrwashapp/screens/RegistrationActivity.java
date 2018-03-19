@@ -28,6 +28,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConfiguration;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.appservices.RegistrationObj;
 import wash.midest.com.mrwashapp.models.RegistrationPojo;
 
 public class RegistrationActivity extends BaseActivity {
@@ -119,9 +120,10 @@ public class RegistrationActivity extends BaseActivity {
     private void doRegAction(){
 
         //Net connection and data retrieval
-        //showOTPScreen();
+        /*showOTPScreen();*/
         alterProgressBar();
         connectToService();
+
     }
 
     void alterProgressBar(){
@@ -140,8 +142,10 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void showOTPScreen(){
+
         Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
         startActivityForResult(i,CHANGE_DETAILS);
+
     }
 
     @Override
@@ -160,7 +164,8 @@ public class RegistrationActivity extends BaseActivity {
         String ln = mLName.getText().toString().trim();
         String email = mEmail.getText().toString().trim();
         String pass = mPassword.getText().toString().trim();
-        String mob = mPhone.getText().toString().trim();
+        //String mob = mPhone.getText().toString().trim();
+        String mob = "88888888";
         String imei = "112233";
         String appid = APIConfiguration.APPID;
 
@@ -174,6 +179,9 @@ public class RegistrationActivity extends BaseActivity {
         params.put(apiConstants.API_MOBILE,mob);
         params.put(apiConstants.API_IMEI,imei);
         params.put(apiConstants.API_APPID,appid);
+        params.put(apiConstants.API_DIALINGCODE,APIConfiguration.DIALINGCODE);
+
+        RegistrationObj registrationObj=new RegistrationObj(fn,ln,email,pass,mob,imei,appid,APIConfiguration.DIALINGCODE);
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
@@ -183,22 +191,13 @@ public class RegistrationActivity extends BaseActivity {
                 .subscribe(new DisposableObserver<RegistrationPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
                     public void onNext(RegistrationPojo registrationPojo) {
-                        //StringBuilder sb = new StringBuilder();
-
-                        Log.d(TAG,TAG+"### registrationPojo.getStatus() = "+registrationPojo.getStatus());
-
-                        Log.d(TAG,TAG+"### registrationPojo.getData().getEmail() = "+registrationPojo.getData().getEmail());
-                        alterProgressBar();
                         // Output
-                        /*for (Map.Entry<String, GistRepo> entry : gist.files.entrySet()) {
-                            sb.append(entry.getKey());
-                            sb.append(" - ");
-                            sb.append("Length of file ");
-                            sb.append(entry.getValue().content.length());
-                            sb.append("\n");
-                        }
-                        hideProgress();
-                        responseView.setText(sb.toString());*/
+
+                        /*Log.d(TAG,TAG+"### registrationPojo.getStatus() = "+registrationPojo.getStatus());
+
+                        Log.d(TAG,TAG+"### registrationPojo.getData().getEmail() = "+registrationPojo.getData().getEmail());*/
+                        alterProgressBar();
+
                     }
                     @Override
                     public void onError(Throwable e) {
@@ -207,7 +206,7 @@ public class RegistrationActivity extends BaseActivity {
                         Log.e(TAG, e.getMessage());
                         e.printStackTrace(); // Just to see complete log information. we can comment if not necessary!
                         */
-                        Log.e(TAG,TAG+"### Error in network ="+e.toString());
+                        /*Log.e(TAG,TAG+"### Error in network ="+e.toString());*/
                         alterProgressBar();
                     }
                     @Override

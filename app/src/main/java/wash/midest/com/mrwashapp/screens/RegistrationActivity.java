@@ -2,7 +2,6 @@ package wash.midest.com.mrwashapp.screens;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Handler;
 import android.support.design.widget.TextInputEditText;
 import android.os.Bundle;
 import android.text.Editable;
@@ -28,7 +27,6 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConfiguration;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
-import wash.midest.com.mrwashapp.appservices.RegistrationObj;
 import wash.midest.com.mrwashapp.models.RegistrationPojo;
 
 public class RegistrationActivity extends BaseActivity {
@@ -160,6 +158,7 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
     private void connectToService(){
+        APIConstants apiConstants=new APIConstants();
         String fn = mFName.getText().toString().trim();
         String ln = mLName.getText().toString().trim();
         String email = mEmail.getText().toString().trim();
@@ -167,46 +166,32 @@ public class RegistrationActivity extends BaseActivity {
         //String mob = mPhone.getText().toString().trim();
         String mob = "88888888";
         String imei = "112233";
-        String appid = APIConfiguration.APPID;
+        String appid = apiConstants.APPID_VAL;
 
-        APIConstants apiConstants=new APIConstants();
-
-        HashMap<String,String> params=new HashMap<>();
-        params.put(apiConstants.API_FIRSTNAME,fn);
-        params.put(apiConstants.API_LASTNAME,ln);
-        params.put(apiConstants.API_EMAIL,email);
-        params.put(apiConstants.API_PASSWORD,pass);
-        params.put(apiConstants.API_MOBILE,mob);
-        params.put(apiConstants.API_IMEI,imei);
-        params.put(apiConstants.API_APPID,appid);
-        params.put(apiConstants.API_DIALINGCODE,APIConfiguration.DIALINGCODE);
-
-        RegistrationObj registrationObj=new RegistrationObj(fn,ln,email,pass,mob,imei,appid,APIConfiguration.DIALINGCODE);
-
+        HashMap<String,String> registrationParams=new HashMap<>();
+        registrationParams.put(apiConstants.API_FIRSTNAME,fn);
+        registrationParams.put(apiConstants.API_LASTNAME,ln);
+        registrationParams.put(apiConstants.API_EMAIL,email);
+        registrationParams.put(apiConstants.API_PASSWORD,pass);
+        registrationParams.put(apiConstants.API_MOBILE,mob);
+        registrationParams.put(apiConstants.API_IMEI,imei);
+        registrationParams.put(apiConstants.API_APPID,appid);
+        registrationParams.put(apiConstants.API_DIALINGCODE,apiConstants.DIALINGCODE_VAL);
+        
         APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
-        serviceFactory.getAPIConfiguration().fetchRegistrationInformation( params )
+        serviceFactory.getAPIConfiguration().fetchRegistrationInformation( registrationParams )
                 .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
                 .observeOn(AndroidSchedulers.mainThread()) // To perform its emissions and response on UiThread(or)MainThread.
                 .subscribe(new DisposableObserver<RegistrationPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
                     public void onNext(RegistrationPojo registrationPojo) {
                         // Output
-
-                        /*Log.d(TAG,TAG+"### registrationPojo.getStatus() = "+registrationPojo.getStatus());
-
-                        Log.d(TAG,TAG+"### registrationPojo.getData().getEmail() = "+registrationPojo.getData().getEmail());*/
                         alterProgressBar();
 
                     }
                     @Override
                     public void onError(Throwable e) {
-                        /*hideProgress();
-                        responseView.setText("Error occurred! Check your Logcat!");
-                        Log.e(TAG, e.getMessage());
-                        e.printStackTrace(); // Just to see complete log information. we can comment if not necessary!
-                        */
-                        /*Log.e(TAG,TAG+"### Error in network ="+e.toString());*/
                         alterProgressBar();
                     }
                     @Override

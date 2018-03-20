@@ -21,24 +21,10 @@ import wash.midest.com.mrwashapp.models.RegistrationPojo;
 public interface APIConfiguration {
 
     String BASE_URL = "http://www.qmyse.com/";
-    String APPID = "110";
-    String DIALINGCODE = "978";
-    /*@Headers({"Accept: application/json"})*/
+
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
-    /*"Content-Type:application/json;charset=UTF-8;x-www-form-urlencoded"*/
     @FormUrlEncoded
     @POST("member/registration")
-    /*Observable<RegistrationPojo> fetchRegistrationInformation(@Body RegistrationObj params);*/
-
     Observable<RegistrationPojo> fetchRegistrationInformation(@FieldMap(encoded = true) Map<String, String> params);
-
-
-    /*String BASE_URL = "http://www.qmyse.com/";
-    String APPID = "110";
-    //@FormUrlEncoded
-    @GET("site/pingpong")
-    @Headers({"Accept: application/json",
-            "Content-Type: application/x-www-form-urlencoded"})
-    Observable<RegistrationPojo> fetchRegistrationInformation();*/
 }

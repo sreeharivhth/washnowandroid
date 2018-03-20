@@ -15,4 +15,6 @@ public class APIConstants {
     public String API_APPID = "appId";
     public String API_DIALINGCODE = "dialingCode";
 
+    public String APPID_VAL = "110";
+    public String DIALINGCODE_VAL = "978";
 }

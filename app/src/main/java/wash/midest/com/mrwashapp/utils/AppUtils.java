@@ -1,7 +1,15 @@
 package wash.midest.com.mrwashapp.utils;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
+import android.telephony.TelephonyManager;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 /**
  * Created by Sreehari.KV on 3/6/2018.
  */
@@ -17,15 +25,39 @@ public class AppUtils {
               {8,12}	    #        length at least 8 characters and maximum of 12
             */
 
-    public boolean isValidPassword(String password){
+    public boolean isValidPassword(String password) {
         Pattern pattern;
         Matcher matcher;
-        String PASSWORD_PATTERN ="((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*['*()=@#$%!^&_\"]).{8,12})";
+        String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*['*()=@#$%!^&_\"]).{8,12})";
         pattern = Pattern.compile(PASSWORD_PATTERN);
         matcher = pattern.matcher(password);
         return matcher.matches();
     }
 
+    public boolean isVersionGreaterThanM(Context context) {
+        int currentAPIVersion = Build.VERSION.SDK_INT;
+        if (currentAPIVersion >= android.os.Build.VERSION_CODES.M) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
+    public String getDeviceIMEI(Context context) {
+        TelephonyManager mTelephonyManager;
+        mTelephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
+        String deviceid = mTelephonyManager.getDeviceId();
 
+        return deviceid;
+    }
 }

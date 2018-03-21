@@ -1,9 +1,17 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.design.widget.TextInputEditText;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -28,6 +36,7 @@ import wash.midest.com.mrwashapp.appservices.APIConfiguration;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.RegistrationPojo;
+import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class RegistrationActivity extends BaseActivity {
 
@@ -42,7 +51,7 @@ public class RegistrationActivity extends BaseActivity {
     private final int mMobileMax =13;
     private final int CHANGE_DETAILS = 220;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
-
+    private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     private boolean mIsProgressShown =false;
 
     @Override
@@ -71,6 +80,20 @@ public class RegistrationActivity extends BaseActivity {
         });
     }
 
+    void checkPermission(){
+        if (ContextCompat.checkSelfPermission(RegistrationActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(RegistrationActivity.this, Manifest.permission.READ_PHONE_STATE)) {
+
+                ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_READ_PHONE_STATE);
+            } else {
+                ActivityCompat.requestPermissions(RegistrationActivity.this, new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_READ_PHONE_STATE);
+            }
+        } else {
+            //Permission already granted. Proceed with functionalities
+            postPermissionGranted();
+        }
+    }
     @OnClick(R.id.registration_btn)
     protected void isValidRegAction(){
         boolean isValid=true;
@@ -102,7 +125,13 @@ public class RegistrationActivity extends BaseActivity {
             isValid=false;
         }
         if(isValid){
-            doRegAction();
+            boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getApplicationContext());
+
+            if(isPermissionRequired) {
+                checkPermission();
+            }else{
+                postPermissionGranted();
+            }
         }
     }
 
@@ -115,14 +144,46 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
 
-    private void doRegAction(){
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_READ_PHONE_STATE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-        //Net connection and data retrieval
-        /*showOTPScreen();*/
-        alterProgressBar();
-        connectToService();
+                    //Permission already granted. Proceed with functionalities
+                    postPermissionGranted();
+                } else {
 
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(RegistrationActivity.this);
+                    alertBuilder.setCancelable(true);
+                    alertBuilder.setTitle("Permission necessary");
+                    alertBuilder.setMessage("Reading phones identifier is required for us to verify this device and proceeding ! Without this application will close");
+                    alertBuilder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            checkPermission();
+                        }
+                    });
+                    alertBuilder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+                        public void onClick(DialogInterface dialog, int which) {
+                            closeApp();
+                        }
+                    });
+                    AlertDialog alert = alertBuilder.create();
+                    alert.show();
+                }
+                break;
+        }
     }
+
+    /*private void postPermissionGranted() {
+        //Net connection and data retrieval
+
+        showOTPScreen();
+        *//*alterProgressBar();
+        connectToService();*//*
+    }*/
 
     void alterProgressBar(){
         if(mIsProgressShown)
@@ -157,28 +218,30 @@ public class RegistrationActivity extends BaseActivity {
             }
         }
     }
-    private void connectToService(){
-        APIConstants apiConstants=new APIConstants();
+    private void postPermissionGranted(){
+
+        alterProgressBar();
         String fn = mFName.getText().toString().trim();
         String ln = mLName.getText().toString().trim();
         String email = mEmail.getText().toString().trim();
         String pass = mPassword.getText().toString().trim();
-        //String mob = mPhone.getText().toString().trim();
-        String mob = "88888888";
-        String imei = "112233";
-        String appid = apiConstants.APPID_VAL;
+        String mob =mPhone.getText().toString().trim().substring(4,13);
+        String imei = mAppUtils.getDeviceIMEI(this);
+        Log.d(TAG,"Device Imei >> "+imei);
+        String appid = mApiConstants.APPID_VAL;
 
         HashMap<String,String> registrationParams=new HashMap<>();
-        registrationParams.put(apiConstants.API_FIRSTNAME,fn);
-        registrationParams.put(apiConstants.API_LASTNAME,ln);
-        registrationParams.put(apiConstants.API_EMAIL,email);
-        registrationParams.put(apiConstants.API_PASSWORD,pass);
-        registrationParams.put(apiConstants.API_MOBILE,mob);
-        registrationParams.put(apiConstants.API_IMEI,imei);
-        registrationParams.put(apiConstants.API_APPID,appid);
-        registrationParams.put(apiConstants.API_DIALINGCODE,apiConstants.DIALINGCODE_VAL);
-        
-        APIServiceFactory serviceFactory = new APIServiceFactory();
+        registrationParams.put(mApiConstants.API_FIRSTNAME,fn);
+        registrationParams.put(mApiConstants.API_LASTNAME,ln);
+        registrationParams.put(mApiConstants.API_EMAIL,email);
+        registrationParams.put(mApiConstants.API_PASSWORD,pass);
+        registrationParams.put(mApiConstants.API_MOBILE,mob);
+        registrationParams.put(mApiConstants.API_IMEI,imei);
+        registrationParams.put(mApiConstants.API_APPID,appid);
+        registrationParams.put(mApiConstants.API_DIALINGCODE,mApiConstants.DIALINGCODE_VAL);
+
+        Log.d(TAG,"Call to API>>>>>>>>>>>>>>");
+        /*APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
         serviceFactory.getAPIConfiguration().fetchRegistrationInformation( registrationParams )
                 .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
@@ -198,6 +261,9 @@ public class RegistrationActivity extends BaseActivity {
                     public void onComplete() {
                         Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
-                });
+                });*/
+    }
+    void closeApp(){
+        finishAffinity();
     }
 }

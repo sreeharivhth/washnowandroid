@@ -2,6 +2,7 @@ package wash.midest.com.mrwashapp.screens;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -91,9 +92,13 @@ public class LandingActivity extends AppCompatActivity
         for(int count=0;count<viewCount;count++){
             LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
             if(count%2!=0){
-                horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
+                }
             }else{
-                horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
+                }
             }
             mScrollLinearView.addView(horizontalView);
         }

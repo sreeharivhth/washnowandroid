@@ -1,16 +1,14 @@
 package wash.midest.com.mrwashapp.screens;
 
-import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import android.util.Patterns;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -23,62 +21,23 @@ import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText;
 
-public class LoginActivity extends BaseActivity {
+public class ForgotPassActivity extends BaseActivity {
 
     private static final String TAG = LoginActivity.class.getName();
-    @BindView(R.id.email) TextInputEditText mEmail;
-    @BindView(R.id.password) TextInputEditText mPassword;
-    @BindView(R.id.login_btn) Button mBtnLogin;
+    @BindView(R.id.forgot_pass_email) TextInputEditText mEmail;
+    @BindView(R.id.send_otp_btn) Button mBtnSendOtp;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
-    @BindView(R.id.txtForgotPasword)TextView mForgotPassword;
+    @BindView(R.id.otpView)PinEntryEditText mOtpEditText;
     private boolean mIsProgressShown =false;
+    private boolean isOTPShown=false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_forgot_pass);
         ButterKnife.bind(this);
-        setActionBarTitleInCenter(getString(R.string.app_title),true);
-
-    }
-
-    @OnClick(R.id.login_btn)
-    protected void isValidLoginAction(){
-        boolean isValid=true;
-        if(TextUtils.isEmpty(mEmail.getText().toString().trim())){
-            mEmail.setError(getResources().getString(R.string.email_error));
-            isValid=false;
-        }
-        else if(!Patterns.EMAIL_ADDRESS.matcher(mEmail.getText().toString().trim()).matches()){
-            mEmail.setError(getResources().getString(R.string.email_error));
-            isValid=false;
-        }
-        if(TextUtils.isEmpty(mPassword.getText().toString().trim())){
-            mPassword.setError(getResources().getString(R.string.password_error));
-            isValid=false;
-        }
-        else if(!isValidPassword()){
-            mPassword.setError(getResources().getString(R.string.password_criteria));
-            isValid=false;
-        }
-
-        if(isValid){
-            proceedWithLogin();
-        }
-    }
-    @OnClick(R.id.txtForgotPasword)
-    void forgotPasswordAction(){
-        startActivity(new Intent(this,ForgotPassActivity.class));
-    }
-
-    private boolean isValidPassword(){
-        String passwordEntered=mPassword.getText().toString().trim();
-        if(!TextUtils.isEmpty(passwordEntered)){
-            return mAppUtils.isValidPassword(passwordEntered);
-        }else{
-            return false;
-        }
     }
 
     void alterProgressBar(){
@@ -96,26 +55,32 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
-    void proceedWithLogin(){
+    @OnClick(R.id.send_otp_btn)
+    void isValidOtpAction(){
 
+        boolean isValid=true;
+        if(TextUtils.isEmpty(mEmail.getText().toString().trim())){
+            mEmail.setError(getResources().getString(R.string.email_error));
+            isValid=false;
+        }
+        if(isValid){
+            proceedAPICall();
+        }
+    }
+
+    void proceedAPICall(){
         if(!mAppUtils.isNetworkConnected(this)){
             return;
         }else{
             showErrorAlert(getString(R.string.network_error));
         }
-        alterProgressBar();
-        String email = mEmail.getText().toString().trim();
-        String password= mPassword.getText().toString().trim();
         String appId = mApiConstants.APPID_VAL;
-
         HashMap<String,String> requestParams=new HashMap<>();
-        requestParams.put(mApiConstants.API_EMAIL,email);
-        requestParams.put(mApiConstants.API_PASSWORD,password);
+        requestParams.put(mApiConstants.API_EMAIL,mEmail.getText().toString().trim());
         requestParams.put(mApiConstants.API_APPID,appId);
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
-
-        serviceFactory.getAPIConfiguration().loginAPI( requestParams )
+        serviceFactory.getAPIConfiguration().verifyEmailAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<GeneralPojo>() {
@@ -133,18 +98,12 @@ public class LoginActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userID = generalPojo.getData().getUserId();
-                            String token = generalPojo.getData().getToken();
+                            String userId = generalPojo.getData().getUserId();
 
-                            if(!TextUtils.isEmpty(userID)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userID);
+                            if(!TextUtils.isEmpty(userId)){
+                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userId);
                             }
-                            if(!TextUtils.isEmpty(token)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,token);
-                            }
-
-                            //Either call new required web services or push Landing screen
-                            pushLanding();
+                            showPinEntry();
                         }
                     }
                     @Override
@@ -159,10 +118,10 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
-    void pushLanding(){
-        Intent i = new Intent(LoginActivity.this, LandingActivity.class);
-        startActivity(i);
-        finish();
-    }
+    void showPinEntry(){
+        mOtpEditText.setVisibility(View.VISIBLE);
+        mBtnSendOtp.setText(getString(R.string.verify_otp));
+        isOTPShown=true;
 
+    }
 }

@@ -1,10 +1,12 @@
 package wash.midest.com.mrwashapp.screens;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -22,6 +24,7 @@ import butterknife.Optional;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
+import wash.midest.com.mrwashapp.localstorage.AppSharedPreferences;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class BaseActivity extends AppCompatActivity implements View.OnClickListener{
@@ -31,6 +34,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView mBackBtn;
     protected AppUtils mAppUtils;
     protected APIConstants mApiConstants;
+    protected AppSharedPreferences mSharedPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +43,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_base);
         mAppUtils= new AppUtils();
         mApiConstants=new APIConstants();
-
+        mSharedPreference=AppSharedPreferences.getInstnace(this);
     }
 
     protected void setActionBarTitleInCenter(String title,boolean displayBackButton){
@@ -73,6 +77,16 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    void showErrorAlert(String message){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
     protected Context getAppContext(){
         return getApplicationContext();
     }

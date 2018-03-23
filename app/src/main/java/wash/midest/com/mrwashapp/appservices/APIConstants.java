@@ -14,7 +14,13 @@ public class APIConstants {
     public String API_IMEI = "imei";
     public String API_APPID = "appId";
     public String API_DIALINGCODE = "dialingCode";
+    public String API_CODE = "code";
 
     public String APPID_VAL = "110";
     public String DIALINGCODE_VAL = "978";
+
+    public int SUCCESS = 200;
+    public String SUCCESS_0 = "0";
+
+    public String ERROR_1109="Email Id is already registered";
 }

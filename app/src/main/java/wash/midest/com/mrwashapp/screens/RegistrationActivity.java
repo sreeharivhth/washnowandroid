@@ -32,10 +32,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
-import wash.midest.com.mrwashapp.appservices.APIConfiguration;
-import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
-import wash.midest.com.mrwashapp.models.RegistrationPojo;
+import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class RegistrationActivity extends BaseActivity {
@@ -125,13 +123,7 @@ public class RegistrationActivity extends BaseActivity {
             isValid=false;
         }
         if(isValid){
-            boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getApplicationContext());
-
-            if(isPermissionRequired) {
-                checkPermission();
-            }else{
-                postPermissionGranted();
-            }
+            isPermissionRequired();
         }
     }
 
@@ -201,10 +193,9 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void showOTPScreen(){
-
         Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
+        i.putExtra("EMAIL",mEmail.getText().toString().trim());
         startActivityForResult(i,CHANGE_DETAILS);
-
     }
 
     @Override
@@ -218,8 +209,25 @@ public class RegistrationActivity extends BaseActivity {
             }
         }
     }
+
+    void isPermissionRequired(){
+
+        boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getApplicationContext());
+
+        if(isPermissionRequired) {
+            checkPermission();
+        }else{
+            postPermissionGranted();
+        }
+    }
+
     private void postPermissionGranted(){
 
+        if(!mAppUtils.isNetworkConnected(this)){
+            return;
+        }else{
+            showErrorAlert(getString(R.string.network_error));
+        }
         alterProgressBar();
         String fn = mFName.getText().toString().trim();
         String ln = mLName.getText().toString().trim();
@@ -230,38 +238,62 @@ public class RegistrationActivity extends BaseActivity {
         Log.d(TAG,"Device Imei >> "+imei);
         String appid = mApiConstants.APPID_VAL;
 
-        HashMap<String,String> registrationParams=new HashMap<>();
-        registrationParams.put(mApiConstants.API_FIRSTNAME,fn);
-        registrationParams.put(mApiConstants.API_LASTNAME,ln);
-        registrationParams.put(mApiConstants.API_EMAIL,email);
-        registrationParams.put(mApiConstants.API_PASSWORD,pass);
-        registrationParams.put(mApiConstants.API_MOBILE,mob);
-        registrationParams.put(mApiConstants.API_IMEI,imei);
-        registrationParams.put(mApiConstants.API_APPID,appid);
-        registrationParams.put(mApiConstants.API_DIALINGCODE,mApiConstants.DIALINGCODE_VAL);
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_FIRSTNAME,fn);
+        requestParams.put(mApiConstants.API_LASTNAME,ln);
+        requestParams.put(mApiConstants.API_EMAIL,email);
+        requestParams.put(mApiConstants.API_PASSWORD,pass);
+        requestParams.put(mApiConstants.API_MOBILE,mob);
+        requestParams.put(mApiConstants.API_IMEI,imei);
+        requestParams.put(mApiConstants.API_APPID,appid);
+        requestParams.put(mApiConstants.API_DIALINGCODE,mApiConstants.DIALINGCODE_VAL);
 
         Log.d(TAG,"Call to API>>>>>>>>>>>>>>");
-        /*APIServiceFactory serviceFactory = new APIServiceFactory();
+        APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
-        serviceFactory.getAPIConfiguration().fetchRegistrationInformation( registrationParams )
+        serviceFactory.getAPIConfiguration().registrationAPI( requestParams )
                 .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
                 .observeOn(AndroidSchedulers.mainThread()) // To perform its emissions and response on UiThread(or)MainThread.
-                .subscribe(new DisposableObserver<RegistrationPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
+                .subscribe(new DisposableObserver<GeneralPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
-                    public void onNext(RegistrationPojo registrationPojo) {
-                        // Output
-                        alterProgressBar();
+                    public void onNext(GeneralPojo generalPojo) {
 
+                        alterProgressBar();
+                        int statusCode = (int) generalPojo.getStatusCode();
+                        //Check for error
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            String errorMessage = generalPojo.getError().getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                                String isVerified = generalPojo.getData().getIsVerified();
+                                if(!TextUtils.isEmpty(isVerified)){
+                                    if(isVerified.equalsIgnoreCase(mApiConstants.SUCCESS_0)){
+                                        //Not verified
+                                        mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS,0);
+                                        //show OTP screen
+                                        showOTPScreen();
+                                    }else{
+                                        //Verified
+                                        mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS,1);
+                                        //TODO
+                                    }
+                                }
+                        }
                     }
                     @Override
                     public void onError(Throwable e) {
                         alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
                     }
                     @Override
                     public void onComplete() {
                         Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
-                });*/
+                });
     }
     void closeApp(){
         finishAffinity();

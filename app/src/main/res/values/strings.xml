@@ -9,6 +9,8 @@
     <string name="last_name_error">Please enter Last Name</string>
     <string name="otp_error">Please enter OTP received</string>
     <string name="phone_error">Please enter valid Phone Number</string>
+    <string name="general_error_server">Error in processing request. Please try later</string>
+    <string name="network_error">Unable to detect internet. Make sure you are connected to internet or WiFi</string>
     <!--Error messages end-->
 
 
@@ -31,6 +33,8 @@
     <string name="password">Password</string>
     <string name="register">Register</string>
     <string name="login">Login</string>
+    <string name="send_otp">Send OTP</string>
+    <string name="verify_otp">Verify OTP</string>
     <string name="forgot_password">Forgot Password ? </string>
     <string name="otp_text1">An OTP has been sent your Email ID</string>
     <string name="otp_text2">Please enter the 4 digit OTP</string>

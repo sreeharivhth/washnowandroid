@@ -3,12 +3,16 @@ package wash.midest.com.mrwashapp.utils;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static android.content.Context.CONNECTIVITY_SERVICE;
 
 /**
  * Created by Sreehari.KV on 3/6/2018.
@@ -59,5 +63,15 @@ public class AppUtils {
         String deviceid = mTelephonyManager.getDeviceId();
 
         return deviceid;
+    }
+
+    public boolean isNetworkConnected(Context context){
+        boolean status=false;
+        ConnectivityManager manager = (ConnectivityManager) context.getSystemService(CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = manager.getActiveNetworkInfo();
+        if(activeNetwork != null && activeNetwork.isConnectedOrConnecting()){
+            status=true;
+        }
+        return status;
     }
 }

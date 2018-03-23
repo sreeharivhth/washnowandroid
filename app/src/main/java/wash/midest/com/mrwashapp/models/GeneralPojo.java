@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Sreehari.KV on 3/14/2018.
  */
 
-public class RegistrationPojo {
+public class GeneralPojo {
 
     @SerializedName("status")
     @Expose
@@ -22,7 +22,7 @@ public class RegistrationPojo {
     private Data data;
     @SerializedName("error")
     @Expose
-    private List<Object> error = null;
+    private Error error;
 
     public String getStatus() {
         return status;
@@ -48,12 +48,12 @@ public class RegistrationPojo {
         this.data = data;
     }
 
-    public List<Object> getError() {
+
+    public Error getError() {
         return error;
     }
 
-    public void setError(List<Object> error) {
+    public void setError(Error error) {
         this.error = error;
     }
-
 }

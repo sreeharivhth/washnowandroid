@@ -7,6 +7,7 @@ import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 
 /**
@@ -44,4 +45,19 @@ public interface APIConfiguration {
     @FormUrlEncoded
     @POST("api/forgot-password")
     Observable<GeneralPojo> forgotPassAPI(@FieldMap(encoded = true) Map<String, String> params);
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("api/verify-forgot-password")
+    Observable<GeneralPojo> forgotPassCodeVerifyAPI(@FieldMap(encoded = true) Map<String, String> params);
+
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("api/services")
+    Observable<GeneralListDataPojo> servicesAPI(@FieldMap(encoded = true) Map<String, String> params);
+
+
 }

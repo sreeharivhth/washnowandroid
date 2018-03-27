@@ -25,6 +25,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText;
 
@@ -41,6 +42,7 @@ public class OtpActivity extends BaseActivity {
     ProgressBar mProgressBar;
     private boolean mIsProgressShown =false;
     private String TAG=OtpActivity.class.getName();
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +94,7 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.verify_btn)
     protected void onVerifyAction(){
-        if(!TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4){
+        if(! (TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4)){
             proceedAPICall();
             alterProgressBar();
         }else{
@@ -134,14 +136,14 @@ public class OtpActivity extends BaseActivity {
                             }
                         }else{
                             String memberId = generalPojo.getData().getMemberId();
-                            String token = generalPojo.getData().getToken();
+                            mToken = generalPojo.getData().getToken();
                             String active = generalPojo.getData().getActive();
 
                             if(!TextUtils.isEmpty(memberId)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,memberId);
                             }
-                            if(!TextUtils.isEmpty(token)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,token);
+                            if(!TextUtils.isEmpty(mToken)){
+                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
                             }
                             if(!TextUtils.isEmpty(active)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,active);
@@ -196,6 +198,41 @@ public class OtpActivity extends BaseActivity {
         }
     }
 
+    void processServicesAPI(){
+        if(!mAppUtils.isNetworkConnected(this)){
+            return;
+        }else{
+            showErrorAlert(getString(R.string.network_error));
+        }
+
+        String appId = mApiConstants.APPID_VAL;
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_EMAIL,mEmail);
+        requestParams.put(mApiConstants.API_CODE,mOtpEditText.getText().toString());
+        requestParams.put(mApiConstants.API_APPID,appId);
+
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().servicesAPI( requestParams )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
+                    @Override
+                    public void onNext(GeneralListDataPojo generalPojo) {
+
+
+
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, TAG+"### The API service Observable has ended!");
+                    }
+                });
+    }
     @Override
     protected void onDestroy() {
         super.onDestroy();

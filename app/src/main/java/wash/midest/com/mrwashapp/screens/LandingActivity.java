@@ -92,12 +92,24 @@ public class LandingActivity extends AppCompatActivity
         for(int count=0;count<viewCount;count++){
             LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
             if(count%2!=0){
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
+                    }else{
+                        horizontalView.setBackgroundResource(R.drawable.list_background_one);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }else{
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
+                try {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
+                    }else{
+                        horizontalView.setBackgroundResource(R.drawable.list_background_two);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             mScrollLinearView.addView(horizontalView);

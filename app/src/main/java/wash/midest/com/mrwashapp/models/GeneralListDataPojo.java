@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Sreehari.KV on 3/26/2018.
  */
 
-public class GeneralDataTrial {
+public class GeneralListDataPojo {
 
     @SerializedName("status")
     @Expose
@@ -18,9 +18,9 @@ public class GeneralDataTrial {
     @Expose
     private Integer statusCode;
     @SerializedName("data")
-    /*@Expose
+    @Expose
     private List<Data> data;
-    @SerializedName("error")*/
+    @SerializedName("error")
     @Expose
     private Error error;
 
@@ -48,7 +48,7 @@ public class GeneralDataTrial {
         this.error = error;
     }
 
-    /*public List<Data> getData() {return data; }
+    public List<Data> getData() {return data; }
 
-    public void setData(List<Data> data) { this.data = data; }*/
+    public void setData(List<Data> data) { this.data = data; }
 }

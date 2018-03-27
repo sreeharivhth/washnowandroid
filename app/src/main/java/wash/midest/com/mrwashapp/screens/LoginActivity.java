@@ -164,5 +164,4 @@ public class LoginActivity extends BaseActivity {
         startActivity(i);
         finish();
     }
-
 }

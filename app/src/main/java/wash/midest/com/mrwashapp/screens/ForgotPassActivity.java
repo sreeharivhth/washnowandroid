@@ -1,12 +1,16 @@
 package wash.midest.com.mrwashapp.screens;
 
+import android.content.Context;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 
@@ -32,6 +36,8 @@ public class ForgotPassActivity extends BaseActivity {
     @BindView(R.id.otpView)PinEntryEditText mOtpEditText;
     private boolean mIsProgressShown =false;
     private boolean isOTPShown=false;
+    private String mUserId;
+    private InputMethodManager mInputMethodManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +70,14 @@ public class ForgotPassActivity extends BaseActivity {
             isValid=false;
         }
         if(isValid){
-            proceedAPICall();
+            if(!isOTPShown) {
+                proceedAPICall();
+            }else if(! (TextUtils.isEmpty(mOtpEditText.getText().toString().trim())
+                        && mOtpEditText.getText().length()==4)){
+                processVerifyCodeAPI();
+            }else{
+                mOtpEditText.setError(getString(R.string.otp_error));
+            }
         }
     }
 
@@ -80,7 +93,86 @@ public class ForgotPassActivity extends BaseActivity {
         requestParams.put(mApiConstants.API_APPID,appId);
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
-        serviceFactory.getAPIConfiguration().verifyEmailAPI( requestParams )
+        serviceFactory.getAPIConfiguration().forgotPassAPI( requestParams )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralPojo>() {
+                    @Override
+                    public void onNext(GeneralPojo generalPojo) {
+
+                        alterProgressBar();
+                        int statusCode = (int) generalPojo.getStatusCode();
+                        //Check for error
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            String errorMessage = generalPojo.getError().getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                            mUserId = generalPojo.getData().getUserId();
+
+                            if(!TextUtils.isEmpty(mUserId)){
+                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,mUserId);
+                                showPinEntry();
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, TAG+"### The API service Observable has ended!");
+                    }
+                });
+    }
+
+    void showPinEntry(){
+        mInputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        mOtpEditText.setVisibility(View.VISIBLE);
+        mOtpEditText.requestFocus();
+        mBtnSendOtp.setText(getString(R.string.verify_otp));
+        mOtpEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s,
+                                          int start,
+                                          int count,
+                                          int after) {}
+            @Override
+            public void onTextChanged(CharSequence s,
+                                      int start,
+                                      int before,
+                                      int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 4) {
+                    mInputMethodManager.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
+                }
+            }
+        });
+        isOTPShown=true;
+    }
+
+    void processVerifyCodeAPI(){
+        if(!mAppUtils.isNetworkConnected(this)){
+            return;
+        }else{
+            showErrorAlert(getString(R.string.network_error));
+        }
+        String appId = mApiConstants.APPID_VAL;
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_USERID,mUserId);
+        requestParams.put(mApiConstants.API_APPID,appId);
+        requestParams.put(mApiConstants.API_CODE,mOtpEditText.getText().toString());
+
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().forgotPassCodeVerifyAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<GeneralPojo>() {
@@ -99,11 +191,9 @@ public class ForgotPassActivity extends BaseActivity {
                             }
                         }else{
                             String userId = generalPojo.getData().getUserId();
+                            //Proceed with
+                            Log.d(TAG,"userId received ==> "+userId);
 
-                            if(!TextUtils.isEmpty(userId)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userId);
-                            }
-                            showPinEntry();
                         }
                     }
                     @Override
@@ -116,12 +206,5 @@ public class ForgotPassActivity extends BaseActivity {
                         Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
                 });
-    }
-
-    void showPinEntry(){
-        mOtpEditText.setVisibility(View.VISIBLE);
-        mBtnSendOtp.setText(getString(R.string.verify_otp));
-        isOTPShown=true;
-
     }
 }

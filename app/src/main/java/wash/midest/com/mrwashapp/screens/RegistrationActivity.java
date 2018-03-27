@@ -127,6 +127,8 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
 
+
+
     private boolean isValidPassword(){
         String passwordEntered=mPassword.getText().toString().trim();
         if(!TextUtils.isEmpty(passwordEntered)){

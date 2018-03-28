@@ -38,6 +38,7 @@ public class LandingActivity extends AppCompatActivity
     private boolean mDidReceivedObject;
     private GeneralListDataPojo mServicesData;
     private APIConstants mApiConstants;
+    private String TAG=LandingActivity.class.getName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +66,9 @@ public class LandingActivity extends AppCompatActivity
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
 
         mApiConstants=new APIConstants();
-        /*ArrayList<WashTypes> washTypes=getWashTypes();
+        /*ArrayList<WashTypes> washTypes=populateWashTypes();
         addHorizontalViews(washTypes.size(),washTypes);*/
+        Log.d(TAG,TAG+" LandingActivity launched");
         ((MrWashApp) getApplication())
                 .getRxEventBus()
                 .toObservable()
@@ -79,7 +81,7 @@ public class LandingActivity extends AppCompatActivity
                             Log.d("DemoScreenOne ====", "DemoScreenOne accept method called ");
                             if (o instanceof GeneralListDataPojo) {
                                 mServicesData = (GeneralListDataPojo) o;
-                                getWashTypes();
+                                populateWashTypes();
                                 Log.d("DemoScreenOne ====", "DemoScreenOne ==== " + mServicesData.getStatus());
                             } else {
                                 Log.d("DemoScreenOne ====", "Not instance of DemoScreenOne ==== ");
@@ -93,9 +95,13 @@ public class LandingActivity extends AppCompatActivity
         ;
     }
 
-    private ArrayList<WashTypes> getWashTypes(){
+    private void populateWashTypes(){
+        Log.d(TAG,TAG+" populateWashTypes");
+
         ArrayList<WashTypes> types = new ArrayList<>();
         if(null!=mServicesData){
+            Log.d(TAG,TAG+" populateWashTypes null!=mServicesData");
+            Log.d(TAG,TAG+" populateWashTypes mServicesData.getData().size() ="+mServicesData.getData().size());
             for(int count=0;count<mServicesData.getData().size();count++){
                 Data serviceData = mServicesData.getData().get(count);
                 if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
@@ -105,9 +111,9 @@ public class LandingActivity extends AppCompatActivity
                     types.add(washType);
                 }
             }
+            Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
+            addHorizontalViews(types.size(),types);
         }
-        addHorizontalViews(types.size(),types);
-
         /*WashTypes washType1=new WashTypes();
         washType1.setTime("@24hrs");
         washType1.setWashType("QUICK WASH");
@@ -128,8 +134,6 @@ public class LandingActivity extends AppCompatActivity
         types.add(washType2);
         types.add(washType3);
         types.add(washType4);*/
-
-        return types;
     }
 
     private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){

@@ -30,13 +30,13 @@ public class SubSplashActivity extends BaseActivity {
 
     @OnClick(R.id.btnRegister)
     void actionRegistration(){
-        ((MrWashApp) getApplication())
+        /*((MrWashApp) getApplication())
                     .getRxEventBus()
                     .send(generalListDataPojo);
 
-        startActivity(new Intent(SubSplashActivity.this,DemoScreenOne.class));
-        /*Intent i = new Intent(SubSplashActivity.this, RegistrationActivity.class);
-        startActivity(i);*/
+        startActivity(new Intent(SubSplashActivity.this,DemoScreenOne.class));*/
+        Intent i = new Intent(SubSplashActivity.this, RegistrationActivity.class);
+        startActivity(i);
     }
 
     @OnClick(R.id.btnLogin)

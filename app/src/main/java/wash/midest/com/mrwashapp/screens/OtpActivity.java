@@ -111,6 +111,7 @@ public class OtpActivity extends BaseActivity {
             showErrorAlert(getString(R.string.network_error));
         }
         alterProgressBar();
+        Log.d(TAG,TAG+" proceedAPICall()");
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_EMAIL,mEmail);
@@ -124,11 +125,11 @@ public class OtpActivity extends BaseActivity {
                 .subscribe(new DisposableObserver<GeneralPojo>() {
                     @Override
                     public void onNext(GeneralPojo generalPojo) {
-
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
                             String errorMessage = generalPojo.getError().getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
@@ -136,11 +137,12 @@ public class OtpActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-
+                            Log.d(TAG,TAG+" onNext statusCode  = "+statusCode );
                             String isVerified = generalPojo.getData().getIsVerified();
                             String isActive = generalPojo.getData().getActive();
 
                             if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_1)) {
+                                Log.d(TAG,TAG+" onNext statusCode  = "+statusCode +" || isVerified = 1 && isActive = 1");
                                 String memberId = generalPojo.getData().getMemberId();
                                 mToken = generalPojo.getData().getToken();
 
@@ -156,6 +158,7 @@ public class OtpActivity extends BaseActivity {
                                 processServicesAPI();
 
                             }else{
+                                Log.d(TAG,TAG+" onNext statusCode  = "+statusCode +" || isVerified != 1 OR isActive != 1");
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }
@@ -186,6 +189,7 @@ public class OtpActivity extends BaseActivity {
     }
 
     private void doLandingAction(GeneralListDataPojo generalPojo){
+        Log.d(TAG,TAG+" doLandingAction");
         ((MrWashApp) getApplication())
                 .getRxEventBus()
                 .send(generalPojo);
@@ -215,7 +219,7 @@ public class OtpActivity extends BaseActivity {
             showErrorAlert(getString(R.string.network_error));
         }
         alterProgressBar();
-
+        Log.d(TAG,TAG+" processServicesAPI()");
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
 
@@ -227,8 +231,20 @@ public class OtpActivity extends BaseActivity {
                     @Override
                     public void onNext(GeneralListDataPojo generalPojo) {
                         alterProgressBar();
-                        //Send data using RxEvent Bus
-                        doLandingAction(generalPojo);
+                        int statusCode = (int) generalPojo.getStatusCode();
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
+                            String errorMessage = generalPojo.getError().getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                            Log.d(TAG,TAG+" onNext success statusCode = "+statusCode);
+                            //Send data using RxEvent Bus
+                            doLandingAction(generalPojo);
+                        }
                     }
                     @Override
                     public void onError(Throwable e) {

@@ -127,8 +127,6 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
 
-
-
     private boolean isValidPassword(){
         String passwordEntered=mPassword.getText().toString().trim();
         if(!TextUtils.isEmpty(passwordEntered)){
@@ -171,14 +169,6 @@ public class RegistrationActivity extends BaseActivity {
         }
     }
 
-    /*private void postPermissionGranted() {
-        //Net connection and data retrieval
-
-        showOTPScreen();
-        *//*alterProgressBar();
-        connectToService();*//*
-    }*/
-
     void alterProgressBar(){
         if(mIsProgressShown)
         {
@@ -195,6 +185,7 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void showOTPScreen(){
+        Log.d(TAG,TAG+" showOTPScreen()");
         Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
         i.putExtra("EMAIL",mEmail.getText().toString().trim());
         startActivityForResult(i,CHANGE_DETAILS);
@@ -236,8 +227,10 @@ public class RegistrationActivity extends BaseActivity {
         String email = mEmail.getText().toString().trim();
         String pass = mPassword.getText().toString().trim();
         String mob =mPhone.getText().toString().trim().substring(4,13);
-        String imei = mAppUtils.getDeviceIMEI(this);
-        Log.d(TAG,"Device Imei >> "+imei);
+        //TODO , keep actual imei retrieval
+        /*String imei = mAppUtils.getDeviceIMEI(this);*/
+        String imei = "1122009933";
+        Log.d(TAG,TAG+"Device Imei >> "+imei);
         String appid = mApiConstants.APPID_VAL;
 
         HashMap<String,String> requestParams=new HashMap<>();
@@ -250,7 +243,7 @@ public class RegistrationActivity extends BaseActivity {
         requestParams.put(mApiConstants.API_APPID,appid);
         requestParams.put(mApiConstants.API_DIALINGCODE,mApiConstants.DIALINGCODE_VAL);
 
-        Log.d(TAG,"Call to API>>>>>>>>>>>>>>");
+        Log.d(TAG,TAG+"postPermissionGranted Call to API>>>>>>>>>>>>>>");
         APIServiceFactory serviceFactory = new APIServiceFactory();
         // start service call using RxJava2
         serviceFactory.getAPIConfiguration().registrationAPI( requestParams )
@@ -259,11 +252,12 @@ public class RegistrationActivity extends BaseActivity {
                 .subscribe(new DisposableObserver<GeneralPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
                     public void onNext(GeneralPojo generalPojo) {
-
+                        Log.d(TAG,TAG+" onNext");
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG,TAG+" onNext ERROR statusCode = "+statusCode);
                             String errorMessage = generalPojo.getError().getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
@@ -271,22 +265,26 @@ public class RegistrationActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
+                            Log.d(TAG,TAG+" onNext statusCode = "+statusCode);
                                 String isVerified = generalPojo.getData().getIsVerified();
                                 String isActive = generalPojo.getData().getActive();
 
                             if(!TextUtils.isEmpty(isVerified) && !TextUtils.isEmpty(isActive)) {
 
                                 if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_1)) {
+                                    Log.d(TAG,TAG+" onNext  = isVerified = 1 && isActive = 1");
                                     //User registered and verified email, but would have deleted the app
                                     showErrorAlert(getString(R.string.already_registered));
                                     mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 1);
 
                                 } else if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_0)) {
+                                    Log.d(TAG,TAG+" onNext  = isVerified = 1 && isActive = 0");
                                     //When registered user is banned from backend due to xyz reason. Contact support.
                                     showErrorAlert(getString(R.string.user_blocked));
                                     mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 1);
 
                                 } else if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_0) && isActive.equalsIgnoreCase(mApiConstants.STATUS_0)) {
+                                    Log.d(TAG,TAG+" onNext  = isVerified = 0 && isActive = 0");
                                     //Email Not verified
                                     mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 0);
                                     //show OTP screen

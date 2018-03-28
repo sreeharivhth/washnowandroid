@@ -272,18 +272,29 @@ public class RegistrationActivity extends BaseActivity {
                             }
                         }else{
                                 String isVerified = generalPojo.getData().getIsVerified();
-                                if(!TextUtils.isEmpty(isVerified)){
-                                    if(isVerified.equalsIgnoreCase(mApiConstants.SUCCESS_0)){
-                                        //Not verified
-                                        mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS,0);
-                                        //show OTP screen
-                                        showOTPScreen();
-                                    }else{
-                                        //Verified
-                                        mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS,1);
-                                        //TODO
-                                    }
+                                String isActive = generalPojo.getData().getActive();
+
+                            if(!TextUtils.isEmpty(isVerified) && !TextUtils.isEmpty(isActive)) {
+
+                                if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_1)) {
+                                    //User registered and verified email, but would have deleted the app
+                                    showErrorAlert(getString(R.string.already_registered));
+                                    mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 1);
+
+                                } else if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_0)) {
+                                    //When registered user is banned from backend due to xyz reason. Contact support.
+                                    showErrorAlert(getString(R.string.user_blocked));
+                                    mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 1);
+
+                                } else if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_0) && isActive.equalsIgnoreCase(mApiConstants.STATUS_0)) {
+                                    //Email Not verified
+                                    mSharedPreference.setPreferenceInt(mSharedPreference.VERIFIED_STATUS, 0);
+                                    //show OTP screen
+                                    showOTPScreen();
                                 }
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
                         }
                     }
                     @Override

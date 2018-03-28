@@ -11,6 +11,7 @@
     <string name="phone_error">Please enter valid Phone Number</string>
     <string name="general_error_server">Error in processing request. Please try later</string>
     <string name="network_error">Unable to detect internet. Make sure you are connected to internet or WiFi</string>
+    <string name="already_registered">Seems to be you have already registered with us. Pls try to login with your registered credentials</string>
     <!--Error messages end-->
 
 
@@ -61,6 +62,7 @@
     <string name="dummy_name">Mr Farook</string>
     <string name="dummy_phone">83903815</string>
     <string name="dummy_email">farook@gmail.com</string>
+    <string name="user_blocked">Seems to be you have been blocked by our admin. Pls contact MrWash support for further assistance</string>
 
 
 </resources>

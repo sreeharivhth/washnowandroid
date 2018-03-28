@@ -27,6 +27,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText;
 
 public class OtpActivity extends BaseActivity {
@@ -96,7 +97,7 @@ public class OtpActivity extends BaseActivity {
     protected void onVerifyAction(){
         if(! (TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4)){
             proceedAPICall();
-            alterProgressBar();
+
         }else{
             mOtpEditText.setError(getString(R.string.otp_error));
             mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -109,7 +110,7 @@ public class OtpActivity extends BaseActivity {
         }else{
             showErrorAlert(getString(R.string.network_error));
         }
-
+        alterProgressBar();
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_EMAIL,mEmail);
@@ -135,22 +136,28 @@ public class OtpActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String memberId = generalPojo.getData().getMemberId();
-                            mToken = generalPojo.getData().getToken();
-                            String active = generalPojo.getData().getActive();
 
-                            if(!TextUtils.isEmpty(memberId)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,memberId);
-                            }
-                            if(!TextUtils.isEmpty(mToken)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
-                            }
-                            if(!TextUtils.isEmpty(active)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,active);
-                            }
+                            String isVerified = generalPojo.getData().getIsVerified();
+                            String isActive = generalPojo.getData().getActive();
 
-                            /*//Either call new required web services or push Landing screen
-                            pushLanding();*/
+                            if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_1)) {
+                                String memberId = generalPojo.getData().getMemberId();
+                                mToken = generalPojo.getData().getToken();
+
+                                if(!TextUtils.isEmpty(memberId)){
+                                    mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,memberId);
+                                }
+                                if(!TextUtils.isEmpty(mToken)){
+                                    mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
+                                }
+                                if(!TextUtils.isEmpty(isActive)){
+                                    mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,isActive);
+                                }
+                                processServicesAPI();
+
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
                         }
                     }
                     @Override
@@ -178,7 +185,10 @@ public class OtpActivity extends BaseActivity {
         finish();
     }
 
-    private void doLandingAction(){
+    private void doLandingAction(GeneralListDataPojo generalPojo){
+        ((MrWashApp) getApplication())
+                .getRxEventBus()
+                .send(generalPojo);
         Intent i = new Intent(OtpActivity.this, LandingActivity.class);
         startActivity(i);
         finish();
@@ -204,12 +214,10 @@ public class OtpActivity extends BaseActivity {
         }else{
             showErrorAlert(getString(R.string.network_error));
         }
+        alterProgressBar();
 
-        String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
-        requestParams.put(mApiConstants.API_EMAIL,mEmail);
-        requestParams.put(mApiConstants.API_CODE,mOtpEditText.getText().toString());
-        requestParams.put(mApiConstants.API_APPID,appId);
+        requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
         serviceFactory.getAPIConfiguration().servicesAPI( requestParams )
@@ -218,9 +226,9 @@ public class OtpActivity extends BaseActivity {
                 .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
                     public void onNext(GeneralListDataPojo generalPojo) {
-
-
-
+                        alterProgressBar();
+                        //Send data using RxEvent Bus
+                        doLandingAction(generalPojo);
                     }
                     @Override
                     public void onError(Throwable e) {

@@ -9,24 +9,34 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 
 public class SubSplashActivity extends BaseActivity {
 
     @BindView(R.id.btnRegister)Button mRegBtn;
     @BindView(R.id.btnLogin)Button mLoginBtn;
-
+    GeneralListDataPojo generalListDataPojo;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_splash);
         ButterKnife.bind(this);
 
+        generalListDataPojo=new GeneralListDataPojo();
+        generalListDataPojo.setStatus("STATUS is success");
+
     }
 
     @OnClick(R.id.btnRegister)
     void actionRegistration(){
-        Intent i = new Intent(SubSplashActivity.this, RegistrationActivity.class);
-        startActivity(i);
+        ((MrWashApp) getApplication())
+                    .getRxEventBus()
+                    .send(generalListDataPojo);
+
+        startActivity(new Intent(SubSplashActivity.this,DemoScreenOne.class));
+        /*Intent i = new Intent(SubSplashActivity.this, RegistrationActivity.class);
+        startActivity(i);*/
     }
 
     @OnClick(R.id.btnLogin)

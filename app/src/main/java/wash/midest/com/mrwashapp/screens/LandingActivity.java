@@ -14,14 +14,20 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import io.reactivex.functions.Consumer;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APIConstants;
+import wash.midest.com.mrwashapp.models.Data;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends AppCompatActivity
@@ -29,6 +35,9 @@ public class LandingActivity extends AppCompatActivity
 
     private TextView mTitleText;
     private LinearLayout mScrollLinearView;
+    private boolean mDidReceivedObject;
+    private GeneralListDataPojo mServicesData;
+    private APIConstants mApiConstants;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,15 +64,51 @@ public class LandingActivity extends AppCompatActivity
         pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
 
-        ArrayList<WashTypes> washTypes=getWashTypes();
+        mApiConstants=new APIConstants();
+        /*ArrayList<WashTypes> washTypes=getWashTypes();
+        addHorizontalViews(washTypes.size(),washTypes);*/
+        ((MrWashApp) getApplication())
+                .getRxEventBus()
+                .toObservable()
+                .subscribe(new Consumer<Object>() {
 
-        addHorizontalViews(washTypes.size(),washTypes);
+                    @Override
+                    public void accept(Object o) throws Exception {
+
+                        if(!mDidReceivedObject) {
+                            Log.d("DemoScreenOne ====", "DemoScreenOne accept method called ");
+                            if (o instanceof GeneralListDataPojo) {
+                                mServicesData = (GeneralListDataPojo) o;
+                                getWashTypes();
+                                Log.d("DemoScreenOne ====", "DemoScreenOne ==== " + mServicesData.getStatus());
+                            } else {
+                                Log.d("DemoScreenOne ====", "Not instance of DemoScreenOne ==== ");
+                            }
+                            mDidReceivedObject=true;
+                        }else{
+                            Log.d("DemoScreenOne ====","DemoScreenOne didReceivedObject=true ");
+                        }
+                    }
+                })
+        ;
     }
 
     private ArrayList<WashTypes> getWashTypes(){
-
         ArrayList<WashTypes> types = new ArrayList<>();
-        WashTypes washType1=new WashTypes();
+        if(null!=mServicesData){
+            for(int count=0;count<mServicesData.getData().size();count++){
+                Data serviceData = mServicesData.getData().get(count);
+                if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
+                    WashTypes washType=new WashTypes();
+                    washType.setTime(serviceData.getDeliveryTime());
+                    washType.setWashType(serviceData.getName());
+                    types.add(washType);
+                }
+            }
+        }
+        addHorizontalViews(types.size(),types);
+
+        /*WashTypes washType1=new WashTypes();
         washType1.setTime("@24hrs");
         washType1.setWashType("QUICK WASH");
 
@@ -82,7 +127,7 @@ public class LandingActivity extends AppCompatActivity
         types.add(washType1);
         types.add(washType2);
         types.add(washType3);
-        types.add(washType4);
+        types.add(washType4);*/
 
         return types;
     }

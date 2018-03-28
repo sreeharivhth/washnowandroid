@@ -79,4 +79,50 @@ public class Data {
     public void setToken(String token) {
         this.token = token;
     }
+
+    //=================== Services ========================//
+    @SerializedName("id")
+    @Expose
+    private String id;
+    @SerializedName("name")
+    @Expose
+    private String name;
+    /*@SerializedName("active")
+    @Expose
+    private String active;*/
+    @SerializedName("deliveryTime")
+    @Expose
+    private String deliveryTime;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /*public String getActive() {
+        return active;
+    }
+
+    public void setActive(String active) {
+        this.active = active;
+    }*/
+
+    public String getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(String deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
 }

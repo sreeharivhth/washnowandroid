@@ -23,7 +23,8 @@ public class APIConstants {
     public String DIALINGCODE_VAL = "978";
 
     public int SUCCESS = 200;
-    public String SUCCESS_0 = "0";
+    public String STATUS_0 = "0";
+    public String STATUS_1 = "1";
 
     public String ERROR_1109="Email Id is already registered";
 }

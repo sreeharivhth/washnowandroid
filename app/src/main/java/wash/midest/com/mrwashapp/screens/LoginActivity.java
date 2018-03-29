@@ -22,7 +22,9 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 
 public class LoginActivity extends BaseActivity {
 
@@ -33,6 +35,7 @@ public class LoginActivity extends BaseActivity {
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     @BindView(R.id.txtForgotPasword)TextView mForgotPassword;
     private boolean mIsProgressShown =false;
+    private String mToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,9 +102,8 @@ public class LoginActivity extends BaseActivity {
     void proceedWithLogin(){
 
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
         alterProgressBar();
         String email = mEmail.getText().toString().trim();
@@ -134,17 +136,15 @@ public class LoginActivity extends BaseActivity {
                             }
                         }else{
                             String userID = generalPojo.getData().getUserId();
-                            String token = generalPojo.getData().getToken();
+                            mToken = generalPojo.getData().getToken();
 
                             if(!TextUtils.isEmpty(userID)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userID);
                             }
-                            if(!TextUtils.isEmpty(token)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,token);
+                            if(!TextUtils.isEmpty(mToken)){
+                                mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
                             }
-
-                            //Either call new required web services or push Landing screen
-                            pushLanding();
+                            processServicesAPI();
                         }
                     }
                     @Override
@@ -159,7 +159,55 @@ public class LoginActivity extends BaseActivity {
                 });
     }
 
-    void pushLanding(){
+    void processServicesAPI(){
+        if(!mAppUtils.isNetworkConnected(this)){
+            showErrorAlert(getString(R.string.network_error));
+            return;
+        }
+        alterProgressBar();
+        Log.d(TAG,TAG+" processServicesAPI()");
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().servicesAPI( requestParams )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
+                    @Override
+                    public void onNext(GeneralListDataPojo generalPojo) {
+                        alterProgressBar();
+                        int statusCode = generalPojo.getStatusCode();
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
+                            String errorMessage = generalPojo.getError().getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                            Log.d(TAG,TAG+" onNext success statusCode = "+statusCode);
+                            //Send data using RxEvent Bus
+                            doLandingAction(generalPojo);
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, TAG+"onError "+e.toString());
+                        alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, TAG+"### The API service Observable has ended!");
+                    }
+                });
+    }
+    void doLandingAction(GeneralListDataPojo generalPojo){
+        ((MrWashApp) getApplication())
+                .getRxEventBus()
+                .send(generalPojo);
         Intent i = new Intent(LoginActivity.this, LandingActivity.class);
         startActivity(i);
         finish();

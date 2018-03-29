@@ -217,9 +217,8 @@ public class RegistrationActivity extends BaseActivity {
     private void postPermissionGranted(){
 
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
         alterProgressBar();
         String fn = mFName.getText().toString().trim();
@@ -229,7 +228,7 @@ public class RegistrationActivity extends BaseActivity {
         String mob =mPhone.getText().toString().trim().substring(4,13);
         //TODO , keep actual imei retrieval
         /*String imei = mAppUtils.getDeviceIMEI(this);*/
-        String imei = "1122009933";
+        String imei = "1122009955";
         Log.d(TAG,TAG+"Device Imei >> "+imei);
         String appid = mApiConstants.APPID_VAL;
 
@@ -297,6 +296,7 @@ public class RegistrationActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, TAG+"onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }

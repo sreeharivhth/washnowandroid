@@ -15,6 +15,8 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.HashMap;
 
 import butterknife.BindView;
@@ -106,9 +108,8 @@ public class OtpActivity extends BaseActivity {
 
     void proceedAPICall(){
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
         alterProgressBar();
         Log.d(TAG,TAG+" proceedAPICall()");
@@ -155,6 +156,8 @@ public class OtpActivity extends BaseActivity {
                                 if(!TextUtils.isEmpty(isActive)){
                                     mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,isActive);
                                 }
+                                //Done with OTP
+                                //Get the services list from server
                                 processServicesAPI();
 
                             }else{
@@ -165,6 +168,7 @@ public class OtpActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, TAG+"onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }
@@ -177,8 +181,60 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.resendOTP)
     protected void onResend(){
-        //TODO
-        showToast(getResources().getString(R.string.coming_soon));
+
+        if(!mAppUtils.isNetworkConnected(this)){
+            showErrorAlert(getString(R.string.network_error));
+            return;
+        }
+        alterProgressBar();
+        Log.d(TAG,TAG+" proceedAPICall()");
+        String appId = mApiConstants.APPID_VAL;
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_EMAIL,mEmail);
+        requestParams.put(mApiConstants.API_APPID,appId);
+
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().resendOTPAPI( requestParams )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralPojo>() {
+                    @Override
+                    public void onNext(GeneralPojo generalPojo) {
+                        alterProgressBar();
+                        int statusCode = (int) generalPojo.getStatusCode();
+                        //Check for error
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
+                            String errorMessage = generalPojo.getError().getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                            Log.d(TAG,TAG+" onNext statusCode  = "+statusCode );
+                            String emailSent = generalPojo.getData().getEmail();
+
+                            if(!TextUtils.isEmpty(emailSent)){
+                                String msg = getString(R.string.opt_sent_to)+emailSent;
+                                showErrorAlert(msg);
+                            }else{
+                                String msg = getString(R.string.opt_sent_to)+" "+mEmail;
+                                showErrorAlert(msg);
+                            }
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.d(TAG, TAG+"onError "+e.toString());
+                        alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, TAG+"### The API service Observable has ended!");
+                    }
+                });
     }
 
     @OnClick(R.id.changeEmail)
@@ -214,9 +270,8 @@ public class OtpActivity extends BaseActivity {
 
     void processServicesAPI(){
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
         alterProgressBar();
         Log.d(TAG,TAG+" processServicesAPI()");
@@ -231,7 +286,7 @@ public class OtpActivity extends BaseActivity {
                     @Override
                     public void onNext(GeneralListDataPojo generalPojo) {
                         alterProgressBar();
-                        int statusCode = (int) generalPojo.getStatusCode();
+                        int statusCode = generalPojo.getStatusCode();
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
                             String errorMessage = generalPojo.getError().getErrMessage();
@@ -248,6 +303,7 @@ public class OtpActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
+                        Log.d(TAG, TAG+"onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }

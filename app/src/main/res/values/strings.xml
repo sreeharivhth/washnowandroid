@@ -12,6 +12,7 @@
     <string name="general_error_server">Error in processing request. Please try later</string>
     <string name="network_error">Unable to detect internet. Make sure you are connected to internet or WiFi</string>
     <string name="already_registered">Seems to be you have already registered with us. Pls try to login with your registered credentials</string>
+    <string name="forgot_pass_status_msg">We have sent a mail to the registered Email. Pls follow the instructions. </string>
     <!--Error messages end-->
 
 
@@ -57,6 +58,7 @@
     <string name="confirm">Confirm</string>
     <string name="exit_confirm">Do you want to exit MrWash?</string>
     <string name="ok">OK</string>
+    <string name="opt_sent_to">OTP has been sent to &#160;&#160;</string>
 
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>

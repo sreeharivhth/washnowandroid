@@ -101,7 +101,7 @@ public class ForgotPassActivity extends BaseActivity {
                     public void onNext(GeneralPojo generalPojo) {
 
                         alterProgressBar();
-                        int statusCode = (int) generalPojo.getStatusCode();
+                        int statusCode = generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
                             String errorMessage = generalPojo.getError().getErrMessage();
@@ -156,14 +156,16 @@ public class ForgotPassActivity extends BaseActivity {
                 }
             }
         });
+        //Make is otp shown as true
         isOTPShown=true;
+        //Disable the email entry field
+        mEmail.setEnabled(false);
     }
 
     void processVerifyCodeAPI(){
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
@@ -193,7 +195,7 @@ public class ForgotPassActivity extends BaseActivity {
                             String userId = generalPojo.getData().getUserId();
                             //Proceed with
                             Log.d(TAG,"userId received ==> "+userId);
-
+                            showErrorAlert(getString(R.string.forgot_pass_status_msg));
                         }
                     }
                     @Override

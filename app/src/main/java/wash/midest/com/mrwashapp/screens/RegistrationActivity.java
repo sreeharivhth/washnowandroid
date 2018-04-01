@@ -257,7 +257,7 @@ public class RegistrationActivity extends BaseActivity {
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext ERROR statusCode = "+statusCode);
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
@@ -265,8 +265,15 @@ public class RegistrationActivity extends BaseActivity {
                             }
                         }else{
                             Log.d(TAG,TAG+" onNext statusCode = "+statusCode);
-                                String isVerified = generalPojo.getData().getIsVerified();
-                                String isActive = generalPojo.getData().getActive();
+                                String isVerified = generalPojo.getData().get(0).getIsVerified();
+                                String memberID = generalPojo.getData().get(0).getMemberId();
+                                String isActive = generalPojo.getData().get(0).getActive();
+
+                                if(!TextUtils.isEmpty(memberID)){
+                                    mSharedPreference.setPreferenceString(mSharedPreference.MEMBER_ID, memberID);
+                                }else{
+                                    Log.d(TAG,TAG+" onNext  member id is empty");
+                                }
 
                             if(!TextUtils.isEmpty(isVerified) && !TextUtils.isEmpty(isActive)) {
 
@@ -296,7 +303,7 @@ public class RegistrationActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, TAG+"onError "+e.toString());
+                        Log.e(TAG, TAG+"onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }

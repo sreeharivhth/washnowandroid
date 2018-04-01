@@ -128,15 +128,15 @@ public class LoginActivity extends BaseActivity {
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userID = generalPojo.getData().getUserId();
-                            mToken = generalPojo.getData().getToken();
+                            String userID = generalPojo.getData().get(0).getUserId();
+                            mToken = generalPojo.getData().get(0).getToken();
 
                             if(!TextUtils.isEmpty(userID)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userID);
@@ -151,6 +151,7 @@ public class LoginActivity extends BaseActivity {
                     public void onError(Throwable e) {
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
+                        Log.e(TAG, TAG+"proceedWithLogin Error "+e.toString());
                     }
                     @Override
                     public void onComplete() {
@@ -180,7 +181,7 @@ public class LoginActivity extends BaseActivity {
                         int statusCode = generalPojo.getStatusCode();
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
@@ -194,7 +195,7 @@ public class LoginActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, TAG+"onError "+e.toString());
+                        Log.e(TAG, TAG+"onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }
@@ -205,10 +206,11 @@ public class LoginActivity extends BaseActivity {
                 });
     }
     void doLandingAction(GeneralListDataPojo generalPojo){
-        ((MrWashApp) getApplication())
+        /*((MrWashApp) getApplication())
                 .getRxEventBus()
-                .send(generalPojo);
+                .send(generalPojo);*/
         Intent i = new Intent(LoginActivity.this, LandingActivity.class);
+        i.putExtra("LandingData",generalPojo);
         startActivity(i);
         finish();
     }

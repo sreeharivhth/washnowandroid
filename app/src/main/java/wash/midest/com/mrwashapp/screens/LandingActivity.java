@@ -35,7 +35,7 @@ public class LandingActivity extends AppCompatActivity
 
     private TextView mTitleText;
     private LinearLayout mScrollLinearView;
-    private boolean mDidReceivedObject;
+    private boolean mDidReceivedObject=false;
     private GeneralListDataPojo mServicesData;
     private APIConstants mApiConstants;
     private String TAG=LandingActivity.class.getName();
@@ -69,7 +69,7 @@ public class LandingActivity extends AppCompatActivity
         /*ArrayList<WashTypes> washTypes=populateWashTypes();
         addHorizontalViews(washTypes.size(),washTypes);*/
         Log.d(TAG,TAG+" LandingActivity launched");
-        ((MrWashApp) getApplication())
+        /*((MrWashApp) getApplication())
                 .getRxEventBus()
                 .toObservable()
                 .subscribe(new Consumer<Object>() {
@@ -77,22 +77,25 @@ public class LandingActivity extends AppCompatActivity
                     @Override
                     public void accept(Object o) throws Exception {
 
-                        if(!mDidReceivedObject) {
-                            Log.d("DemoScreenOne ====", "DemoScreenOne accept method called ");
+                        *//*if(!mDidReceivedObject) {*//*
+                            Log.d(TAG, TAG+"DemoScreenOne accept method called ");
                             if (o instanceof GeneralListDataPojo) {
                                 mServicesData = (GeneralListDataPojo) o;
                                 populateWashTypes();
-                                Log.d("DemoScreenOne ====", "DemoScreenOne ==== " + mServicesData.getStatus());
+                                Log.d(TAG, TAG+ "DemoScreenOne ==== " + mServicesData.getStatus());
                             } else {
-                                Log.d("DemoScreenOne ====", "Not instance of DemoScreenOne ==== ");
+                                Log.d(TAG, TAG+"Not instance of DemoScreenOne ==== ");
                             }
                             mDidReceivedObject=true;
-                        }else{
+                        *//*}else{
                             Log.d("DemoScreenOne ====","DemoScreenOne didReceivedObject=true ");
-                        }
+                        }*//*
                     }
                 })
-        ;
+        ;*/
+
+        mServicesData = getIntent().getExtras().getParcelable("LandingData");
+        populateWashTypes();
     }
 
     private void populateWashTypes(){
@@ -106,13 +109,15 @@ public class LandingActivity extends AppCompatActivity
                 Data serviceData = mServicesData.getData().get(count);
                 if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
                     WashTypes washType=new WashTypes();
-                    washType.setTime(serviceData.getDeliveryTime());
+                    washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
                     washType.setWashType(serviceData.getName());
                     types.add(washType);
                 }
             }
             Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
             addHorizontalViews(types.size(),types);
+        }else{
+            Log.d(TAG,TAG+" mServicesData is null");
         }
         /*WashTypes washType1=new WashTypes();
         washType1.setTime("@24hrs");

@@ -104,14 +104,14 @@ public class ForgotPassActivity extends BaseActivity {
                         int statusCode = generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            mUserId = generalPojo.getData().getUserId();
+                            mUserId = generalPojo.getData().get(0).getUserId();
 
                             if(!TextUtils.isEmpty(mUserId)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,mUserId);
@@ -185,14 +185,14 @@ public class ForgotPassActivity extends BaseActivity {
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userId = generalPojo.getData().getUserId();
+                            String userId = generalPojo.getData().get(0).getUserId();
                             //Proceed with
                             Log.d(TAG,"userId received ==> "+userId);
                             showErrorAlert(getString(R.string.forgot_pass_status_msg));

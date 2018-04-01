@@ -54,10 +54,12 @@ public class OtpActivity extends BaseActivity {
         ButterKnife.bind(this);
         setActionBarTitleInCenter(getString(R.string.app_title),true);
 
-        if(null!=savedInstanceState){
+        Bundle bundle = getIntent().getExtras();
+        mEmail=bundle.getString("EMAIL");
+        /*if(null!=savedInstanceState){
             //i.putExtra("EMAIL",mEmail.getText().toString().trim());
             mEmail=savedInstanceState.getString("EMAIL");
-        }
+        }*/
         mOtpEditText.requestFocus();
         mInputMethodManager = (InputMethodManager)   getSystemService(Context.INPUT_METHOD_SERVICE);
         mInputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, InputMethodManager.HIDE_IMPLICIT_ONLY);
@@ -97,7 +99,7 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.verify_btn)
     protected void onVerifyAction(){
-        if(! (TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4)){
+        if(!( TextUtils.isEmpty(mOtpEditText.getText()) && mOtpEditText.getText().length()==4)){
             proceedAPICall();
 
         }else{
@@ -131,7 +133,7 @@ public class OtpActivity extends BaseActivity {
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
@@ -139,13 +141,13 @@ public class OtpActivity extends BaseActivity {
                             }
                         }else{
                             Log.d(TAG,TAG+" onNext statusCode  = "+statusCode );
-                            String isVerified = generalPojo.getData().getIsVerified();
-                            String isActive = generalPojo.getData().getActive();
+                            String isVerified = generalPojo.getData().get(0).getIsVerified();
+                            String isActive = generalPojo.getData().get(0).getActive();
 
                             if (isVerified.equalsIgnoreCase(mApiConstants.STATUS_1) && isActive.equalsIgnoreCase(mApiConstants.STATUS_1)) {
                                 Log.d(TAG,TAG+" onNext statusCode  = "+statusCode +" || isVerified = 1 && isActive = 1");
-                                String memberId = generalPojo.getData().getMemberId();
-                                mToken = generalPojo.getData().getToken();
+                                String memberId = generalPojo.getData().get(0).getMemberId();
+                                mToken = generalPojo.getData().get(0).getToken();
 
                                 if(!TextUtils.isEmpty(memberId)){
                                     mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,memberId);
@@ -205,7 +207,7 @@ public class OtpActivity extends BaseActivity {
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
@@ -213,7 +215,7 @@ public class OtpActivity extends BaseActivity {
                             }
                         }else{
                             Log.d(TAG,TAG+" onNext statusCode  = "+statusCode );
-                            String emailSent = generalPojo.getData().getEmail();
+                            String emailSent = generalPojo.getData().get(0).getEmail();
 
                             if(!TextUtils.isEmpty(emailSent)){
                                 String msg = getString(R.string.opt_sent_to)+emailSent;
@@ -226,7 +228,7 @@ public class OtpActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, TAG+"onError "+e.toString());
+                        Log.e(TAG, TAG+" onResend onError "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }
@@ -246,10 +248,11 @@ public class OtpActivity extends BaseActivity {
 
     private void doLandingAction(GeneralListDataPojo generalPojo){
         Log.d(TAG,TAG+" doLandingAction");
-        ((MrWashApp) getApplication())
+        /*((MrWashApp) getApplication())
                 .getRxEventBus()
-                .send(generalPojo);
+                .send(generalPojo);*/
         Intent i = new Intent(OtpActivity.this, LandingActivity.class);
+        i.putExtra("LandingData",generalPojo);
         startActivity(i);
         finish();
     }
@@ -276,7 +279,8 @@ public class OtpActivity extends BaseActivity {
         alterProgressBar();
         Log.d(TAG,TAG+" processServicesAPI()");
         HashMap<String,String> requestParams=new HashMap<>();
-        requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        //requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        requestParams.put(mApiConstants.API_ACCESSTOKEN,"");
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
         serviceFactory.getAPIConfiguration().servicesAPI( requestParams )
@@ -289,7 +293,7 @@ public class OtpActivity extends BaseActivity {
                         int statusCode = generalPojo.getStatusCode();
                         if(statusCode!=mApiConstants.SUCCESS){
                             Log.d(TAG,TAG+" onNext error statusCode = "+statusCode);
-                            String errorMessage = generalPojo.getError().getErrMessage();
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
                             if(!TextUtils.isEmpty(errorMessage)){
                                 showErrorAlert(errorMessage);
                             }else{
@@ -303,7 +307,7 @@ public class OtpActivity extends BaseActivity {
                     }
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, TAG+"onError "+e.toString());
+                        Log.e(TAG, TAG+" processServicesAPI Error "+e.toString());
                         alterProgressBar();
                         showErrorAlert(getString(R.string.general_error_server));
                     }

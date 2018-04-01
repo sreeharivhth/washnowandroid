@@ -1,5 +1,8 @@
 package wash.midest.com.mrwashapp.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Sreehari.KV on 3/14/2018.
  */
 
-public class Data {
+public class Data implements Parcelable {
 
     //============== Registration =====================//
     @SerializedName("memberId")
@@ -125,4 +128,49 @@ public class Data {
     public void setDeliveryTime(String deliveryTime) {
         this.deliveryTime = deliveryTime;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.memberId);
+        dest.writeString(this.email);
+        dest.writeString(this.isVerified);
+        dest.writeString(this.active);
+        dest.writeString(this.userId);
+        dest.writeString(this.token);
+        dest.writeString(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.deliveryTime);
+    }
+
+    public Data() {
+    }
+
+    protected Data(Parcel in) {
+        this.memberId = in.readString();
+        this.email = in.readString();
+        this.isVerified = in.readString();
+        this.active = in.readString();
+        this.userId = in.readString();
+        this.token = in.readString();
+        this.id = in.readString();
+        this.name = in.readString();
+        this.deliveryTime = in.readString();
+    }
+
+    public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {
+        @Override
+        public Data createFromParcel(Parcel source) {
+            return new Data(source);
+        }
+
+        @Override
+        public Data[] newArray(int size) {
+            return new Data[size];
+        }
+    };
 }

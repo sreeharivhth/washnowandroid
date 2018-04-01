@@ -16,7 +16,7 @@ public class AppSharedPreferences {
 
     public String VERIFIED_STATUS="VERIFIED_STATUS";
     public String ACTIVE_STATUS="ACTIVE_STATUS";
-
+    public String MEMBER_ID="MEMBER_ID";
     public String TOKEN_SESSION="TOKEN_SESSION";
     public String USER_ID="USER_ID";
 

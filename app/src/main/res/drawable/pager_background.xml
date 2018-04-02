@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle" >
     <gradient
-        android:angle="180"
-        android:endColor="@color/pager_back_two"
-        android:startColor="@color/pager_back_one"
+        android:angle="0"
+        android:endColor="@color/pager_back_one"
+        android:startColor="@color/pager_back_two"
         android:type="linear" />
     <corners
         android:radius="0dp"/>

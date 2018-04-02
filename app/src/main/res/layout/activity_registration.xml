@@ -110,7 +110,7 @@
                     android:inputType="textEmailAddress"
                     android:maxLength="30"
                     android:textColor="@color/text_color"
-                    android:text="hari00145@abcdmail.com"
+                    android:text=""
                     />
             </android.support.design.widget.TextInputLayout>
 

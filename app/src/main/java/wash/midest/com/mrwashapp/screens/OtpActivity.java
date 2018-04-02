@@ -150,7 +150,7 @@ public class OtpActivity extends BaseActivity {
                                 mToken = generalPojo.getData().get(0).getToken();
 
                                 if(!TextUtils.isEmpty(memberId)){
-                                    mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,memberId);
+                                    mSharedPreference.setPreferenceString(mSharedPreference.MEMBER_ID,memberId);
                                 }
                                 if(!TextUtils.isEmpty(mToken)){
                                     mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
@@ -280,6 +280,7 @@ public class OtpActivity extends BaseActivity {
         Log.d(TAG,TAG+" processServicesAPI()");
         HashMap<String,String> requestParams=new HashMap<>();
         //requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        //TODO keep actual mToken, once handled fromserver side
         requestParams.put(mApiConstants.API_ACCESSTOKEN,"");
 
         APIServiceFactory serviceFactory = new APIServiceFactory();

@@ -31,7 +31,7 @@
         android:id="@+id/btnRegister"
         android:layout_below="@id/splashImg"
         android:text="@string/register"
-        android:layout_marginTop="76dp"
+        android:layout_marginTop="25dp"
         android:layout_marginLeft="25dp"
         android:layout_marginRight="25dp"
         android:background="@drawable/button_bg_rounded_pale"

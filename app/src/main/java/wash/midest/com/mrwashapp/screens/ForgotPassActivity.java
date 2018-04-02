@@ -111,10 +111,10 @@ public class ForgotPassActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            mUserId = generalPojo.getData().get(0).getUserId();
+                            mUserId = generalPojo.getData().get(0).getMemberId();
 
                             if(!TextUtils.isEmpty(mUserId)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,mUserId);
+                                mSharedPreference.setPreferenceString(mSharedPreference.MEMBER_ID,mUserId);
                                 showPinEntry();
                             }else{
                                 showErrorAlert(getString(R.string.general_error_server));
@@ -192,7 +192,7 @@ public class ForgotPassActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userId = generalPojo.getData().get(0).getUserId();
+                            String userId = generalPojo.getData().get(0).getMemberId();
                             //Proceed with
                             Log.d(TAG,"userId received ==> "+userId);
                             showErrorAlert(getString(R.string.forgot_pass_status_msg));

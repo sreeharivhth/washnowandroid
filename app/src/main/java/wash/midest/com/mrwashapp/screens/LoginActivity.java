@@ -72,7 +72,8 @@ public class LoginActivity extends BaseActivity {
     }
     @OnClick(R.id.txtForgotPasword)
     void forgotPasswordAction(){
-        startActivity(new Intent(this,ForgotPassActivity.class));
+        //startActivity(new Intent(this,ForgotPassActivity.class));
+        showToast("Coming Soon...");
     }
 
     private boolean isValidPassword(){
@@ -135,11 +136,11 @@ public class LoginActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userID = generalPojo.getData().get(0).getUserId();
+                            String memberID = generalPojo.getData().get(0).getMemberId();
                             mToken = generalPojo.getData().get(0).getToken();
 
-                            if(!TextUtils.isEmpty(userID)){
-                                mSharedPreference.setPreferenceString(mSharedPreference.USER_ID,userID);
+                            if(!TextUtils.isEmpty(memberID)){
+                                mSharedPreference.setPreferenceString(mSharedPreference.MEMBER_ID,memberID);
                             }
                             if(!TextUtils.isEmpty(mToken)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
@@ -168,7 +169,9 @@ public class LoginActivity extends BaseActivity {
         alterProgressBar();
         Log.d(TAG,TAG+" processServicesAPI()");
         HashMap<String,String> requestParams=new HashMap<>();
-        requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        //requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        //TODO keep actual mToken, once handled fromserver side
+        requestParams.put(mApiConstants.API_ACCESSTOKEN,"");
 
         APIServiceFactory serviceFactory = new APIServiceFactory();
         serviceFactory.getAPIConfiguration().servicesAPI( requestParams )

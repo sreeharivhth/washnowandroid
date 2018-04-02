@@ -29,7 +29,7 @@ public interface APIConfiguration {
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
-    @POST("api/login")
+    @POST("member/login")
     Observable<GeneralPojo> loginAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
@@ -43,13 +43,13 @@ public interface APIConfiguration {
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
-    @POST("api/forgot-password")
+    @POST("member/forgot-password")
     Observable<GeneralPojo> forgotPassAPI(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
-    @POST("api/verify-forgot-password")
+    @POST("member/verify-forgot-password")
     Observable<GeneralPojo> forgotPassCodeVerifyAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 

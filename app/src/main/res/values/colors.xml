@@ -13,8 +13,8 @@
     <color name="pager_selected">#fbae2c</color>
     <color name="pager_un_selected">#d8d8d8</color>
 
-    <color name="pager_back_one">#3023ae</color>
-    <color name="pager_back_two">#c86dd7</color>
+    <color name="pager_back_one">#988FD1</color>
+    <color name="pager_back_two">#D0AAE0</color>
 
 
     <color name="text_color_light_blue">#00a7cc</color>

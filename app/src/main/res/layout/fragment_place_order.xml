@@ -2,14 +2,85 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/pager_selected"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/screen_back_color"
     tools:context="wash.midest.com.mrwashapp.screens.fragmentviews.PlaceOrderFrag">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/testTextView"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Place Order Fragment" />
+        android:layout_height="wrap_content"
+        android:id="@+id/place_order_fields"
+        android:layout_marginRight="@dimen/screen_margin"
+        android:layout_marginLeft="@dimen/screen_margin"
+        android:layout_gravity="center"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/service_type"
+                android:textColor="@color/text_color_gray_light"
+                android:layout_marginBottom="@dimen/component_margin_5"
+                />
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/component_margin_5"
+                android:prompt="@string/service_type"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                ></Spinner>
+
+            <View
+
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent" />
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/pickup_time"
+                android:textColor="@color/text_color_gray_light"
+                android:layout_marginBottom="@dimen/component_margin_5"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/llTimeHorizontal"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pickDate"
+                    android:padding="@dimen/component_margin_10"
+                    android:text="Pick Date"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/pickTime"
+                    android:padding="@dimen/component_margin_10"
+                    android:text="Pick Time"
+                    />
+            </LinearLayout>
+
+            <View
+
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent" />
+        </LinearLayout>
+    </ScrollView>
 
 </FrameLayout>

@@ -26,6 +26,7 @@
 
     <color name="landing_hori_back_one">#f5fdfe</color>
 
+    <color name="screen_back_color">@android:color/white</color>
 
 
 </resources>

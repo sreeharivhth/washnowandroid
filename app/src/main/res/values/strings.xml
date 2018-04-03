@@ -65,6 +65,7 @@
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="submit">Submit</string>
+
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>
     <string name="dummy_phone">83903815</string>

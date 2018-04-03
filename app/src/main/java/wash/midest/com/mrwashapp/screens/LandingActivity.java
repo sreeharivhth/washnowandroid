@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -39,6 +40,7 @@ public class LandingActivity extends AppCompatActivity
     private GeneralListDataPojo mServicesData;
     private APIConstants mApiConstants;
     private String TAG=LandingActivity.class.getName();
+    private LinearLayout mLandingReplaceableContent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,41 +63,19 @@ public class LandingActivity extends AppCompatActivity
         mTitleText=findViewById(R.id.toolbar_title);
         mTitleText.setText(getString(R.string.app_title));
 
+        mLandingReplaceableContent = findViewById(R.id.landing_view);
+
         ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
         pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
-
         mApiConstants=new APIConstants();
-        /*ArrayList<WashTypes> washTypes=populateWashTypes();
-        addHorizontalViews(washTypes.size(),washTypes);*/
         Log.d(TAG,TAG+" LandingActivity launched");
-        /*((MrWashApp) getApplication())
-                .getRxEventBus()
-                .toObservable()
-                .subscribe(new Consumer<Object>() {
-
-                    @Override
-                    public void accept(Object o) throws Exception {
-
-                        *//*if(!mDidReceivedObject) {*//*
-                            Log.d(TAG, TAG+"DemoScreenOne accept method called ");
-                            if (o instanceof GeneralListDataPojo) {
-                                mServicesData = (GeneralListDataPojo) o;
-                                populateWashTypes();
-                                Log.d(TAG, TAG+ "DemoScreenOne ==== " + mServicesData.getStatus());
-                            } else {
-                                Log.d(TAG, TAG+"Not instance of DemoScreenOne ==== ");
-                            }
-                            mDidReceivedObject=true;
-                        *//*}else{
-                            Log.d("DemoScreenOne ====","DemoScreenOne didReceivedObject=true ");
-                        }*//*
-                    }
-                })
-        ;*/
-
         mServicesData = getIntent().getExtras().getParcelable("LandingData");
         populateWashTypes();
+    }
+
+    private void replaceLandingContent(){
+
     }
 
     private void populateWashTypes(){

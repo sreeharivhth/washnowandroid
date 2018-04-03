@@ -71,5 +71,8 @@
     <string name="dummy_email">farook@gmail.com</string>
     <string name="user_blocked">Seems to be you have been blocked by our admin. Pls contact MrWash support for further assistance</string>
 
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

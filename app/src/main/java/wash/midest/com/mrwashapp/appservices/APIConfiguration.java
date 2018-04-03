@@ -65,4 +65,12 @@ public interface APIConfiguration {
     @FormUrlEncoded
     @POST("member/resend-verification-code")
     Observable<GeneralPojo> resendOTPAPI(@FieldMap(encoded = true) Map<String, String> params);
+
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/update-password")
+    Observable<GeneralPojo> updateNewPassAPI(@FieldMap(encoded = true) Map<String, String> params);
+
 }

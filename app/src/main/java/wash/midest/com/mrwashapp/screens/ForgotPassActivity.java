@@ -1,6 +1,7 @@
 package wash.midest.com.mrwashapp.screens;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TextInputEditText;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ public class ForgotPassActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_pass);
         ButterKnife.bind(this);
+        setActionBarTitleInCenter(getString(R.string.app_title),true);
     }
 
     void alterProgressBar(){
@@ -82,11 +84,12 @@ public class ForgotPassActivity extends BaseActivity {
     }
 
     void proceedAPICall(){
+        //TODO server returning 500 error for forgot password api
         if(!mAppUtils.isNetworkConnected(this)){
-            return;
-        }else{
             showErrorAlert(getString(R.string.network_error));
+            return;
         }
+        alterProgressBar();
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_EMAIL,mEmail.getText().toString().trim());
@@ -167,6 +170,7 @@ public class ForgotPassActivity extends BaseActivity {
             showErrorAlert(getString(R.string.network_error));
             return;
         }
+        alterProgressBar();
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_USERID,mUserId);
@@ -192,10 +196,11 @@ public class ForgotPassActivity extends BaseActivity {
                                 showErrorAlert(getString(R.string.general_error_server));
                             }
                         }else{
-                            String userId = generalPojo.getData().get(0).getMemberId();
+                            String memberId = generalPojo.getData().get(0).getMemberId();
                             //Proceed with
-                            Log.d(TAG,"userId received ==> "+userId);
-                            showErrorAlert(getString(R.string.forgot_pass_status_msg));
+                            Log.d(TAG,"memberId received ==> "+memberId);
+                            //showErrorAlert(getString(R.string.forgot_pass_status_msg));
+                            showPasswordSet(memberId);
                         }
                     }
                     @Override
@@ -208,5 +213,11 @@ public class ForgotPassActivity extends BaseActivity {
                         Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
                 });
+    }
+    void showPasswordSet(String memberId){
+
+        Intent i = new Intent(ForgotPassActivity.this,NewPasswordActivity.class);
+        i.putExtra("memberId",memberId);
+        startActivity(i);
     }
 }

@@ -4,6 +4,8 @@
     <!--Error messages-->
     <string name="email_error">Please enter valid Email</string>
     <string name="password_error">Please enter valid Password</string>
+    <string name="confirm_password_error">Please enter valid Confirm Password</string>
+    <string name="password_match_error">New Password and Confirm Password does not match</string>
     <string name="password_criteria">Password should contain one alphabet,number and special character.Min 8 and Max 12 characters.</string>
     <string name="first_name_error">Please enter First Name</string>
     <string name="last_name_error">Please enter Last Name</string>
@@ -59,7 +61,10 @@
     <string name="exit_confirm">Do you want to exit MrWash?</string>
     <string name="ok">OK</string>
     <string name="opt_sent_to">OTP has been sent to &#160;&#160;</string>
-
+    <string name="login_redirect">You will be redirected to Login. Pls login with your new credentials</string>
+    <string name="new_password">New Password</string>
+    <string name="confirm_new_password">Confirm New Password</string>
+    <string name="submit">Submit</string>
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>
     <string name="dummy_phone">83903815</string>

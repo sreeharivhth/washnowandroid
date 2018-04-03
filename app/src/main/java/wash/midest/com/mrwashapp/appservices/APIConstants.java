@@ -10,12 +10,16 @@ public class APIConstants {
     public String API_LASTNAME = "lastName";
     public String API_EMAIL = "email";
     public String API_PASSWORD = "password";
+    public String API_PASSWORDCONFIRM = "confirmPassword";
+
     public String API_MOBILE = "mobile";
     public String API_IMEI = "imei";
     public String API_USERID = "userId";
     public String API_ACCESSTOKEN = "accessToken";
 
     public String API_APPID = "appId";
+    public String API_MEMBERID = "memberId";
+
     public String API_DIALINGCODE = "dialingCode";
     public String API_CODE = "code";
 

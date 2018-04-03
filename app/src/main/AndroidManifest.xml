@@ -7,14 +7,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
+        android:name=".mrwashapp.MrWashApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_title"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".mrwashapp.MrWashApp"
-        >
+        android:theme="@style/AppTheme">
         <activity
             android:name=".screens.SplashActivity"
             android:screenOrientation="portrait"
@@ -50,7 +49,8 @@
         <activity android:name=".screens.OtpActivity" />
         <activity android:name=".screens.PlaceOrderActivity" />
         <activity android:name=".screens.ForgotPassActivity" />
-        <activity android:name=".screens.DemoScreenOne"></activity>
+        <activity android:name=".screens.DemoScreenOne" />
+        <activity android:name=".screens.NewPasswordActivity"></activity>
     </application>
 
 </manifest>

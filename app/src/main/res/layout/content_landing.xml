@@ -15,7 +15,7 @@
         android:orientation="vertical"
         android:background="@android:color/holo_purple"
         >
-        <include layout="@layout/landing_content" />
+        <!--<include layout="@layout/landing_content" />-->
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

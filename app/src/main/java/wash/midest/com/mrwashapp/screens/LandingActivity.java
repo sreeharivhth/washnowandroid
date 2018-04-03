@@ -29,6 +29,7 @@ import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
+import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends AppCompatActivity
@@ -65,17 +66,23 @@ public class LandingActivity extends AppCompatActivity
 
         mLandingReplaceableContent = findViewById(R.id.landing_view);
 
-        ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
-        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));
+        /*ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
+        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));*/
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
         mApiConstants=new APIConstants();
         Log.d(TAG,TAG+" LandingActivity launched");
         mServicesData = getIntent().getExtras().getParcelable("LandingData");
-        populateWashTypes();
+        /*populateWashTypes();*/
+        replaceLandingContent(mServicesData);
     }
 
-    private void replaceLandingContent(){
-
+    private void replaceLandingContent(GeneralListDataPojo mServicesData){
+        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentTransaction fragTrans = fragMan.beginTransaction();
+        LandingFrag fragA = LandingFrag.newInstance(mServicesData);
+        fragTrans.add(R.id.landing_view, fragA);
+        fragTrans.addToBackStack("A");
+        fragTrans.commit();
     }
 
     private void populateWashTypes(){

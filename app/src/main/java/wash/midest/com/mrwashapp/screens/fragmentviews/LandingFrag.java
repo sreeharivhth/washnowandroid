@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,13 +27,15 @@ import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LandingFrag extends Fragment {
+public class LandingFrag extends Fragment implements LandingHorizontalView.ButtonClicked{
 
     private String TAG=LandingFrag.class.getName();
     private LinearLayout mScrollLinearView;
     private GeneralListDataPojo mGeneralPojo;
     private static String LANDING_DATA="LandingData";
     private APIConstants mApiConstants;
+
+
 
     public static LandingFrag newInstance(GeneralListDataPojo generalPojo) {
         LandingFrag fragment = new LandingFrag();
@@ -43,20 +46,18 @@ public class LandingFrag extends Fragment {
         return fragment;
     }
     public LandingFrag() {
-        // Required empty public constructor
     }
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view=  inflater.inflate(R.layout.fragment_landing, container, false);
         mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
         mApiConstants=new APIConstants();
-        ViewPager pager = (ViewPager) view.findViewById(R.id.viewpager_home);
+        ViewPager pager =  view.findViewById(R.id.viewpager_home);
         pager.setAdapter(new ViewPagerAdapter(getActivity().getSupportFragmentManager()));
-        mScrollLinearView=(LinearLayout) view.findViewById(R.id.landingScrollLinearView);
+        mScrollLinearView= view.findViewById(R.id.landingScrollLinearView);
         populateWashTypes();
         return view;
     }
@@ -77,7 +78,7 @@ public class LandingFrag extends Fragment {
                 case 3:
                     return ViewPagerFrag.newInstance("50","ON FOURTH ORDER");
                 default:
-                    return ViewPagerFrag.newInstance("def","def");
+                    return ViewPagerFrag.newInstance("10","ON FIRST ORDER");
             }
         }
         @Override
@@ -106,31 +107,11 @@ public class LandingFrag extends Fragment {
         }else{
             Log.d(TAG,TAG+" mServicesData is null");
         }
-        /*WashTypes washType1=new WashTypes();
-        washType1.setTime("@24hrs");
-        washType1.setWashType("QUICK WASH");
-
-        WashTypes washType2=new WashTypes();
-        washType2.setTime("@48hrs");
-        washType2.setWashType("NORMAL WASH");
-
-        WashTypes washType3=new WashTypes();
-        washType3.setTime("@24hrs");
-        washType3.setWashType("QUICK IRON");
-
-        WashTypes washType4=new WashTypes();
-        washType4.setTime("@48hrs");
-        washType4.setWashType("NORMAL IRON");
-
-        types.add(washType1);
-        types.add(washType2);
-        types.add(washType3);
-        types.add(washType4);*/
     }
 
     private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
         for(int count=0;count<viewCount;count++){
-            LandingHorizontalView horizontalView=new LandingHorizontalView(getActivity(),count,types.get(count));
+            LandingHorizontalView horizontalView=new LandingHorizontalView(getActivity(),count,types.get(count),this);
             if(count%2!=0){
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -155,4 +136,17 @@ public class LandingFrag extends Fragment {
             mScrollLinearView.addView(horizontalView);
         }
     }
+
+    @Override
+    public void onButtonClicked(int index) {
+        Log.d(TAG,TAG+"Button clicked on index = "+index);
+        FragmentManager childFragMan = getChildFragmentManager();
+        FragmentTransaction childFragTrans = childFragMan.beginTransaction();
+        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index);
+        childFragTrans.add(R.id.landing_fragment_id, fragB);
+        /*childFragTrans.add(fragB,"B");*/
+        childFragTrans.addToBackStack("B");
+        childFragTrans.commit();
+    }
+
 }

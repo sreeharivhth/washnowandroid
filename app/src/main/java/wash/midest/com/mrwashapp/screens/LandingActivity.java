@@ -42,6 +42,7 @@ public class LandingActivity extends AppCompatActivity
     private APIConstants mApiConstants;
     private String TAG=LandingActivity.class.getName();
     private LinearLayout mLandingReplaceableContent;
+    private Fragment mDirectFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,12 +81,13 @@ public class LandingActivity extends AppCompatActivity
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTrans = fragMan.beginTransaction();
         LandingFrag fragA = LandingFrag.newInstance(mServicesData);
+        mDirectFragment = fragA;
         fragTrans.add(R.id.landing_view, fragA);
         fragTrans.addToBackStack("A");
         fragTrans.commit();
     }
 
-    private void populateWashTypes(){
+    /*private void populateWashTypes(){
         Log.d(TAG,TAG+" populateWashTypes");
 
         ArrayList<WashTypes> types = new ArrayList<>();
@@ -106,7 +108,7 @@ public class LandingActivity extends AppCompatActivity
         }else{
             Log.d(TAG,TAG+" mServicesData is null");
         }
-        /*WashTypes washType1=new WashTypes();
+        *//*WashTypes washType1=new WashTypes();
         washType1.setTime("@24hrs");
         washType1.setWashType("QUICK WASH");
 
@@ -125,10 +127,10 @@ public class LandingActivity extends AppCompatActivity
         types.add(washType1);
         types.add(washType2);
         types.add(washType3);
-        types.add(washType4);*/
-    }
+        types.add(washType4);*//*
+    }*/
 
-    private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
+    /*private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
 
         for(int count=0;count<viewCount;count++){
             LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
@@ -155,7 +157,7 @@ public class LandingActivity extends AppCompatActivity
             }
             mScrollLinearView.addView(horizontalView);
         }
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -164,7 +166,14 @@ public class LandingActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             //super.onBackPressed();
-            onExit();
+
+            if(mDirectFragment!=null && mDirectFragment.getChildFragmentManager().getBackStackEntryCount()>0){
+                mDirectFragment.getChildFragmentManager().popBackStack();
+            }else if(mDirectFragment instanceof LandingFrag){
+                onExit();
+            }else{
+                super.onBackPressed();
+            }
         }
     }
 

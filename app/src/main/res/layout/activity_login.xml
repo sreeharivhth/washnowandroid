@@ -47,7 +47,9 @@
                 android:imeOptions="actionNext"
                 android:inputType="textEmailAddress"
                 android:textColor="@color/text_color"
-                android:maxLength="30"/>
+                android:maxLength="30"
+                android:text="raze@emailsy.info"
+                />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout

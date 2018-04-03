@@ -2,12 +2,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/pager_selected"
     tools:context="wash.midest.com.mrwashapp.screens.fragmentviews.PlaceOrderFrag">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/testTextView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:text="Place Order Fragment" />
 
 </FrameLayout>

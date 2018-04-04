@@ -61,10 +61,11 @@
     <string name="exit_confirm">Do you want to exit MrWash?</string>
     <string name="ok">OK</string>
     <string name="opt_sent_to">OTP has been sent to &#160;&#160;</string>
-    <string name="login_redirect">You will be redirected to Login. Pls login with your new credentials</string>
+    <string name="login_redirect">Password changed successfully. You will be redirected to Login. Pls login with your new credentials</string>
     <string name="new_password">New Password</string>
     <string name="confirm_new_password">Confirm New Password</string>
     <string name="submit">Submit</string>
+    <string name="enter_otp">OTP</string>
 
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>

@@ -41,7 +41,7 @@ public class NewPasswordActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_password);
         ButterKnife.bind(this);
-        mMemberId = getIntent().getExtras().getParcelable("memberId");
+        mMemberId = getIntent().getExtras().getString("memberId");
         setActionBarTitleInCenter(getString(R.string.app_title),true);
     }
 
@@ -72,7 +72,7 @@ public class NewPasswordActivity extends BaseActivity {
             isValid=false;
         }
         else if(TextUtils.isEmpty(mConfirmPass.getText().toString().trim())){
-            mConfirmPass.setError(getResources().getString(R.string.email_error));
+            mConfirmPass.setError(getResources().getString(R.string.confirm_password_error));
             isValid=false;
         }
         else if(!isValidPassword(mConfirmPass)){
@@ -80,7 +80,7 @@ public class NewPasswordActivity extends BaseActivity {
             isValid=false;
         }
         else if(!mNewPass.getText().toString().trim() .contentEquals(mConfirmPass.getText().toString().trim())){
-            mConfirmPass.setError(getResources().getString(R.string.email_error));
+            mConfirmPass.setError(getResources().getString(R.string.password_match_error));
             isValid=false;
         }
         if(isValid){

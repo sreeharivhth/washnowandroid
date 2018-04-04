@@ -14,6 +14,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -35,6 +36,7 @@ public class ForgotPassActivity extends BaseActivity {
     @BindView(R.id.send_otp_btn) Button mBtnSendOtp;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     @BindView(R.id.otpView)PinEntryEditText mOtpEditText;
+    @BindView(R.id.otp_text) TextView mOtpText;
     private boolean mIsProgressShown =false;
     private boolean isOTPShown=false;
     private String mUserId;
@@ -139,6 +141,7 @@ public class ForgotPassActivity extends BaseActivity {
     void showPinEntry(){
         mInputMethodManager = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
         mOtpEditText.setVisibility(View.VISIBLE);
+        mOtpText.setVisibility(View.VISIBLE);
         mOtpEditText.requestFocus();
         mBtnSendOtp.setText(getString(R.string.verify_otp));
         mOtpEditText.addTextChangedListener(new TextWatcher() {
@@ -173,7 +176,7 @@ public class ForgotPassActivity extends BaseActivity {
         alterProgressBar();
         String appId = mApiConstants.APPID_VAL;
         HashMap<String,String> requestParams=new HashMap<>();
-        requestParams.put(mApiConstants.API_USERID,mUserId);
+        requestParams.put(mApiConstants.API_MEMBERID,mUserId);
         requestParams.put(mApiConstants.API_APPID,appId);
         requestParams.put(mApiConstants.API_CODE,mOtpEditText.getText().toString());
 

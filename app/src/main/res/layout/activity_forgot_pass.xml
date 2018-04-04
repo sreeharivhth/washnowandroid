@@ -49,6 +49,19 @@
             android:maxLength="30"/>
     </android.support.design.widget.TextInputLayout>
 
+        <TextView
+            android:id="@+id/otp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_otp"
+            android:textColor="@color/text_color_gray_light"
+            android:layout_marginTop="@dimen/component_margin_16"
+            android:layout_marginLeft="@dimen/component_margin_16"
+            android:layout_marginRight="@dimen/component_margin_16"
+            android:paddingLeft="3dp"
+            android:visibility="gone"
+            />
+
         <wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText
             android:id="@+id/otpView"
             android:layout_width="match_parent"
@@ -62,7 +75,6 @@
             android:focusedByDefault="true"
             android:layout_marginLeft="@dimen/component_margin_16"
             android:layout_marginRight="@dimen/component_margin_16"
-            android:layout_marginTop="50dp"
             android:focusableInTouchMode="true"
             android:visibility="gone"
             />

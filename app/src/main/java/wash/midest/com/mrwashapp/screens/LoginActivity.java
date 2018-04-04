@@ -73,8 +73,8 @@ public class LoginActivity extends BaseActivity {
     @OnClick(R.id.txtForgotPasword)
     void forgotPasswordAction(){
         //TODO server returning 500 error for forgot password api
-        //startActivity(new Intent(this,ForgotPassActivity.class));
-        showToast("Coming Soon...");
+        startActivity(new Intent(this,ForgotPassActivity.class));
+        /*showToast("Coming Soon...");*/
     }
 
     private boolean isValidPassword(){

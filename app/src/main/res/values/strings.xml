@@ -20,7 +20,7 @@
 
     <string name="app_name">App</string>
     <string name="coming_soon">Coming Soon</string>
-    <string name="app_title">Mr.Wash</string>
+    <string name="app_title">DemoApp</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="action_settings">Settings</string>

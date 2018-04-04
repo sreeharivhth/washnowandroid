@@ -20,6 +20,7 @@ import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.models.Data;
@@ -40,7 +41,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     private GeneralListDataPojo mGeneralPojo;
     private static String LANDING_DATA="LandingData";
     private APIConstants mApiConstants;
-
+    private ArrayList<String> mServices;
+    private Unbinder mUnbinder;
 
 
     public static LandingFrag newInstance(GeneralListDataPojo generalPojo) {
@@ -58,7 +60,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=  inflater.inflate(R.layout.fragment_landing, container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
         mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
         mApiConstants=new APIConstants();
         /*ViewPager pager =  view.findViewById(R.id.viewpager_home);*/
@@ -97,6 +99,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
 
         ArrayList<WashTypes> types = new ArrayList<>();
         if(null!=mGeneralPojo){
+            mServices=new ArrayList<String>();
             Log.d(TAG,TAG+" populateWashTypes null!=mServicesData");
             Log.d(TAG,TAG+" populateWashTypes mServicesData.getData().size() ="+mGeneralPojo.getData().size());
             for(int count=0;count<mGeneralPojo.getData().size();count++){
@@ -106,6 +109,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
                     washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
                     washType.setWashType(serviceData.getName());
                     types.add(washType);
+                    //Add types into mServices for PlaceOrderFrag
+                    mServices.add(serviceData.getName());
                 }
             }
             Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
@@ -148,7 +153,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         Log.d(TAG,TAG+"Button clicked on index = "+index);
         FragmentManager childFragMan = getChildFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index);
+        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
         childFragTrans.add(R.id.landing_fragment_id, fragB);
         /*childFragTrans.add(fragB,"B");*/
         childFragTrans.addToBackStack("B");
@@ -165,5 +170,10 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
             df = new SimpleDateFormat("yyyy-MM-dd ");
         }
         return df.format(c.getTime());
+    }
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
     }
 }

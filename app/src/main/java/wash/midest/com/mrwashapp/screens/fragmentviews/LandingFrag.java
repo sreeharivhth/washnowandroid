@@ -14,7 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
@@ -149,4 +151,15 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         childFragTrans.commit();
     }
 
+    String getCurrentDateTime(boolean isTime){
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => "+c.getTime());
+        SimpleDateFormat df;
+        if(isTime){
+            df = new SimpleDateFormat("HH:mm");
+        }else{
+            df = new SimpleDateFormat("yyyy-MM-dd ");
+        }
+        return df.format(c.getTime());
+    }
 }

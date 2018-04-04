@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.models.Data;
@@ -32,7 +34,9 @@ import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 public class LandingFrag extends Fragment implements LandingHorizontalView.ButtonClicked{
 
     private String TAG=LandingFrag.class.getName();
-    private LinearLayout mScrollLinearView;
+    @BindView(R.id.landingScrollLinearView) LinearLayout mScrollLinearView;
+    @BindView(R.id.viewpager_home) ViewPager mPager;
+
     private GeneralListDataPojo mGeneralPojo;
     private static String LANDING_DATA="LandingData";
     private APIConstants mApiConstants;
@@ -44,7 +48,6 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         Bundle bundle = new Bundle();
         bundle.putParcelable(LANDING_DATA, generalPojo);
         fragment.setArguments(bundle);
-
         return fragment;
     }
     public LandingFrag() {
@@ -55,11 +58,12 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=  inflater.inflate(R.layout.fragment_landing, container, false);
+        ButterKnife.bind(this, view);
         mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
         mApiConstants=new APIConstants();
-        ViewPager pager =  view.findViewById(R.id.viewpager_home);
-        pager.setAdapter(new ViewPagerAdapter(getActivity().getSupportFragmentManager()));
-        mScrollLinearView= view.findViewById(R.id.landingScrollLinearView);
+        /*ViewPager pager =  view.findViewById(R.id.viewpager_home);*/
+        mPager.setAdapter(new ViewPagerAdapter(getActivity().getSupportFragmentManager()));
+        /*mScrollLinearView= view.findViewById(R.id.landingScrollLinearView);*/
         populateWashTypes();
         return view;
     }

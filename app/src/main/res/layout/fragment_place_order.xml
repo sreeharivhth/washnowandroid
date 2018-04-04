@@ -167,6 +167,20 @@
                     />
             </android.support.design.widget.TextInputLayout>
 
+            <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/placeOrderMap"
+                android:name="com.google.android.gms.maps.SupportMapFragment"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                />-->
+            <com.google.android.gms.maps.MapView
+                android:id="@+id/placeOrderMap"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                >
+            </com.google.android.gms.maps.MapView>
+
             <Button
                 android:id="@+id/registration_btn"
                 android:layout_width="match_parent"
@@ -181,6 +195,8 @@
                 android:layout_marginRight="@dimen/component_margin_25"
                 android:layout_marginBottom="@dimen/component_margin_10"
                 />
+
+
         </LinearLayout>
     </ScrollView>
 

@@ -15,6 +15,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,7 +41,7 @@ import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/{
+public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
 
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
@@ -43,9 +52,10 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
     @BindView(R.id.pickTime) TextView mTxtPickTime;
     @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
     @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
-
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     private Unbinder mUnbinder;
+    private SupportMapFragment mMapFragment;
+    @BindView(R.id.placeOrderMap)MapView mMapView;
 
     public PlaceOrderFrag() {
     }
@@ -77,6 +87,14 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
 
         mTxtDeliveryDate.setText(currentDate);
         mTxtDeliveryTime.setText(currentTime);
+        mMapView.onCreate(savedInstanceState);
+        mMapView.onResume();
+        try {
+            MapsInitializer.initialize(getActivity().getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        mMapView.getMapAsync(this);
 
         return view;
     }
@@ -144,5 +162,14 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        LatLng sydney = new LatLng(-33.852, 151.211);
+        googleMap.addMarker(new MarkerOptions().position(sydney)
+                .title("Marker in Sydney"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+
     }
 }

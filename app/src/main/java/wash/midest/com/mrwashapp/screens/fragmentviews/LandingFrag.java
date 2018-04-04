@@ -160,18 +160,6 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         childFragTrans.commit();
     }
 
-    String getCurrentDateTime(boolean isTime){
-        Calendar c = Calendar.getInstance();
-        System.out.println("Current time => "+c.getTime());
-        SimpleDateFormat df;
-        if(isTime){
-            df = new SimpleDateFormat("HH:mm");
-        }else{
-            df = new SimpleDateFormat("yyyy-MM-dd ");
-        }
-        return df.format(c.getTime());
-    }
-
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();

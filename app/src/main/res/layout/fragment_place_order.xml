@@ -38,14 +38,15 @@
                 ></Spinner>
 
             <View
-
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/colorAccent" />
 
 
+            <!--PickUp Time-->
             <TextView
+                android:layout_marginTop="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup_time"
@@ -57,7 +58,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:id="@+id/llTimeHorizontal"
+                android:id="@+id/llPickUp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
@@ -76,11 +77,110 @@
             </LinearLayout>
 
             <View
-
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="10dp"
                 android:background="@color/colorAccent" />
+
+            <!-- Delivery Time-->
+
+
+            <TextView
+                android:layout_marginTop="30dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delivery_time"
+                android:textColor="@color/text_color_gray_light"
+                android:layout_marginBottom="@dimen/component_margin_5"
+                />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:id="@+id/llDeliveryTime"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/deliveryDate"
+                    android:padding="@dimen/component_margin_10"
+                    android:text="Delivery Date"
+                    />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/deliveryTime"
+                    android:padding="@dimen/component_margin_10"
+                    android:text="Delivery Time"
+                    />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent" />
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="@dimen/component_margin"
+                >
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorAccent"
+                    android:focusedByDefault="true"
+                    android:hint="@string/address"
+                    android:imeOptions="actionNext"
+                    android:inputType="textAutoComplete"
+                    android:maxLength="100"
+                    android:maxLines="1"
+                    android:textColor="@color/text_color"
+                    android:text="Address ABC"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="@dimen/component_margin"
+                >
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/promocode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:backgroundTint="@color/colorAccent"
+                    android:focusedByDefault="true"
+                    android:hint="@string/promo_code"
+                    android:imeOptions="actionNext"
+                    android:inputType="textAutoComplete"
+                    android:maxLength="30"
+                    android:maxLines="1"
+                    android:textColor="@color/text_color"
+                    android:text="Promo Code"
+                    />
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/registration_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:theme="@style/AppButtonTheme"
+                android:background="@drawable/button_bg_rounded_corners"
+                android:text="@string/register"
+                android:layout_gravity="center"
+                android:textSize="@dimen/text_size_13"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="@dimen/component_margin_25"
+                android:layout_marginRight="@dimen/component_margin_25"
+                android:layout_marginBottom="@dimen/component_margin_10"
+                />
         </LinearLayout>
     </ScrollView>
 

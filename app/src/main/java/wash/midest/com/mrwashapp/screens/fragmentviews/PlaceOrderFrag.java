@@ -15,6 +15,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -40,6 +41,9 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
     private ArrayList mServicesList;
     @BindView(R.id.pickDate) TextView mTxtPickDate;
     @BindView(R.id.pickTime) TextView mTxtPickTime;
+    @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
+    @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
+
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     private Unbinder mUnbinder;
 
@@ -65,6 +69,15 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServicesList);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mServicesPicker.setAdapter(dataAdapter);
+        String currentDate = getCurrentDateTime(false);
+        String currentTime = getCurrentDateTime(true);
+
+        mTxtPickDate.setText(currentDate);
+        mTxtPickTime.setText(currentTime);
+
+        mTxtDeliveryDate.setText(currentDate);
+        mTxtDeliveryTime.setText(currentTime);
+
         return view;
     }
 
@@ -114,6 +127,18 @@ public class PlaceOrderFrag extends Fragment /*implements View.OnClickListener*/
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();
+    }
+
+    String getCurrentDateTime(boolean isTime){
+        Calendar c = Calendar.getInstance();
+        System.out.println("Current time => "+c.getTime());
+        SimpleDateFormat df;
+        if(isTime){
+            df = new SimpleDateFormat("HH:mm");
+        }else{
+            df = new SimpleDateFormat("yyyy-MM-dd ");
+        }
+        return df.format(c.getTime());
     }
 
     @Override public void onDestroyView() {

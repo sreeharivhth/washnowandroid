@@ -151,12 +151,13 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     @Override
     public void onButtonClicked(int index) {
         Log.d(TAG,TAG+"Button clicked on index = "+index);
-        FragmentManager childFragMan = getChildFragmentManager();
+        //Avoided below dut to neglecting backstack by android
+        //FragmentManager childFragMan = getChildFragmentManager();
+        FragmentManager childFragMan = getActivity().getSupportFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
         PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
         childFragTrans.add(R.id.landing_fragment_id, fragB);
-        /*childFragTrans.add(fragB,"B");*/
-        childFragTrans.addToBackStack("B");
+        childFragTrans.addToBackStack("PlaceOrderFrag");
         childFragTrans.commit();
     }
 

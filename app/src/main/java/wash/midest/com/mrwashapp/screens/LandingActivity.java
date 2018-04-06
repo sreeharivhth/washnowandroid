@@ -83,7 +83,7 @@ public class LandingActivity extends AppCompatActivity
         LandingFrag fragA = LandingFrag.newInstance(mServicesData);
         mDirectFragment = fragA;
         fragTrans.add(R.id.landing_view, fragA);
-        fragTrans.addToBackStack("A");
+        fragTrans.addToBackStack("LandingFrag");
         fragTrans.commit();
     }
 
@@ -167,13 +167,31 @@ public class LandingActivity extends AppCompatActivity
         } else {
             //super.onBackPressed();
 
-            if(mDirectFragment!=null && mDirectFragment.getChildFragmentManager().getBackStackEntryCount()>0){
+            /*if(mDirectFragment!=null && mDirectFragment.getChildFragmentManager().getBackStackEntryCount()>0){
                 mDirectFragment.getChildFragmentManager().popBackStack();
             }else if(mDirectFragment instanceof LandingFrag){
                 onExit();
             }else{
                 super.onBackPressed();
+            }*/
+
+            FragmentManager fm = getSupportFragmentManager();
+            for (Fragment frag : fm.getFragments()) {
+                if (frag.isVisible()) {
+                    FragmentManager childFm = frag.getChildFragmentManager();
+                    if (childFm.getBackStackEntryCount() > 0) {
+                        for (Fragment childfragnested: childFm.getFragments()) {
+                            FragmentManager childFmNestManager = childfragnested.getFragmentManager();
+                            if(childfragnested.isVisible()) {
+                                childFmNestManager.popBackStack();
+                                return;
+                            }
+                        }
+                    }
+                }
             }
+            super.onBackPressed();
+
         }
     }
 

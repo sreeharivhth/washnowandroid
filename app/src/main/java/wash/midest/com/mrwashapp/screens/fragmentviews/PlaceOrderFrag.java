@@ -5,6 +5,8 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.text.SimpleDateFormat;
@@ -54,7 +57,6 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
     @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     private Unbinder mUnbinder;
-    private SupportMapFragment mMapFragment;
     @BindView(R.id.placeOrderMap)MapView mMapView;
 
     public PlaceOrderFrag() {
@@ -170,6 +172,31 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
         googleMap.addMarker(new MarkerOptions().position(sydney)
                 .title("Marker in Sydney"));
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng latLng) {
+                onMapClickEvent();
+            }
+        });
 
+        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                onMapClickEvent();
+                return true;
+            }
+        });
+    }
+
+    @OnClick(R.id.placeOrderMap)
+    void onMapClickEvent(){
+        //Avoided below dut to neglecting backstack by android
+        //FragmentManager childFragMan = getChildFragmentManager();
+        FragmentManager childFragMan = getActivity().getSupportFragmentManager();
+        FragmentTransaction childFragTrans = childFragMan.beginTransaction();
+        OrderMapFrag frag = OrderMapFrag.newInstance();
+        childFragTrans.add(R.id.place_order_frag, frag);
+        childFragTrans.addToBackStack("OrderMapFrag");
+        childFragTrans.commit();
     }
 }

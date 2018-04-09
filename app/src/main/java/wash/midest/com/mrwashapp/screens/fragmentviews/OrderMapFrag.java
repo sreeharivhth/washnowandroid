@@ -65,7 +65,7 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback{
         googleMap.addMarker(new MarkerOptions().position(sydney)
                 .title("Marker in Sydney")
         );
-
+        
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
     @Override public void onDestroyView() {

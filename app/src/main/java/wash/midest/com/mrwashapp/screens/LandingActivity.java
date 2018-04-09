@@ -76,88 +76,17 @@ public class LandingActivity extends AppCompatActivity
         /*populateWashTypes();*/
         replaceLandingContent(mServicesData);
     }
-
+    LandingFrag fragA;
     private void replaceLandingContent(GeneralListDataPojo mServicesData){
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTrans = fragMan.beginTransaction();
-        LandingFrag fragA = LandingFrag.newInstance(mServicesData);
+        fragA = LandingFrag.newInstance(mServicesData);
         mDirectFragment = fragA;
         fragTrans.add(R.id.landing_view, fragA);
-        fragTrans.addToBackStack("LandingFrag");
+        //fragTrans.addToBackStack("LandingFrag");
+        fragTrans.addToBackStack(null);
         fragTrans.commit();
     }
-
-    /*private void populateWashTypes(){
-        Log.d(TAG,TAG+" populateWashTypes");
-
-        ArrayList<WashTypes> types = new ArrayList<>();
-        if(null!=mServicesData){
-            Log.d(TAG,TAG+" populateWashTypes null!=mServicesData");
-            Log.d(TAG,TAG+" populateWashTypes mServicesData.getData().size() ="+mServicesData.getData().size());
-            for(int count=0;count<mServicesData.getData().size();count++){
-                Data serviceData = mServicesData.getData().get(count);
-                if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
-                    WashTypes washType=new WashTypes();
-                    washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
-                    washType.setWashType(serviceData.getName());
-                    types.add(washType);
-                }
-            }
-            Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
-            addHorizontalViews(types.size(),types);
-        }else{
-            Log.d(TAG,TAG+" mServicesData is null");
-        }
-        *//*WashTypes washType1=new WashTypes();
-        washType1.setTime("@24hrs");
-        washType1.setWashType("QUICK WASH");
-
-        WashTypes washType2=new WashTypes();
-        washType2.setTime("@48hrs");
-        washType2.setWashType("NORMAL WASH");
-
-        WashTypes washType3=new WashTypes();
-        washType3.setTime("@24hrs");
-        washType3.setWashType("QUICK IRON");
-
-        WashTypes washType4=new WashTypes();
-        washType4.setTime("@48hrs");
-        washType4.setWashType("NORMAL IRON");
-
-        types.add(washType1);
-        types.add(washType2);
-        types.add(washType3);
-        types.add(washType4);*//*
-    }*/
-
-    /*private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
-
-        for(int count=0;count<viewCount;count++){
-            LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
-            if(count%2!=0){
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
-                    }else{
-                        horizontalView.setBackgroundResource(R.drawable.list_background_one);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
-                    }else{
-                        horizontalView.setBackgroundResource(R.drawable.list_background_two);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            mScrollLinearView.addView(horizontalView);
-        }
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -175,22 +104,35 @@ public class LandingActivity extends AppCompatActivity
                 super.onBackPressed();
             }*/
 
-            FragmentManager fm = getSupportFragmentManager();
-            for (Fragment frag : fm.getFragments()) {
-                if (frag.isVisible()) {
-                    FragmentManager childFm = frag.getChildFragmentManager();
-                    if (childFm.getBackStackEntryCount() > 0) {
-                        for (Fragment childfragnested: childFm.getFragments()) {
-                            FragmentManager childFmNestManager = childfragnested.getFragmentManager();
-                            if(childfragnested.isVisible()) {
-                                childFmNestManager.popBackStack();
-                                return;
+            //Fragment landingMainFrag=getSupportFragmentManager().findFragmentById(R.id.landing_view);
+                FragmentManager fm = getSupportFragmentManager();
+                /*LandingFrag landingFragment = (LandingFrag) getSupportFragmentManager().findFragmentByTag("LandingFrag");
+                if(landingFragment != null && landingFragment.getUserVisibleHint() && landingFragment.isResumed()){
+                    onExit();
+                }else {*/
+
+                    for (Fragment frag : fm.getFragments()) {
+
+                        boolean isResumed = frag.isResumed();
+                        boolean isVisible = frag.isVisible();
+
+
+
+                        if (frag.isVisible()) {
+                            FragmentManager childFm = frag.getChildFragmentManager();
+
+                            if (childFm.getBackStackEntryCount() > 0) {
+                                for (Fragment childfragnested : childFm.getFragments()) {
+                                    FragmentManager childFmNestManager = childfragnested.getFragmentManager();
+                                    if (childfragnested.isVisible()) {
+                                        childFmNestManager.popBackStack();
+                                        return;
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-            super.onBackPressed();
+                    super.onBackPressed();
 
         }
     }

@@ -1,6 +1,8 @@
 package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +11,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -70,6 +73,53 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         return view;
     }
 
+    /*@Override
+    public void onResume() {
+        super.onResume();
+
+        if(getView() == null){
+            return;
+        }
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+
+                if (event.getAction() == KeyEvent.ACTION_UP && keyCode == KeyEvent.KEYCODE_BACK){
+                    onExit();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if(getView() == null){
+            return;
+        }
+
+        getView().setFocusableInTouchMode(true);
+        getView().requestFocus();
+        getView().setOnKeyListener(null);
+    }*/
+
+    private void onExit(){
+        AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(getActivity());
+        alertDialog2.setTitle("");
+        alertDialog2.setMessage(R.string.exit_confirm);
+        alertDialog2.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                getActivity().finishAffinity();
+            }
+        });
+        alertDialog2.show();
+    }
     private class ViewPagerAdapter extends FragmentPagerAdapter {
         public ViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);
@@ -157,12 +207,30 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
         PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
         childFragTrans.add(R.id.landing_fragment_id, fragB);
-        childFragTrans.addToBackStack("PlaceOrderFrag");
+        //childFragTrans.addToBackStack("PlaceOrderFrag");
+        childFragTrans.addToBackStack(null);
         childFragTrans.commit();
     }
 
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void setMenuVisibility(final boolean visible) {
+        if (visible) {
+            AlertDialog.Builder alertDialog2 = new AlertDialog.Builder(getActivity());
+            alertDialog2.setTitle("");
+            alertDialog2.setMessage(R.string.exit_confirm);
+            alertDialog2.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    getActivity().finishAffinity();
+                }
+            });
+            alertDialog2.show();
+        }else{
+            super.setMenuVisibility(visible);
+        }
     }
 }

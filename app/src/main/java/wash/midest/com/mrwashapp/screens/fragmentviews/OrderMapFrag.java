@@ -55,6 +55,8 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback, Google
     private Marker mCurrLocationMarker;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
+    private OnLocationSelected mChangedLocationToUpdate;
+    private static Fragment mParentFrag;
 
     public OrderMapFrag() {
     }
@@ -132,8 +134,9 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback, Google
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
     }
-    public static OrderMapFrag newInstance() {
+    public static OrderMapFrag newInstance(Fragment parentFrag) {
         OrderMapFrag fragment = new OrderMapFrag();
+        mParentFrag = parentFrag;
         Bundle bundle = new Bundle();
         fragment.setArguments(bundle);
         return fragment;
@@ -154,6 +157,7 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback, Google
             e.printStackTrace();
         }
         mMapView.getMapAsync(this);
+        onAttachToParentFragment(mParentFrag);
         return view;
     }
 
@@ -202,6 +206,7 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback, Google
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         //move map camera
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+        mChangedLocationToUpdate.updatedLocation(location);
     }
 
     @Override
@@ -217,5 +222,23 @@ public class OrderMapFrag extends Fragment implements OnMapReadyCallback, Google
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+    public void onAttachToParentFragment(Fragment fragment)
+    {
+        try
+        {
+            mChangedLocationToUpdate = (OnLocationSelected)fragment;
+
+        }
+        catch (ClassCastException e)
+        {
+            throw new ClassCastException(
+                    fragment.toString() + " must implement OnLocationSelected");
+        }
+    }
+
+    public interface OnLocationSelected
+    {
+        public void updatedLocation(Location location);
     }
 }

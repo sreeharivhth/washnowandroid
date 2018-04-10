@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -44,7 +45,7 @@ import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
+public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected{
 
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
@@ -197,11 +198,16 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
         //FragmentManager childFragMan = getChildFragmentManager();
         FragmentManager childFragMan = getActivity().getSupportFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-        OrderMapFrag frag = OrderMapFrag.newInstance();
+        OrderMapFrag frag = OrderMapFrag.newInstance(this);
         childFragTrans.add(R.id.place_order_frag, frag);
         childFragTrans.addToBackStack("OrderMapFrag");
         childFragTrans.commit();
         frag.setUserVisibleHint(true);
         this.setUserVisibleHint(false);
+    }
+
+    @Override
+    public void updatedLocation(Location location) {
+        Log.d(TAG,TAG+" PlaceOrderFrag lat = "+location.getLatitude()+" || lon = "+location.getLongitude());
     }
 }

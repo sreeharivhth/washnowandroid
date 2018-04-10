@@ -169,10 +169,12 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        double qatarLat = 25.240530;
+        double qatarLon = 51.126810;
+        LatLng locationCurr = new LatLng(qatarLat,qatarLon);
+        googleMap.addMarker(new MarkerOptions().position(locationCurr)
+                .title("Click for more option"));
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationCurr,8));
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {

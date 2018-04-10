@@ -253,6 +253,7 @@ public class OtpActivity extends BaseActivity {
                 .send(generalPojo);*/
         Intent i = new Intent(OtpActivity.this, LandingActivity.class);
         i.putExtra("LandingData",generalPojo);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         finish();
     }

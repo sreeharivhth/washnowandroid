@@ -59,6 +59,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
     private Unbinder mUnbinder;
     @BindView(R.id.placeOrderMap)MapView mMapView;
 
+
     public PlaceOrderFrag() {
     }
 
@@ -198,5 +199,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback{
         childFragTrans.add(R.id.place_order_frag, frag);
         childFragTrans.addToBackStack("OrderMapFrag");
         childFragTrans.commit();
+        frag.setUserVisibleHint(true);
+        this.setUserVisibleHint(false);
     }
 }

@@ -15,6 +15,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
@@ -31,6 +32,7 @@ import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends AppCompatActivity
@@ -43,7 +45,7 @@ public class LandingActivity extends AppCompatActivity
     private APIConstants mApiConstants;
     private String TAG=LandingActivity.class.getName();
     private LinearLayout mLandingReplaceableContent;
-    private Fragment mDirectFragment;
+    private LandingFrag mDirectFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,98 +69,22 @@ public class LandingActivity extends AppCompatActivity
         mTitleText.setText(getString(R.string.app_title));
 
         mLandingReplaceableContent = findViewById(R.id.landing_view);
-
-        /*ViewPager pager = (ViewPager) findViewById(R.id.viewpager_home);
-        pager.setAdapter(new ViewPagerAdapter(getSupportFragmentManager()));*/
         mScrollLinearView=(LinearLayout) findViewById(R.id.landingScrollLinearView);
         mApiConstants=new APIConstants();
         Log.d(TAG,TAG+" LandingActivity launched");
         mServicesData = getIntent().getExtras().getParcelable("LandingData");
-        /*populateWashTypes();*/
         replaceLandingContent(mServicesData);
     }
 
     private void replaceLandingContent(GeneralListDataPojo mServicesData){
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTrans = fragMan.beginTransaction();
-        LandingFrag fragA = LandingFrag.newInstance(mServicesData);
-        mDirectFragment = fragA;
-        fragTrans.add(R.id.landing_view, fragA);
+        mDirectFragment = LandingFrag.newInstance(mServicesData);
+        fragTrans.replace(R.id.landing_view, mDirectFragment);
         fragTrans.addToBackStack("LandingFrag");
         fragTrans.commit();
+        mDirectFragment.setUserVisibleHint(true);
     }
-
-    /*private void populateWashTypes(){
-        Log.d(TAG,TAG+" populateWashTypes");
-
-        ArrayList<WashTypes> types = new ArrayList<>();
-        if(null!=mServicesData){
-            Log.d(TAG,TAG+" populateWashTypes null!=mServicesData");
-            Log.d(TAG,TAG+" populateWashTypes mServicesData.getData().size() ="+mServicesData.getData().size());
-            for(int count=0;count<mServicesData.getData().size();count++){
-                Data serviceData = mServicesData.getData().get(count);
-                if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
-                    WashTypes washType=new WashTypes();
-                    washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
-                    washType.setWashType(serviceData.getName());
-                    types.add(washType);
-                }
-            }
-            Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
-            addHorizontalViews(types.size(),types);
-        }else{
-            Log.d(TAG,TAG+" mServicesData is null");
-        }
-        *//*WashTypes washType1=new WashTypes();
-        washType1.setTime("@24hrs");
-        washType1.setWashType("QUICK WASH");
-
-        WashTypes washType2=new WashTypes();
-        washType2.setTime("@48hrs");
-        washType2.setWashType("NORMAL WASH");
-
-        WashTypes washType3=new WashTypes();
-        washType3.setTime("@24hrs");
-        washType3.setWashType("QUICK IRON");
-
-        WashTypes washType4=new WashTypes();
-        washType4.setTime("@48hrs");
-        washType4.setWashType("NORMAL IRON");
-
-        types.add(washType1);
-        types.add(washType2);
-        types.add(washType3);
-        types.add(washType4);*//*
-    }*/
-
-    /*private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
-
-        for(int count=0;count<viewCount;count++){
-            LandingHorizontalView horizontalView=new LandingHorizontalView(this,count,types.get(count));
-            if(count%2!=0){
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        horizontalView.setBackground(getDrawable(R.drawable.list_background_one));
-                    }else{
-                        horizontalView.setBackgroundResource(R.drawable.list_background_one);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        horizontalView.setBackground(getDrawable(R.drawable.list_background_two));
-                    }else{
-                        horizontalView.setBackgroundResource(R.drawable.list_background_two);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            mScrollLinearView.addView(horizontalView);
-        }
-    }*/
 
     @Override
     public void onBackPressed() {
@@ -166,18 +92,16 @@ public class LandingActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            //super.onBackPressed();
-
-            /*if(mDirectFragment!=null && mDirectFragment.getChildFragmentManager().getBackStackEntryCount()>0){
-                mDirectFragment.getChildFragmentManager().popBackStack();
-            }else if(mDirectFragment instanceof LandingFrag){
-                onExit();
-            }else{
-                super.onBackPressed();
-            }*/
 
             FragmentManager fm = getSupportFragmentManager();
+            int currentCount = fm.getBackStackEntryCount();
+            //If count is 1 , its landing fragment
+            if(currentCount==1){
+                onExit();
+                return;
+            }
             for (Fragment frag : fm.getFragments()) {
+
                 if (frag.isVisible()) {
                     FragmentManager childFm = frag.getChildFragmentManager();
                     if (childFm.getBackStackEntryCount() > 0) {
@@ -189,9 +113,7 @@ public class LandingActivity extends AppCompatActivity
                             }
                         }
                     }
-                    else if(frag instanceof LandingFrag && frag.getUserVisibleHint() && frag.isResumed()){
-                        Toast.makeText(this,"LandingFrag detected",Toast.LENGTH_SHORT).show();
-                    }
+
                 }
             }
             super.onBackPressed();
@@ -239,8 +161,13 @@ public class LandingActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+
+
         if (id == R.id.nav_profile) {
-            // Handle the camera action
+            //Maintain count as 1 while changing the menu options
+            popTillBackStack(1);
+            replaceLandingContent(null, MyProfileFrag.newInstance(),"MyProfile");
+
         } else if (id == R.id.nav_orders) {
 
         } else if (id == R.id.nav_price) {
@@ -257,6 +184,28 @@ public class LandingActivity extends AppCompatActivity
         return true;
     }
 
+    private void popAllFragBackStack(String name){
+        FragmentManager fragMan = getSupportFragmentManager();
+        if(TextUtils.isEmpty(name))
+            fragMan.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        else
+            fragMan.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+    }
+
+    private void popTillBackStack(int count){
+        FragmentManager fm = getSupportFragmentManager();
+        int totalBackStack = fm.getBackStackEntryCount();
+        for(int i = totalBackStack; i > count ; --i) {
+            fm.popBackStack();
+        }
+    }
+    private void replaceLandingContent(GeneralListDataPojo mServicesData,Fragment fragment,String tag){
+        FragmentManager fragMan = getSupportFragmentManager();
+        FragmentTransaction fragTrans = fragMan.beginTransaction();
+        fragTrans.replace(R.id.landing_view, fragment);
+        fragTrans.addToBackStack(tag);
+        fragTrans.commit();
+    }
     private class ViewPagerAdapter extends FragmentPagerAdapter{
         public ViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);

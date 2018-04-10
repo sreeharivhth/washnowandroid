@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -159,6 +160,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         childFragTrans.add(R.id.landing_fragment_id, fragB);
         childFragTrans.addToBackStack("PlaceOrderFrag");
         childFragTrans.commit();
+        fragB.setUserVisibleHint(true);
+        this.setUserVisibleHint(false);
     }
 
     @Override public void onDestroyView() {

@@ -65,7 +65,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
         mApiConstants=new APIConstants();
         /*ViewPager pager =  view.findViewById(R.id.viewpager_home);*/
-        mPager.setAdapter(new ViewPagerAdapter(getActivity().getSupportFragmentManager()));
+        mPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));
         /*mScrollLinearView= view.findViewById(R.id.landingScrollLinearView);*/
         populateWashTypes();
         return view;

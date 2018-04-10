@@ -161,8 +161,6 @@ public class LandingActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
-
         if (id == R.id.nav_profile) {
             //Maintain count as 1 while changing the menu options
             popTillBackStack(1);
@@ -184,13 +182,13 @@ public class LandingActivity extends AppCompatActivity
         return true;
     }
 
-    private void popAllFragBackStack(String name){
+    /*private void popAllFragBackStack(String name){
         FragmentManager fragMan = getSupportFragmentManager();
         if(TextUtils.isEmpty(name))
             fragMan.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         else
             fragMan.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }
+    }*/
 
     private void popTillBackStack(int count){
         FragmentManager fm = getSupportFragmentManager();
@@ -206,7 +204,7 @@ public class LandingActivity extends AppCompatActivity
         fragTrans.addToBackStack(tag);
         fragTrans.commit();
     }
-    private class ViewPagerAdapter extends FragmentPagerAdapter{
+    /*private class ViewPagerAdapter extends FragmentPagerAdapter{
         public ViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);
         }
@@ -229,5 +227,5 @@ public class LandingActivity extends AppCompatActivity
         public int getCount() {
             return 4;
         }
-    }
+    }*/
 }

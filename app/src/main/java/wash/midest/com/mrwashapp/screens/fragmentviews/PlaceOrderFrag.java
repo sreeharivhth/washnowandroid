@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +25,7 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -59,7 +61,10 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     private Unbinder mUnbinder;
     @BindView(R.id.placeOrderMap)MapView mMapView;
-
+    private Location mLocation;
+    private GoogleMap mGoogleMap;
+    private Marker mCurrLocationMarker;
+    private boolean mIsRestoredFromBackstack;
 
     public PlaceOrderFrag() {
     }
@@ -71,6 +76,13 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         bundle.putStringArrayList(SERVICES,servicesList);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mIsRestoredFromBackstack = false;
+        Log.d(TAG,"PlaceOrderFrag onCreate called ");
     }
 
     @Override
@@ -101,6 +113,18 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         mMapView.getMapAsync(this);
 
         return view;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG,"PlaceOrderFrag +  onViewStateRestored=== ");
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        Log.d(TAG,"PlaceOrderFrag +  onViewCreated === ");
     }
 
     @OnItemSelected(R.id.servicesSpinner)
@@ -163,27 +187,30 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         return df.format(c.getTime());
     }
 
-    @Override public void onDestroyView() {
-        super.onDestroyView();
-        mUnbinder.unbind();
-    }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG,"onMapReady called");
         double qatarLat = 25.240530;
         double qatarLon = 51.126810;
-        LatLng locationCurr = new LatLng(qatarLat,qatarLon);
-        googleMap.addMarker(new MarkerOptions().position(locationCurr)
-                .title("Click for more option"));
-        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(locationCurr,8));
-        googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+        LatLng latLng = new LatLng(qatarLat,qatarLon);
+        mGoogleMap=googleMap;
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Click to tag location also");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+        mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
                 onMapClickEvent();
             }
         });
-
-        googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+        mGoogleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
             @Override
             public boolean onMarkerClick(Marker marker) {
                 onMapClickEvent();
@@ -208,6 +235,49 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
 
     @Override
     public void updatedLocation(Location location) {
-        Log.d(TAG,TAG+" PlaceOrderFrag lat = "+location.getLatitude()+" || lon = "+location.getLongitude());
+        mLocation=location;
+        Log.d(TAG," updatedLocation PlaceOrderFrag lat = "+location.getLatitude()+" || lon = "+location.getLongitude());
+        /*if(isResumed() && getUserVisibleHint()){
+
+        }else{
+            Log.d(TAG," PlaceOrderFrag  not onResumed");
+        }*/
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG," PlaceOrderFrag onResume() === ");
+        if(mIsRestoredFromBackstack)
+        {
+            Log.d(TAG,"onResume  mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
+            if(mLocation!=null && mGoogleMap!=null ){
+                if (mCurrLocationMarker != null) {
+                    mCurrLocationMarker.remove();
+                }
+                LatLng latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.title("Current Position");
+                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+                //move map camera
+                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+                Log.d(TAG,"!! Updated marker !!");
+            }else{
+                Log.d(TAG,"onResume Map or location is null ");
+            }
+        }else{
+            Log.d(TAG," onResume mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
+        }
+    }
+
+
+
+    @Override public void onDestroyView() {
+        super.onDestroyView();
+        mUnbinder.unbind();
+        mIsRestoredFromBackstack = true;
+        Log.d(TAG," onDestroyView  mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
     }
 }

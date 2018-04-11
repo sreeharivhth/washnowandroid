@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -65,6 +66,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
     private GoogleMap mGoogleMap;
     private Marker mCurrLocationMarker;
     private boolean mIsRestoredFromBackstack;
+    private int PLACE_ORDER_STACK_NUMBER=2;
 
     public PlaceOrderFrag() {
     }
@@ -112,19 +114,41 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         }
         mMapView.getMapAsync(this);
 
+        getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                int backStackCount = getFragmentManager().getBackStackEntryCount();
+                Log.d(TAG,"PlaceOrderFrag addOnBackStackChangedListener called ");
+                Log.d(TAG,"PlaceOrderFrag backstackcount = "+getFragmentManager().getBackStackEntryCount());
+                if(backStackCount==PLACE_ORDER_STACK_NUMBER){
+                    updateLocation();
+                }
+            }
+        });
+        Toast.makeText(getActivity(),R.string.tapmap_for_location,Toast.LENGTH_SHORT).show();
+
         return view;
     }
 
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.d(TAG,"PlaceOrderFrag +  onViewStateRestored=== ");
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        Log.d(TAG,"PlaceOrderFrag +  onViewCreated === ");
+    void updateLocation(){
+        Log.d(TAG,"updateLocation  === ");
+        if(mLocation!=null && mGoogleMap!=null ){
+            Log.d(TAG,"updateLocation mLocation and mGoogleMap are valid");
+            if (mCurrLocationMarker != null) {
+                mCurrLocationMarker.remove();
+            }
+            LatLng latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            //move map camera
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+            Log.d(TAG,"!!updateLocation  Updated marker !!");
+        }else{
+            Log.d(TAG,"updateLocation Map or location is null ");
+        }
     }
 
     @OnItemSelected(R.id.servicesSpinner)
@@ -203,7 +227,8 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,8));
+        /*mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));*/
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -250,23 +275,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         Log.d(TAG," PlaceOrderFrag onResume() === ");
         if(mIsRestoredFromBackstack)
         {
-            Log.d(TAG,"onResume  mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
-            if(mLocation!=null && mGoogleMap!=null ){
-                if (mCurrLocationMarker != null) {
-                    mCurrLocationMarker.remove();
-                }
-                LatLng latLng = new LatLng(mLocation.getLatitude(), mLocation.getLongitude());
-                MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.title("Current Position");
-                markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-                mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-                //move map camera
-                mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
-                Log.d(TAG,"!! Updated marker !!");
-            }else{
-                Log.d(TAG,"onResume Map or location is null ");
-            }
+
         }else{
             Log.d(TAG," onResume mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
         }
@@ -277,7 +286,5 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
-        mIsRestoredFromBackstack = true;
-        Log.d(TAG," onDestroyView  mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
     }
 }

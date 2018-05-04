@@ -81,6 +81,8 @@
     <string name="pick_up_time">Pick Up Time</string>
     <string name="within_24_hrs">Within 24 hrs</string>
     <string name="faq">FAQ</string>
+    <string name="edit">Edit</string>
+    <string name="profile_updated">Updated your profile successfully</string>
 
 
 </resources>

@@ -124,4 +124,38 @@ public class APIProcessor {
                 });
     }
 
+    public void updateMyProfile(final APICallBack callBack, HashMap<String,String> requestParams){
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().updateMyProfile(requestParams)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralPojo>() {
+                    @Override
+                    public void onNext(GeneralPojo generalPojo) {
+                        int statusCode = generalPojo.getStatusCode();
+                        //Check for error
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                callBack.processedResponse(null,false,errorMessage);
+                            }else {
+                                callBack.processedResponse(null,false,"Error in processing request. Please try later");
+                            }
+                        }else{
+                            Log.d(TAG, "### The API service success");
+                            callBack.processedResponse(generalPojo,true,null);
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "### The API service error");
+                        callBack.processedResponse(null,false,"Error in processing request. Want to try again");
+                    }
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
 }

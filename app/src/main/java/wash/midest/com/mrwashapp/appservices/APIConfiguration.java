@@ -91,4 +91,12 @@ public interface APIConfiguration {
     @FormUrlEncoded
     @POST("member/my-profile")
     Observable<GeneralPojo> getMyProfile(@FieldMap(encoded = true) Map<String, String> params);
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/update-my-profile")
+    Observable<GeneralPojo> updateMyProfile(@FieldMap(encoded = true) Map<String, String> params);
+
+
 }

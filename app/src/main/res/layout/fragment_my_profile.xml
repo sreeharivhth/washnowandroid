@@ -45,7 +45,6 @@
                         android:inputType="textAutoComplete"
                         android:maxLength="30"
                         android:textColor="@color/text_color"
-                        android:text="FN"
                         />
                 </android.support.design.widget.TextInputLayout>
 
@@ -64,7 +63,6 @@
                         android:inputType="textAutoComplete"
                         android:maxLength="30"
                         android:textColor="@color/text_color"
-                        android:text="LN"
                         />
                 </android.support.design.widget.TextInputLayout>
 
@@ -103,7 +101,6 @@
                         android:inputType="textEmailAddress"
                         android:maxLength="30"
                         android:textColor="@color/text_color"
-                        android:text=""
                         />
                 </android.support.design.widget.TextInputLayout>
 

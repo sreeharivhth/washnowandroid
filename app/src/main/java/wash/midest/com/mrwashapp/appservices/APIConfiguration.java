@@ -73,4 +73,17 @@ public interface APIConfiguration {
     @POST("member/update-password")
     Observable<GeneralPojo> updateNewPassAPI(@FieldMap(encoded = true) Map<String, String> params);
 
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/update-password")
+    Observable<GeneralPojo> getPriceList(@FieldMap(encoded = true) Map<String, String> params);
+
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("api/faq")
+    Observable<GeneralPojo> getFAQ(@FieldMap(encoded = true) Map<String, String> params);
+
 }

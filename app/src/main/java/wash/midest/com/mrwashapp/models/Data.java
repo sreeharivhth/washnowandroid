@@ -25,6 +25,12 @@ public class Data implements Parcelable {
     @SerializedName("active")
     @Expose
     private String active;
+    @SerializedName("question")
+    @Expose
+    private String question;
+    @SerializedName("answer")
+    @Expose
+    private String answer;
 
     public String getMemberId() {
         return memberId;
@@ -113,6 +119,23 @@ public class Data implements Parcelable {
         this.name = name;
     }
 
+    //=================== FAQ ========================//
+    public String getQuestion() {
+        return question;
+    }
+
+    public void setQuestion(String question) {
+        this.question = question;
+    }
+
+    public String getAnswer() {
+        return answer;
+    }
+
+    public void setAnswer(String answer) {
+        this.answer = answer;
+    }
+
     /*public String getActive() {
         return active;
     }
@@ -129,6 +152,7 @@ public class Data implements Parcelable {
         this.deliveryTime = deliveryTime;
     }
 
+
     @Override
     public int describeContents() {
         return 0;
@@ -140,6 +164,8 @@ public class Data implements Parcelable {
         dest.writeString(this.email);
         dest.writeString(this.isVerified);
         dest.writeString(this.active);
+        dest.writeString(this.question);
+        dest.writeString(this.answer);
         dest.writeString(this.userId);
         dest.writeString(this.token);
         dest.writeString(this.id);
@@ -155,6 +181,8 @@ public class Data implements Parcelable {
         this.email = in.readString();
         this.isVerified = in.readString();
         this.active = in.readString();
+        this.question = in.readString();
+        this.answer = in.readString();
         this.userId = in.readString();
         this.token = in.readString();
         this.id = in.readString();

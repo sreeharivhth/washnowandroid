@@ -31,11 +31,13 @@ import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
+import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.PriceListFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
-public class LandingActivity extends AppCompatActivity
+public class LandingActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private TextView mTitleText;
@@ -169,13 +171,23 @@ public class LandingActivity extends AppCompatActivity
         } else if (id == R.id.nav_orders) {
 
         } else if (id == R.id.nav_price) {
+            popTillBackStack(1);
+            replaceLandingContent(null, PriceListFrag.newInstance(),"PriceListFrag");
 
         } else if (id == R.id.nav_offers) {
+            if(isConnectedToNet()){
 
+            }
         } else if (id == R.id.nav_faq) {
+            if(isConnectedToNet()){
+                popTillBackStack(1);
 
+                replaceLandingContent(null, FAQFrag.newInstance(),"FAQFrag");
+            }
         } else if (id == R.id.nav_contact) {
+            if(isConnectedToNet()){
 
+            }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -190,6 +202,10 @@ public class LandingActivity extends AppCompatActivity
             fragMan.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }*/
 
+    public void setFragmentTitle(String title){
+        if(!TextUtils.isEmpty(title))
+        mTitleText.setText(title);
+    }
     private void popTillBackStack(int count){
         FragmentManager fm = getSupportFragmentManager();
         int totalBackStack = fm.getBackStackEntryCount();
@@ -204,6 +220,14 @@ public class LandingActivity extends AppCompatActivity
         fragTrans.addToBackStack(tag);
         fragTrans.commit();
     }
+    private boolean isConnectedToNet(){
+        boolean status = mAppUtils.isNetworkConnected(this);
+        if(!status){
+            showErrorAlert(getString(R.string.network_error));
+        }
+        return status;
+    }
+
     /*private class ViewPagerAdapter extends FragmentPagerAdapter{
         public ViewPagerAdapter(FragmentManager fragmentManager){
             super(fragmentManager);

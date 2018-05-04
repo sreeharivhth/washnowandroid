@@ -118,15 +118,12 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
             @Override
             public void onBackStackChanged() {
                 int backStackCount = getFragmentManager().getBackStackEntryCount();
-                Log.d(TAG,"PlaceOrderFrag addOnBackStackChangedListener called ");
-                Log.d(TAG,"PlaceOrderFrag backstackcount = "+getFragmentManager().getBackStackEntryCount());
                 if(backStackCount==PLACE_ORDER_STACK_NUMBER){
                     updateLocation();
                 }
             }
         });
         Toast.makeText(getActivity(),R.string.tapmap_for_location,Toast.LENGTH_SHORT).show();
-
         return view;
     }
 

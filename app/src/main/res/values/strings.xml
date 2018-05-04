@@ -67,6 +67,9 @@
     <string name="submit">Submit</string>
     <string name="enter_otp">OTP</string>
 
+    <string name="retry">Retry</string>
+    <string name="cancel">Cancel</string>
+
     <!--dummy text-->
     <string name="dummy_name">Mr Farook</string>
     <string name="dummy_phone">83903815</string>
@@ -75,6 +78,9 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="tapmap_for_location">Click on Map for tagging location with current order</string>
+    <string name="pick_up_time">Pick Up Time</string>
+    <string name="within_24_hrs">Within 24 hrs</string>
+    <string name="faq">FAQ</string>
 
 
 </resources>

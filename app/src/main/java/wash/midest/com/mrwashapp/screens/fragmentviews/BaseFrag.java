@@ -1,0 +1,75 @@
+package wash.midest.com.mrwashapp.screens.fragmentviews;
+
+import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+
+import wash.midest.com.mrwashapp.screens.uiutility.AlertCallBack;
+import wash.midest.com.mrwashapp.utils.AppUtils;
+
+/**
+ * Created by Sreehari.KV on 4/21/2018.
+ */
+
+public class BaseFrag extends Fragment implements AlertCallBack{
+
+    protected AppUtils mAppUtils;
+    protected AlertDialog mCallBackAlertDialog;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mAppUtils=new AppUtils();
+    }
+
+    /**
+     * Show alert message with call back
+     * @param message message to show in alert
+     * @param positiveBtnText positive button text
+     * @param negativeBtnText negative button text
+     */
+    void showMessage(String message,int positiveBtnText,int negativeBtnText){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
+
+        dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handlePositiveAlertCallBack();
+            }
+        });
+        dialogBuilder.setNegativeButton(negativeBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handleNegativeAlertCallBack();
+            }
+        });
+        mCallBackAlertDialog = dialogBuilder.create();
+        mCallBackAlertDialog.setCancelable(false);
+        mCallBackAlertDialog.show();
+    }
+
+    void showMessage(String message,int positiveBtnText){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
+
+        dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handlePositiveAlertCallBack();
+            }
+        });
+        mCallBackAlertDialog = dialogBuilder.create();
+        mCallBackAlertDialog.setCancelable(false);
+        mCallBackAlertDialog.show();
+    }
+    @Override
+    public void handleNegativeAlertCallBack() {
+
+    }
+
+    @Override
+    public void handlePositiveAlertCallBack() {
+
+    }
+
+}

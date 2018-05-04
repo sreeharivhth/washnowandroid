@@ -62,9 +62,9 @@ public class FAQFrag extends BaseFrag implements APICallBack {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_faq, container, false);
         mUnbinder=ButterKnife.bind(this, view);
+
         //set Title
-        LandingActivity landingActivity = (LandingActivity) getActivity();
-        landingActivity.setFragmentTitle(getActivity().getString(R.string.faq));
+        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.faq));
 
         mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();

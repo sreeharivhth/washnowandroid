@@ -153,6 +153,56 @@ public class Data implements Parcelable {
     }
 
 
+    //=================== MyProfile ========================//
+    @SerializedName("firstName")
+    @Expose
+    private String firstName;
+    @SerializedName("lastName")
+    @Expose
+    private String lastName;
+    /*@SerializedName("email")
+    @Expose
+    private Object email;*/
+    @SerializedName("mobile")
+    @Expose
+    private String mobile;
+    @SerializedName("dialingCode")
+    @Expose
+    private String dialingCode;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getDialingCode() {
+        return dialingCode;
+    }
+
+    public void setDialingCode(String dialingCode) {
+        this.dialingCode = dialingCode;
+    }
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -171,6 +221,10 @@ public class Data implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeString(this.deliveryTime);
+        dest.writeString(this.firstName);
+        dest.writeString(this.lastName);
+        dest.writeString(this.mobile);
+        dest.writeString(this.dialingCode);
     }
 
     public Data() {
@@ -188,6 +242,10 @@ public class Data implements Parcelable {
         this.id = in.readString();
         this.name = in.readString();
         this.deliveryTime = in.readString();
+        this.firstName = in.readString();
+        this.lastName = in.readString();
+        this.mobile = in.readString();
+        this.dialingCode = in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

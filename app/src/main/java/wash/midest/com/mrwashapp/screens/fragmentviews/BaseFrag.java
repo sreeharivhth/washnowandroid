@@ -6,6 +6,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 
+import wash.midest.com.mrwashapp.appservices.APIConstants;
+import wash.midest.com.mrwashapp.localstorage.AppSharedPreferences;
 import wash.midest.com.mrwashapp.screens.uiutility.AlertCallBack;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
@@ -17,11 +19,15 @@ public class BaseFrag extends Fragment implements AlertCallBack{
 
     protected AppUtils mAppUtils;
     protected AlertDialog mCallBackAlertDialog;
+    protected APIConstants mApiConstants;
+    protected AppSharedPreferences mSharedPreference;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mAppUtils=new AppUtils();
+        mApiConstants=new APIConstants();
+        mSharedPreference=AppSharedPreferences.getInstnace(getActivity());
     }
 
     /**

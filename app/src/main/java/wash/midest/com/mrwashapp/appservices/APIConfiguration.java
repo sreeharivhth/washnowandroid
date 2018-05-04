@@ -86,4 +86,9 @@ public interface APIConfiguration {
     @POST("api/faq")
     Observable<GeneralPojo> getFAQ(@FieldMap(encoded = true) Map<String, String> params);
 
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/my-profile")
+    Observable<GeneralPojo> getMyProfile(@FieldMap(encoded = true) Map<String, String> params);
 }

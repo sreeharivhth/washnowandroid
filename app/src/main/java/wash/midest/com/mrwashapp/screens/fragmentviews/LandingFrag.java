@@ -27,6 +27,7 @@ import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
+import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.ViewPagerFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
@@ -62,6 +63,9 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
                              Bundle savedInstanceState) {
         View view=  inflater.inflate(R.layout.fragment_landing, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+
+        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.app_title));
+
         mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
         mApiConstants=new APIConstants();
         /*ViewPager pager =  view.findViewById(R.id.viewpager_home);*/

@@ -33,6 +33,7 @@ dependencies {
     compile 'com.android.support:support-annotations:26.1.0'
     compile 'com.android.support:support-compat:26.1.0'
     compile 'com.android.support:support-core-ui:26.1.0'
+    compile 'com.android.support:cardview-v7:26.1.0'
 
     //Retrofit
     compile 'com.squareup.retrofit2:retrofit:2.3.0'

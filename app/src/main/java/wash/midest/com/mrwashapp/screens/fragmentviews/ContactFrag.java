@@ -1,5 +1,7 @@
 package wash.midest.com.mrwashapp.screens.fragmentviews;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -8,11 +10,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APICallBack;
@@ -62,6 +66,31 @@ public class ContactFrag extends BaseFrag implements APICallBack{
         return view;
     }
 
+    @OnClick(R.id.phone_num)
+    void makeCall(){
+        Intent callIntent = new Intent(Intent.ACTION_CALL);
+        String phoneNum = "tel:"+mPhone.getText();
+        callIntent.setData(Uri.parse(phoneNum));
+        startActivity(callIntent);
+    }
+
+    @OnClick(R.id.email)
+    void sendMail(){
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.setType("text/plain");
+        String[] TO = {mEmail.getText().toString()};
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, TO);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Mr Wash Query");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "Query details");
+        try {
+            startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(getActivity(), "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         mProgressBar.setVisibility(View.GONE);

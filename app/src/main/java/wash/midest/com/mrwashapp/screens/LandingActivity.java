@@ -31,6 +31,7 @@ import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
+import wash.midest.com.mrwashapp.screens.fragmentviews.ContactFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
@@ -181,11 +182,12 @@ public class LandingActivity extends BaseActivity
         } else if (id == R.id.nav_faq) {
             if(isConnectedToNet()){
                 popTillBackStack(1);
-
                 replaceLandingContent(null, FAQFrag.newInstance(),"FAQFrag");
             }
         } else if (id == R.id.nav_contact) {
             if(isConnectedToNet()){
+                popTillBackStack(1);
+                replaceLandingContent(null, ContactFrag.newInstance(),"ContactFrag");
 
             }
         }

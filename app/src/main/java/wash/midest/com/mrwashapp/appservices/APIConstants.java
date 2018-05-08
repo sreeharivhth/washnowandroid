@@ -6,6 +6,7 @@ package wash.midest.com.mrwashapp.appservices;
 
 public class APIConstants {
 
+    public final String API_TYPE = "type";
     public String API_FIRSTNAME = "firstName";
     public String API_LASTNAME = "lastName";
     public String API_EMAIL = "email";

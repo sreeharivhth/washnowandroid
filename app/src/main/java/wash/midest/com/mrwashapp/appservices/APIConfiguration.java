@@ -104,4 +104,10 @@ public interface APIConfiguration {
     @POST("api/contactus")
     Observable<GeneralPojo> contactUs(@FieldMap(encoded = true) Map<String, String> params);
 
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("api/pricelist")
+    Observable<GeneralPojo> priceList(@FieldMap(encoded = true) Map<String, String> params);
+
 }

@@ -117,9 +117,13 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         getFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
             public void onBackStackChanged() {
-                int backStackCount = getFragmentManager().getBackStackEntryCount();
-                if(backStackCount==PLACE_ORDER_STACK_NUMBER){
-                    updateLocation();
+                try {
+                    int backStackCount = getFragmentManager().getBackStackEntryCount();
+                    if(backStackCount==PLACE_ORDER_STACK_NUMBER){
+                        updateLocation();
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         });

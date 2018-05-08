@@ -2,6 +2,7 @@ package wash.midest.com.mrwashapp.screens;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -116,11 +117,9 @@ public class LandingActivity extends BaseActivity
                             }
                         }
                     }
-
                 }
             }
             super.onBackPressed();
-
         }
     }
 
@@ -172,9 +171,10 @@ public class LandingActivity extends BaseActivity
         } else if (id == R.id.nav_orders) {
 
         } else if (id == R.id.nav_price) {
-            popTillBackStack(1);
-            replaceLandingContent(null, PriceListFrag.newInstance(),"PriceListFrag");
-
+            if(isConnectedToNet()) {
+                popTillBackStack(1);
+                replaceLandingContent(null, PriceListFrag.newInstance(getServiceTypes()), "PriceListFrag");
+            }
         } else if (id == R.id.nav_offers) {
             if(isConnectedToNet()){
 
@@ -188,7 +188,6 @@ public class LandingActivity extends BaseActivity
             if(isConnectedToNet()){
                 popTillBackStack(1);
                 replaceLandingContent(null, ContactFrag.newInstance(),"ContactFrag");
-
             }
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -196,6 +195,20 @@ public class LandingActivity extends BaseActivity
         return true;
     }
 
+    private ArrayList<WashTypes> getServiceTypes(){
+        ArrayList<WashTypes> types = new ArrayList<>();
+        for(int count=0;count<mServicesData.getData().size();count++){
+            Data serviceData = mServicesData.getData().get(count);
+            if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
+                WashTypes washType=new WashTypes();
+                washType.setId(Integer.parseInt(serviceData.getId()));
+                washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
+                washType.setWashType(serviceData.getName());
+                types.add(washType);
+            }
+        }
+        return types;
+    }
     /*private void popAllFragBackStack(String name){
         FragmentManager fragMan = getSupportFragmentManager();
         if(TextUtils.isEmpty(name))

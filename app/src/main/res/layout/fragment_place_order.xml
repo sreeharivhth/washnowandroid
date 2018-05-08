@@ -199,7 +199,7 @@
                 android:layout_height="wrap_content"
                 android:theme="@style/AppButtonTheme"
                 android:background="@drawable/button_bg_rounded_corners"
-                android:text="@string/register"
+                android:text="@string/place_order_title"
                 android:layout_gravity="center"
                 android:textSize="@dimen/text_size_13"
                 android:layout_marginTop="@dimen/component_margin_16"

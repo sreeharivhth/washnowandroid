@@ -25,32 +25,32 @@ public class APIProcessor {
 
     //--------------------------------  Methods  --------------------------------//
 
-    public void processPriceList(final APICallBack callBack, HashMap<String,String> requestParams){
+    /*public void processPriceList(final APICallBack callBack, HashMap<String,String> requestParams){
         APIServiceFactory serviceFactory = new APIServiceFactory();
 
-        /*requestParams.put(mApiConstants.API_EMAIL,email);
+        *//*requestParams.put(mApiConstants.API_EMAIL,email);
         requestParams.put(mApiConstants.API_PASSWORD,password);
-        requestParams.put(mApiConstants.API_APPID,appId);*/
+        requestParams.put(mApiConstants.API_APPID,appId);*//*
         serviceFactory.getAPIConfiguration().getPriceList(requestParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<GeneralPojo>() {
                     @Override
                     public void onNext(GeneralPojo vehicles) {
-                        /*Log.d(TAG, "### The API service success");
-                        callBack.processedResponse(vehicles,true,null);*/
+                        *//*Log.d(TAG, "### The API service success");
+                        callBack.processedResponse(vehicles,true,null);*//*
                     }
                     @Override
                     public void onError(Throwable e) {
-                        /*Log.e(TAG, "### The API service error");
-                        callBack.processedResponse(null,false,"Error in processing request. Want to try again");*/
+                        *//*Log.e(TAG, "### The API service error");
+                        callBack.processedResponse(null,false,"Error in processing request. Want to try again");*//*
                     }
                     @Override
                     public void onComplete() {
 
                     }
                 });
-    }
+    }*/
 
     public void processFAQ(final APICallBack callBack, HashMap<String,String> requestParams){
         APIServiceFactory serviceFactory = new APIServiceFactory();
@@ -161,6 +161,40 @@ public class APIProcessor {
     public void getContactUS(final APICallBack callBack, HashMap<String,String> requestParams){
         APIServiceFactory serviceFactory = new APIServiceFactory();
         serviceFactory.getAPIConfiguration().contactUs(requestParams)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralPojo>() {
+                    @Override
+                    public void onNext(GeneralPojo generalPojo) {
+                        int statusCode = generalPojo.getStatusCode();
+                        //Check for error
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                callBack.processedResponse(null,false,errorMessage);
+                            }else {
+                                callBack.processedResponse(null,false,"Error in processing request. Please try later");
+                            }
+                        }else{
+                            Log.d(TAG, "### The API service success");
+                            callBack.processedResponse(generalPojo,true,null);
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, "### The API service error");
+                        callBack.processedResponse(null,false,"Error in processing request. Want to try again");
+                    }
+                    @Override
+                    public void onComplete() {
+
+                    }
+                });
+    }
+
+    public void getPriceList(final APICallBack callBack, HashMap<String,String> requestParams){
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().priceList(requestParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new DisposableObserver<GeneralPojo>() {

@@ -228,6 +228,35 @@ public class Data implements Parcelable {
         this.address = address;
     }
 
+    //=================== Price List ========================//
+    @SerializedName("itemName")
+    @Expose
+    private String itemName;
+
+    @SerializedName("price")
+    @Expose
+    private String price;
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+
+
+
+
     @Override
     public int describeContents() {
         return 0;
@@ -252,6 +281,8 @@ public class Data implements Parcelable {
         dest.writeString(this.dialingCode);
         dest.writeString(this.phone);
         dest.writeString(this.address);
+        dest.writeString(this.itemName);
+        dest.writeString(this.price);
     }
 
     public Data() {
@@ -275,6 +306,8 @@ public class Data implements Parcelable {
         this.dialingCode = in.readString();
         this.phone = in.readString();
         this.address = in.readString();
+        this.itemName = in.readString();
+        this.price = in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

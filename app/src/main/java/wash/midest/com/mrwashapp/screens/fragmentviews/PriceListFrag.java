@@ -3,16 +3,22 @@ package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,6 +28,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APICallBack;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
@@ -33,7 +40,11 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
  */
 public class PriceListFrag extends BaseFrag implements APICallBack{
 
-    private LinearLayout listComponent;
+    @BindView(R.id.list_component)
+    RecyclerView listRecycler;
+    @BindView(R.id.progressBarLoading)
+    ProgressBar mProgressBar;
+    private ListAdapter mListAdapter;
     private static final String TAG="PriceListFrag";
     private static String SERVICE_DATA="ServiceData";
     private Unbinder mUnbinder;
@@ -41,6 +52,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     private ArrayList<WashTypes> mAllService;
     @BindView(R.id.serviceType)
     Spinner mSpinner;
+    private final String CURRENCY = "QR";
 
     public PriceListFrag() {
         // Required empty public constructor
@@ -62,40 +74,44 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         View view =  inflater.inflate(R.layout.fragment_price_list, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.action_price_list));
-
         mAllService= getArguments().getParcelableArrayList(SERVICE_DATA);
-        listComponent=(LinearLayout)view.findViewById(R.id.list_component);
 
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        listRecycler.setLayoutManager(layoutManager);
         if(mAllService!=null && mAllService.size()>0){
             addListComponents();
         }
         return view;
     }
 
+    @OnItemSelected(R.id.serviceType)
+    void spinnerSelectAction(Spinner spinner, int position){
+        try {
+            String itemSelected = (String) spinner.getItemAtPosition(position);
+            WashTypes washTypes = mAllService.get(position);
+            int idSel = washTypes.getId();
+            Log.d(TAG,"itemSelected === "+itemSelected);
+            Log.d(TAG,"Selected ID === "+idSel);
+            getPriceListData(idSel);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     void getPriceListData(int type){
         Log.d(TAG,"type selected = "+type);
         if(!mAppUtils.isNetworkConnected(getActivity())){
-            //showMessage(getString(R.string.network_error),R.string.retry,R.string.cancel);
             showMessage(getString(R.string.network_error),R.string.ok);
             return;
         }
+        mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();
         //TODO keep actual mToken, once handled from backend
         requestParams.put(mApiConstants.API_ACCESSTOKEN,"");
         requestParams.put(mApiConstants.API_TYPE,String.valueOf(type));
         APIProcessor apiProcessor=new APIProcessor();
         apiProcessor.getPriceList(PriceListFrag.this,requestParams);
-    }
-
-    @OnItemSelected(R.id.serviceType)
-    void spinnerSelectAction(Spinner spinner, int position){
-        String itemSelected = (String) spinner.getItemAtPosition(position);
-
-        WashTypes washTypes = mAllService.get(position);
-        int idSel = washTypes.getId();
-        Log.d(TAG,"itemSelected === "+itemSelected);
-        Log.d(TAG,"Selected ID === "+idSel);
-        getPriceListData(idSel);
     }
 
     void addListComponents(){
@@ -110,12 +126,61 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
+        mProgressBar.setVisibility(View.GONE);
         if(isSuccess) {
-            GeneralPojo responsePojo = (GeneralPojo) responseObj;
-            /*Data data = ((GeneralPojo) responseObj).getData().get(0);*/
-
+            List<Data> dataList = ((GeneralPojo) responseObj).getData();
+            mListAdapter = new ListAdapter(dataList);
+            listRecycler.setAdapter(mListAdapter);
+            mListAdapter.notifyDataSetChanged();
         }else{
             showMessage(errorMsg,R.string.ok);
+        }
+    }
+    /**
+     * Adapter for representing list view
+     */
+    public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>{
+        private List<Data> dataList;
+        private ListAdapter(List<Data> data)
+        {
+            this.dataList = data;
+        }
+        @Override
+        public ListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.price_list_item, parent, false);
+            ViewHolder viewHolder;
+            viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
+        @Override
+        public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
+        {
+            String itemName = dataList.get(holder.getAdapterPosition()).getItemName();
+            holder.textItem.setText(itemName);
+
+            String itemPrice = dataList.get(holder.getAdapterPosition()).getPrice();
+            holder.textPrice.setText(itemPrice+" "+CURRENCY);
+
+        }
+        @Override
+        public int getItemCount()
+        {
+            return dataList.size();
+        }
+        class ViewHolder extends RecyclerView.ViewHolder
+        {
+            @BindView(R.id.item_name)
+            TextView textItem;
+
+            @BindView(R.id.item_price)
+            TextView textPrice;
+
+            ViewHolder(View itemView)
+            {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
         }
     }
 }

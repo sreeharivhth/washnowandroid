@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.DatePicker;
@@ -57,7 +58,7 @@ import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected{
+public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected{
 
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
@@ -70,8 +71,9 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
     @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     @BindView(R.id.address) TextInputEditText mAddress;
-    private Unbinder mUnbinder;
+    @BindView(R.id.placeorder_btn) Button mBtnPlaceOrder;
     @BindView(R.id.placeOrderMap)MapView mMapView;
+    private Unbinder mUnbinder;
     /*@BindView(R.id.checkbox)
     CheckBox mCheckBox;*/
     private LatLng mLocation;
@@ -182,7 +184,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         Log.d(TAG,"itemSelected === "+itemSelected);
     }
 
-    @OnClick(R.id.pickDate)
+    @OnClick({R.id.pickDate , R.id.deliveryDate})
     void pickDate(){
         // Get Current Date
         final Calendar c = Calendar.getInstance();
@@ -203,7 +205,7 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         datePickerDialog.show();
     }
 
-    @OnClick(R.id.pickTime)
+    @OnClick({R.id.pickTime , R.id.deliveryTime})
     void pickTime(){
         // Get Current Time
         final Calendar c = Calendar.getInstance();
@@ -351,7 +353,10 @@ public class PlaceOrderFrag extends Fragment implements OnMapReadyCallback,Order
         }
     }
 
-
+    @OnClick(R.id.placeorder_btn)
+    void proceedPlaceOrder(){
+        showToast("Coming Soon");
+    }
 
     @Override public void onDestroyView() {
         super.onDestroyView();

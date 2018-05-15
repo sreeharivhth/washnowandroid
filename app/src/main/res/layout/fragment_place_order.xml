@@ -202,7 +202,7 @@
             </com.google.android.gms.maps.MapView>
 
             <Button
-                android:id="@+id/registration_btn"
+                android:id="@+id/placeorder_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:theme="@style/AppButtonTheme"

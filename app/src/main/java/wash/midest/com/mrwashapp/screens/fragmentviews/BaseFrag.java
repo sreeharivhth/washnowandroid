@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.widget.Toast;
 
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.localstorage.AppSharedPreferences;
@@ -76,6 +78,17 @@ public class BaseFrag extends Fragment implements AlertCallBack{
     @Override
     public void handlePositiveAlertCallBack() {
 
+    }
+
+    protected void showToast(final String msg){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),msg,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        });
     }
 
 }

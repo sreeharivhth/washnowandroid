@@ -84,6 +84,9 @@
     <string name="edit">Edit</string>
     <string name="profile_updated">Updated your profile successfully</string>
     <string name="call_us">Call us</string>
+    <string name="done">Done</string>
+    <string name="gps_network_not_enabled">Location is not enabled</string>
+    <string name="open_location_settings">Open location settings</string>
 
 
 </resources>

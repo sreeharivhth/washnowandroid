@@ -20,16 +20,20 @@ public class LandingHorizontalView extends LinearLayout implements View.OnClickL
     private WashTypes mTypeContent;
     private Button mButton;
     private ButtonClicked mListener;
+    private PriceListClicked mPriceListListener;
+    private TextView mPriceList;
 
     public LandingHorizontalView(Context context){
         super(context);
         initialize();
     }
 
-    public LandingHorizontalView(Context context, int count, WashTypes typeContent,ButtonClicked listener){
+    public LandingHorizontalView(Context context, int count, WashTypes typeContent,ButtonClicked listener,
+                                 PriceListClicked priceListListener){
         super(context);
         mTypeContent = typeContent;
         mListener = listener;
+        mPriceListListener = priceListListener;
         initialize(count);
     }
 
@@ -39,6 +43,9 @@ public class LandingHorizontalView extends LinearLayout implements View.OnClickL
     private void initialize(int count){
 
         View view = LayoutInflater.from(getContext()).inflate(R.layout.landing_hori_view, this, true);
+        mPriceList=findViewById(R.id.txt_price_list);
+        mPriceList.setTag(count);
+        mPriceList.setOnClickListener(this);
         mButton= findViewById(R.id.btn_place_order);
         mButton.setTag(count);
         mButton.setOnClickListener(this);
@@ -60,11 +67,21 @@ public class LandingHorizontalView extends LinearLayout implements View.OnClickL
 
     @Override
     public void onClick(View v) {
-        int count = (int) v.getTag();
-        mListener.onButtonClicked(count);
+        if(v instanceof  Button){
+            int count = (int) v.getTag();
+            mListener.onButtonClicked(count);
+        }else if(v instanceof TextView){
+            int count = (int) v.getTag();
+            mPriceListListener.onPriceListClicked(count);
+        }
+
     }
 
     public interface ButtonClicked{
         public void onButtonClicked(int index);
+    }
+
+    public interface PriceListClicked{
+        public void onPriceListClicked(int index);
     }
 }

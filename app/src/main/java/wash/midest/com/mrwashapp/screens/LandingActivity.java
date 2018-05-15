@@ -173,7 +173,8 @@ public class LandingActivity extends BaseActivity
         } else if (id == R.id.nav_price) {
             if(isConnectedToNet()) {
                 popTillBackStack(1);
-                replaceLandingContent(null, PriceListFrag.newInstance(getServiceTypes()), "PriceListFrag");
+                int defaultSelection = -1;
+                replaceLandingContent(null, PriceListFrag.newInstance(getServiceTypes(),defaultSelection), "PriceListFrag");
             }
         } else if (id == R.id.nav_offers) {
             if(isConnectedToNet()){
@@ -217,6 +218,12 @@ public class LandingActivity extends BaseActivity
             fragMan.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }*/
 
+    public void pushPriceListWithIndex(int index){
+        if(isConnectedToNet()) {
+            popTillBackStack(1);
+            replaceLandingContent(null, PriceListFrag.newInstance(getServiceTypes(),index), "PriceListFrag");
+        }
+    }
     public void setFragmentTitle(String title){
         if(!TextUtils.isEmpty(title))
         mTitleText.setText(title);

@@ -34,18 +34,16 @@ import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LandingFrag extends Fragment implements LandingHorizontalView.ButtonClicked{
+public class LandingFrag extends Fragment implements LandingHorizontalView.ButtonClicked, LandingHorizontalView.PriceListClicked{
 
-    private String TAG=LandingFrag.class.getName();
+    private String TAG="LandingFrag";
     @BindView(R.id.landingScrollLinearView) LinearLayout mScrollLinearView;
     @BindView(R.id.viewpager_home) ViewPager mPager;
-
     private GeneralListDataPojo mGeneralPojo;
     private static String LANDING_DATA="LandingData";
     private APIConstants mApiConstants;
     private ArrayList<String> mServices;
     private Unbinder mUnbinder;
-
 
     public static LandingFrag newInstance(GeneralListDataPojo generalPojo) {
         LandingFrag fragment = new LandingFrag();
@@ -100,13 +98,13 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         }
     }
     private void populateWashTypes(){
-        Log.d(TAG,TAG+" populateWashTypes");
+        Log.d(TAG, " populateWashTypes");
 
         ArrayList<WashTypes> types = new ArrayList<>();
         if(null!=mGeneralPojo){
             mServices=new ArrayList<String>();
-            Log.d(TAG,TAG+" populateWashTypes null!=mServicesData");
-            Log.d(TAG,TAG+" populateWashTypes mServicesData.getData().size() ="+mGeneralPojo.getData().size());
+            Log.d(TAG, " populateWashTypes null!=mServicesData");
+            Log.d(TAG, " populateWashTypes mServicesData.getData().size() ="+mGeneralPojo.getData().size());
             for(int count=0;count<mGeneralPojo.getData().size();count++){
                 Data serviceData = mGeneralPojo.getData().get(count);
                 if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
@@ -118,16 +116,16 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
                     mServices.add(serviceData.getName());
                 }
             }
-            Log.d(TAG,TAG+" populateWashTypes Adding horizontal news");
+            Log.d(TAG," populateWashTypes Adding horizontal news");
             addHorizontalViews(types.size(),types);
         }else{
-            Log.d(TAG,TAG+" mServicesData is null");
+            Log.d(TAG," mServicesData is null");
         }
     }
 
     private void addHorizontalViews(int viewCount,ArrayList<WashTypes> types){
         for(int count=0;count<viewCount;count++){
-            LandingHorizontalView horizontalView=new LandingHorizontalView(getActivity(),count,types.get(count),this);
+            LandingHorizontalView horizontalView=new LandingHorizontalView(getActivity(),count,types.get(count),this,this);
             if(count%2!=0){
                 try {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -155,7 +153,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
 
     @Override
     public void onButtonClicked(int index) {
-        Log.d(TAG,TAG+"Button clicked on index = "+index);
+        Log.d(TAG,"Button clicked on index = "+index);
         //Avoided below dut to neglecting backstack by android
         //FragmentManager childFragMan = getChildFragmentManager();
         FragmentManager childFragMan = getActivity().getSupportFragmentManager();
@@ -166,6 +164,14 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         childFragTrans.commit();
         fragB.setUserVisibleHint(true);
         this.setUserVisibleHint(false);
+    }
+
+    @Override
+    public void onPriceListClicked(int index) {
+        Log.d(TAG,"onPriceListClicked clicked on index = "+index);
+        if(index!=-1){
+            ((LandingActivity) getActivity()).pushPriceListWithIndex(index);
+        }
     }
 
     @Override public void onDestroyView() {

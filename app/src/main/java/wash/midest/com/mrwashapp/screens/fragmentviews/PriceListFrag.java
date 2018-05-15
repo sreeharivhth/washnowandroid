@@ -47,22 +47,25 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     private ListAdapter mListAdapter;
     private static final String TAG="PriceListFrag";
     private static String SERVICE_DATA="ServiceData";
+    private static String SELECTED_INDEX="SelectedIndex";
     private Unbinder mUnbinder;
     private ArrayList<String> mServiceTypes;
     private ArrayList<WashTypes> mAllService;
     @BindView(R.id.serviceType)
     Spinner mSpinner;
     private final String CURRENCY = "QR";
+    private int mSelectedIndex=-1;
 
     public PriceListFrag() {
         // Required empty public constructor
     }
 
-    public static PriceListFrag newInstance(ArrayList<WashTypes> serviceTypes){
+    public static PriceListFrag newInstance(ArrayList<WashTypes> serviceTypes,int selectedPos){
 
         PriceListFrag priceListFrag=new PriceListFrag();
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(SERVICE_DATA, serviceTypes);
+        bundle.putInt(SELECTED_INDEX,selectedPos);
         priceListFrag.setArguments(bundle);
         return priceListFrag;
     }
@@ -75,6 +78,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         mUnbinder = ButterKnife.bind(this, view);
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.action_price_list));
         mAllService= getArguments().getParcelableArrayList(SERVICE_DATA);
+        mSelectedIndex=getArguments().getInt(SELECTED_INDEX);
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -122,6 +126,13 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServiceTypes);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mSpinner.setAdapter(dataAdapter);
+
+        if(mSelectedIndex!=-1){
+            mSpinner.setSelection(mSelectedIndex);
+            Log.d(TAG,"mSelectedIndex = "+mSelectedIndex);
+        }else{
+            Log.d(TAG,"mSelectedIndex = "+mSelectedIndex);
+        }
     }
 
     @Override

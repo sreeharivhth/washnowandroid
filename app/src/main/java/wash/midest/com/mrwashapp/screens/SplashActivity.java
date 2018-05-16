@@ -12,21 +12,38 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.ProgressBar;
 
+import java.util.HashMap;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class SplashActivity extends BaseActivity {
 
+    private static final String TAG = "SplashActivity";
     // Splash screen timer
     private static int SPLASH_TIME_OUT = 3000;
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
+    @BindView(R.id.progressBar) ProgressBar mProgressBar;
+    private boolean mIsProgressShown =false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-
+        ButterKnife.bind(this);
         new Handler().postDelayed(new Runnable() {
 
             @Override
@@ -96,7 +113,85 @@ public class SplashActivity extends BaseActivity {
     }
 
     void postPermissionGranted(){
-        Intent i = new Intent(SplashActivity.this, SubSplashActivity.class);
+
+        String isActive = mSharedPreference.getPreferenceString(mSharedPreference.ACTIVE_STATUS);
+        if(isActive.equalsIgnoreCase("1")){
+            processServicesAPI();
+        }else{
+            Intent i = new Intent(SplashActivity.this, SubSplashActivity.class);
+            startActivity(i);
+            finish();
+        }
+    }
+
+    void alterProgressBar(){
+        if(mIsProgressShown)
+        {
+            mProgressBar.setVisibility(View.INVISIBLE);
+            mIsProgressShown =false;
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+        }else{
+            mProgressBar.setVisibility(View.VISIBLE);
+            mIsProgressShown =true;
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+        }
+    }
+
+    void processServicesAPI(){
+        if(!mAppUtils.isNetworkConnected(this)){
+            showErrorAlert(getString(R.string.network_error));
+            return;
+        }
+        alterProgressBar();
+        Log.d(TAG," processServicesAPI()");
+        HashMap<String,String> requestParams=new HashMap<>();
+        //requestParams.put(mApiConstants.API_ACCESSTOKEN,mToken);
+        //TODO keep actual mToken, once handled fromserver side
+        requestParams.put(mApiConstants.API_ACCESSTOKEN,"");
+
+        APIServiceFactory serviceFactory = new APIServiceFactory();
+        serviceFactory.getAPIConfiguration().servicesAPI( requestParams )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
+                    @Override
+                    public void onNext(GeneralListDataPojo generalPojo) {
+                        alterProgressBar();
+                        int statusCode = generalPojo.getStatusCode();
+                        if(statusCode!=mApiConstants.SUCCESS){
+                            Log.d(TAG," onNext error statusCode = "+statusCode);
+                            String errorMessage = generalPojo.getError().get(0).getErrMessage();
+                            if(!TextUtils.isEmpty(errorMessage)){
+                                showErrorAlert(errorMessage);
+                            }else{
+                                showErrorAlert(getString(R.string.general_error_server));
+                            }
+                        }else{
+                            Log.d(TAG," onNext success statusCode = "+statusCode);
+                            //Send data using RxEvent Bus
+                            doLandingAction(generalPojo);
+                        }
+                    }
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.e(TAG, " processServicesAPI Error "+e.toString());
+                        alterProgressBar();
+                        showErrorAlert(getString(R.string.general_error_server));
+                    }
+                    @Override
+                    public void onComplete() {
+                        Log.d(TAG, "### The API service Observable has ended!");
+                    }
+                });
+    }
+    private void doLandingAction(GeneralListDataPojo generalPojo){
+        Log.d(TAG,TAG+" doLandingAction");
+
+        Intent i = new Intent(SplashActivity.this, LandingActivity.class);
+        i.putExtra("LandingData",generalPojo);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(i);
         finish();
     }

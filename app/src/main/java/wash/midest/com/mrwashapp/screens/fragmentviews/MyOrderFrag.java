@@ -1,19 +1,14 @@
 package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -25,83 +20,87 @@ import butterknife.ButterKnife;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APICallBack;
-import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
-import wash.midest.com.mrwashapp.screens.customviews.PriceListRowView;
-import wash.midest.com.mrwashapp.utils.AppUtils;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FAQFrag extends BaseFrag implements APICallBack {
+public class MyOrderFrag extends BaseFrag implements APICallBack{
 
-    private ListAdapter mListAdapter;
-    @BindView(R.id.faqRecyclerView)
-    RecyclerView mRecyclerView;
+    private GeneralListDataPojo mGeneralPojo;
+    private static String LANDING_DATA="Data";
+    @BindView(R.id.order_list)
+    RecyclerView listRecycler;
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
+    private static final String TAG="MyOrderFrag";
     private Unbinder mUnbinder;
-    private List<Data> data;
+    private ListAdapter mListAdapter;
 
-    public FAQFrag() {
+    public MyOrderFrag() {
         // Required empty public constructor
-
     }
 
-    public static FAQFrag newInstance(){
-
-        FAQFrag faqFrag=new FAQFrag();
-        return faqFrag;
+    public static MyOrderFrag newInstance(){
+        MyOrderFrag fragment=new MyOrderFrag();
+        Bundle bundle = new Bundle();
+        /*bundle.putParcelable(LANDING_DATA, generalPojo);*/
+        fragment.setArguments(bundle);
+        return fragment;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view =  inflater.inflate(R.layout.fragment_faq, container, false);
-        mUnbinder=ButterKnife.bind(this, view);
+        View view =  inflater.inflate(R.layout.fragment_my_order, container, false);
+        mUnbinder = ButterKnife.bind(this, view);
+        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.action_orders));
 
-        //set Title
-        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.faq));
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        listRecycler.setLayoutManager(layoutManager);
 
+        getPriceListData();
+
+        return view;
+    }
+
+    void getPriceListData(){
+        if(!mAppUtils.isNetworkConnected(getActivity())){
+            showMessage(getString(R.string.network_error),R.string.ok);
+            return;
+        }
         mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();
         //TODO keep actual mToken, once handled from backend
-        requestParams.put(new APIConstants().API_ACCESSTOKEN,"");
+        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
         APIProcessor apiProcessor=new APIProcessor();
-        apiProcessor.processFAQ(FAQFrag.this,requestParams);
-
-        return view;
+        apiProcessor.getMyOrder(MyOrderFrag.this,requestParams);
     }
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         mProgressBar.setVisibility(View.GONE);
-        if(isSuccess){
+        if(isSuccess) {
+            List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
+            if(dataList.size()>0){
+                mListAdapter = new ListAdapter(dataList);
+                listRecycler.setAdapter(mListAdapter);
+                mListAdapter.notifyDataSetChanged();
+            }else{
+                showMessage("No orders made till now ",R.string.ok);
+            }
 
-            GeneralListDataPojo pojo=(GeneralListDataPojo)responseObj;
-            data =  pojo.getData();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(layoutManager);
-                    if(data!=null && data.size()>0){
-                        mListAdapter = new ListAdapter(data);
-                        mRecyclerView.setAdapter(mListAdapter);
-                        mListAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
         }else{
             showMessage(errorMsg,R.string.ok);
         }
     }
+
     /**
      * Adapter for representing list view
      */
@@ -114,7 +113,7 @@ public class FAQFrag extends BaseFrag implements APICallBack {
         @Override
         public ListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
         {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.faq_row_view, parent, false);
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.myorder_list, parent, false);
             ViewHolder viewHolder;
             viewHolder = new ViewHolder(view);
             return viewHolder;
@@ -122,20 +121,14 @@ public class FAQFrag extends BaseFrag implements APICallBack {
         @Override
         public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
         {
-            String question = dataList.get(holder.getAdapterPosition()).getQuestion();
-            holder.textQuestion.setText(question);
+            String orderId = dataList.get(holder.getAdapterPosition()).getOrderId();
+            holder.textOrder_num.setText(orderId);
 
-            String answer = dataList.get(holder.getAdapterPosition()).getAnswer();
-            holder.textAnswer.setText(answer);
+            String time = dataList.get(holder.getAdapterPosition()).getDeliveryTime();
+            holder.textDate.setText(time);
 
-            /*holder.itemView.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick(View v)
-                {
-                    invokeMapActivity(position);
-                }
-            });*/
+            String status = dataList.get(holder.getAdapterPosition()).getStatus();
+            holder.textStatus.setText(status);
         }
         @Override
         public int getItemCount()
@@ -144,10 +137,15 @@ public class FAQFrag extends BaseFrag implements APICallBack {
         }
         class ViewHolder extends RecyclerView.ViewHolder
         {
-            @BindView(R.id.faq_question)
-            TextView textQuestion;
-            @BindView(R.id.faq_answer)
-            TextView textAnswer;
+            @BindView(R.id.order_num)
+            TextView textOrder_num;
+
+            @BindView(R.id.date)
+            TextView textDate;
+
+            @BindView(R.id.status)
+            TextView textStatus;
+
             ViewHolder(View itemView)
             {
                 super(itemView);

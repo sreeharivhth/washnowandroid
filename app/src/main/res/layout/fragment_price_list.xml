@@ -136,11 +136,38 @@
                 android:id="@+id/list_component"
                 ></LinearLayout>-->
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/list_component"
+                android:id="@+id/list_gents"
                 android:layout_marginTop="@dimen/component_margin_5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
             </android.support.v7.widget.RecyclerView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_others"
+                android:layout_marginTop="@dimen/component_margin_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginBottom="10dp"
+                android:background="@color/colorAccent" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/list_ladies"
+                android:layout_marginTop="@dimen/component_margin_5"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </android.support.v7.widget.RecyclerView>
+
         </LinearLayout>
 
     </ScrollView>

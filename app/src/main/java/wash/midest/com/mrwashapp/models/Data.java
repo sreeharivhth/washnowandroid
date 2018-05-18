@@ -6,6 +6,8 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by Sreehari.KV on 3/14/2018.
  */
@@ -237,6 +239,30 @@ public class Data implements Parcelable {
     @Expose
     private String price;
 
+    @SerializedName("Gents")
+    @Expose
+    private List<Gents> gents = null;
+
+    @SerializedName("Others")
+    @Expose
+    private List<Others> others = null;
+
+    public List<Gents> getGents() {
+        return gents;
+    }
+
+    public void setGents(List<Gents> gents) {
+        this.gents = gents;
+    }
+
+    public List<Others> getOthers() {
+        return others;
+    }
+
+    public void setOthers(List<Others> others) {
+        this.others = others;
+    }
+
     public String getItemName() {
         return itemName;
     }
@@ -253,9 +279,31 @@ public class Data implements Parcelable {
         this.price = price;
     }
 
+    //=================== My Order ========================//
+    @SerializedName("orderId")
+    @Expose
+    private String orderId;
+
+    @SerializedName("status")
+    @Expose
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 
+    public String getOrderId() {
+        return orderId;
+    }
 
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
 
     @Override
     public int describeContents() {
@@ -283,6 +331,10 @@ public class Data implements Parcelable {
         dest.writeString(this.address);
         dest.writeString(this.itemName);
         dest.writeString(this.price);
+        dest.writeString(this.orderId);
+        dest.writeString(this.status);
+
+
     }
 
     public Data() {
@@ -308,6 +360,8 @@ public class Data implements Parcelable {
         this.address = in.readString();
         this.itemName = in.readString();
         this.price = in.readString();
+        this.orderId = in.readString();
+        this.status= in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

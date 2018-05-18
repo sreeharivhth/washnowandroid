@@ -35,6 +35,7 @@ import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.fragmentviews.ContactFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.MyOrderFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.PriceListFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
@@ -169,6 +170,9 @@ public class LandingActivity extends BaseActivity
             replaceLandingContent(null, MyProfileFrag.newInstance(),"MyProfile");
 
         } else if (id == R.id.nav_orders) {
+
+            popTillBackStack(1);
+            replaceLandingContent(null, MyOrderFrag.newInstance(),"MyOrderFrag");
 
         } else if (id == R.id.nav_price) {
             if(isConnectedToNet()) {

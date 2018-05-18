@@ -26,6 +26,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText;
 
@@ -101,9 +102,9 @@ public class ForgotPassActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().forgotPassAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
 
                         alterProgressBar();
                         int statusCode = generalPojo.getStatusCode();
@@ -184,9 +185,9 @@ public class ForgotPassActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().forgotPassCodeVerifyAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
 
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();

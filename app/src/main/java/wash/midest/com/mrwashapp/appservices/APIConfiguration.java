@@ -22,7 +22,7 @@ public interface APIConfiguration {
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/registration")
-    Observable<GeneralPojo> registrationAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> registrationAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
 
@@ -30,27 +30,27 @@ public interface APIConfiguration {
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/login")
-    Observable<GeneralPojo> loginAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> loginAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/verify-email")
-    Observable<GeneralPojo> verifyEmailAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> verifyEmailAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/forgot-password")
-    Observable<GeneralPojo> forgotPassAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> forgotPassAPI(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/verify-forgot-password")
-    Observable<GeneralPojo> forgotPassCodeVerifyAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> forgotPassCodeVerifyAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
     @Headers({"Accept:application/json",
@@ -64,45 +64,45 @@ public interface APIConfiguration {
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/resend-verification-code")
-    Observable<GeneralPojo> resendOTPAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> resendOTPAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/update-password")
-    Observable<GeneralPojo> updateNewPassAPI(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> updateNewPassAPI(@FieldMap(encoded = true) Map<String, String> params);
 
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/update-password")
-    Observable<GeneralPojo> getPriceList(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> getPriceList(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("api/faq")
-    Observable<GeneralPojo> getFAQ(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> getFAQ(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/my-profile")
-    Observable<GeneralPojo> getMyProfile(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> getMyProfile(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/update-my-profile")
-    Observable<GeneralPojo> updateMyProfile(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> updateMyProfile(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("api/contactus")
-    Observable<GeneralPojo> contactUs(@FieldMap(encoded = true) Map<String, String> params);
+    Observable<GeneralListDataPojo> contactUs(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})
@@ -110,4 +110,9 @@ public interface APIConfiguration {
     @POST("api/pricelist")
     Observable<GeneralPojo> priceList(@FieldMap(encoded = true) Map<String, String> params);
 
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/my-orders")
+    Observable<GeneralListDataPojo> myOrder(@FieldMap(encoded = true) Map<String, String> params);
 }

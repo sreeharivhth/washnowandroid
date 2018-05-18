@@ -122,9 +122,9 @@ public class LoginActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().loginAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
 
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();

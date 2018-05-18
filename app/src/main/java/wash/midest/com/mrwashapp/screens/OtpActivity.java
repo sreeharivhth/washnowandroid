@@ -125,9 +125,9 @@ public class OtpActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().verifyEmailAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error
@@ -199,9 +199,9 @@ public class OtpActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().resendOTPAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();
                         //Check for error

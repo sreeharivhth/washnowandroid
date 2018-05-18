@@ -22,6 +22,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APICallBack;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 
@@ -95,8 +96,8 @@ public class ContactFrag extends BaseFrag implements APICallBack{
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         mProgressBar.setVisibility(View.GONE);
         if(isSuccess) {
-            GeneralPojo responsePojo = (GeneralPojo) responseObj;
-            Data data = ((GeneralPojo) responseObj).getData().get(0);
+            GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
+            Data data = ((GeneralListDataPojo) responseObj).getData().get(0);
 
             mEmail.setText(data.getEmail());
             mPhone.setText(data.getPhone());

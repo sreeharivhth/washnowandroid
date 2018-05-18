@@ -33,6 +33,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
@@ -248,9 +249,9 @@ public class RegistrationActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().registrationAPI( requestParams )
                 .subscribeOn(Schedulers.io()) //Asynchronously subscribes Observable to perform action in I/O Thread.
                 .observeOn(AndroidSchedulers.mainThread()) // To perform its emissions and response on UiThread(or)MainThread.
-                .subscribe(new DisposableObserver<GeneralPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() { // It would dispose the subscription automatically. If you wish to handle it use io.reactivex.Observer
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
                         Log.d(TAG,TAG+" onNext");
                         alterProgressBar();
                         int statusCode = (int) generalPojo.getStatusCode();

@@ -19,7 +19,7 @@ public class GeneralPojo {
     private Integer statusCode;
     @SerializedName("data")
     @Expose
-    private List<Data> data;
+    private Data data;
     @SerializedName("error")
     @Expose
     private List<Error> error;
@@ -40,11 +40,11 @@ public class GeneralPojo {
         this.statusCode = statusCode;
     }
 
-    public List<Data> getData() {
+    public Data getData() {
         return data;
     }
 
-    public void setData(List<Data> data) {
+    public void setData(Data data) {
         this.data = data;
     }
 

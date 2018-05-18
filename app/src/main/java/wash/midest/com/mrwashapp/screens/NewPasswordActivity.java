@@ -23,6 +23,7 @@ import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 
 public class NewPasswordActivity extends BaseActivity {
@@ -113,9 +114,9 @@ public class NewPasswordActivity extends BaseActivity {
         serviceFactory.getAPIConfiguration().updateNewPassAPI( requestParams )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralPojo>() {
+                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralPojo generalPojo) {
+                    public void onNext(GeneralListDataPojo generalPojo) {
 
                         alterProgressBar();
                         int statusCode = generalPojo.getStatusCode();

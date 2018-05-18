@@ -115,6 +115,10 @@ public class SplashActivity extends BaseActivity {
     void postPermissionGranted(){
 
         String isActive = mSharedPreference.getPreferenceString(mSharedPreference.ACTIVE_STATUS);
+
+        String memberID = mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID);
+        Log.d(TAG,"memberID = "+memberID);
+
         if(isActive.equalsIgnoreCase("1")){
             processServicesAPI();
         }else{

@@ -30,6 +30,8 @@ import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.models.Gents;
+import wash.midest.com.mrwashapp.models.Others;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.customviews.PriceListRowView;
@@ -40,8 +42,15 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
  */
 public class PriceListFrag extends BaseFrag implements APICallBack{
 
-    @BindView(R.id.list_component)
-    RecyclerView listRecycler;
+    @BindView(R.id.list_gents)
+    RecyclerView listRecyclerGents;
+
+    @BindView(R.id.list_others)
+    RecyclerView listRecyclerOthers;
+
+    @BindView(R.id.list_ladies)
+    RecyclerView listRecyclerLadies;
+
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
     private ListAdapter mListAdapter;
@@ -82,7 +91,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
 
         final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        listRecycler.setLayoutManager(layoutManager);
+        listRecyclerGents.setLayoutManager(layoutManager);
         if(mAllService!=null && mAllService.size()>0){
             addListComponents();
         }
@@ -139,9 +148,12 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         mProgressBar.setVisibility(View.GONE);
         if(isSuccess) {
-            List<Data> dataList = ((GeneralPojo) responseObj).getData();
-            mListAdapter = new ListAdapter(dataList);
-            listRecycler.setAdapter(mListAdapter);
+            List<Gents> gents = ((GeneralPojo) responseObj).getData().getGents();
+            //List<Gents> gents = dataList.get(0).getGents();
+            List<Others> others = ((GeneralPojo) responseObj).getData().getOthers();
+
+            mListAdapter = new ListAdapter(gents);
+            listRecyclerGents.setAdapter(mListAdapter);
             mListAdapter.notifyDataSetChanged();
         }else{
             showMessage(errorMsg,R.string.ok);
@@ -151,8 +163,8 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
      * Adapter for representing list view
      */
     public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>{
-        private List<Data> dataList;
-        private ListAdapter(List<Data> data)
+        private List<Gents> dataList;
+        private ListAdapter(List<Gents> data)
         {
             this.dataList = data;
         }

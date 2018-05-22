@@ -116,10 +116,10 @@ public class SplashActivity extends BaseActivity {
 
         String isActive = mSharedPreference.getPreferenceString(mSharedPreference.ACTIVE_STATUS);
 
-        String memberID = mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID);
-        Log.d(TAG,"memberID = "+memberID);
+        /*String memberID = mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID);
+        Log.d(TAG,"memberID = "+memberID);*/
 
-        if(isActive.equalsIgnoreCase("1")){
+        if(!TextUtils.isEmpty(isActive) && isActive.equalsIgnoreCase("1")){
             processServicesAPI();
         }else{
             Intent i = new Intent(SplashActivity.this, SubSplashActivity.class);

@@ -12,7 +12,7 @@
     <application
         android:name=".mrwashapp.MrWashApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/wash_launch_icon"
         android:label="@string/app_title"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"

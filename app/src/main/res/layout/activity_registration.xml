@@ -52,7 +52,7 @@
                     android:inputType="textAutoComplete"
                     android:maxLength="30"
                     android:textColor="@color/text_color"
-                    android:text="FN"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -71,7 +71,7 @@
                     android:inputType="textAutoComplete"
                     android:maxLength="30"
                     android:textColor="@color/text_color"
-                    android:text="LN"
+                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -110,7 +110,6 @@
                     android:inputType="textEmailAddress"
                     android:maxLength="30"
                     android:textColor="@color/text_color"
-                    android:text=""
                     />
             </android.support.design.widget.TextInputLayout>
 
@@ -128,7 +127,6 @@
                     android:inputType="textPassword"
                     android:maxLength="12"
                     android:textColor="@color/text_color"
-                    android:text="11abcA1@12"
                     />
             </android.support.design.widget.TextInputLayout>
 

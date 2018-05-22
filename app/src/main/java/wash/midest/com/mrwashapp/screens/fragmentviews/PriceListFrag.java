@@ -31,6 +31,7 @@ import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.models.Gents;
+import wash.midest.com.mrwashapp.models.Ladies;
 import wash.midest.com.mrwashapp.models.Others;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
@@ -53,7 +54,12 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
 
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
-    private ListAdapter mListAdapter;
+    private ListAdapterGents mListAdapterGents;
+
+    private ListAdapterOthers mListAdapterOthers;
+
+    private ListAdapterLadies mListAdapterLadies;
+
     private static final String TAG="PriceListFrag";
     private static String SERVICE_DATA="ServiceData";
     private static String SELECTED_INDEX="SelectedIndex";
@@ -152,24 +158,38 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
             //List<Gents> gents = dataList.get(0).getGents();
             List<Others> others = ((GeneralPojo) responseObj).getData().getOthers();
 
-            mListAdapter = new ListAdapter(gents);
-            listRecyclerGents.setAdapter(mListAdapter);
-            mListAdapter.notifyDataSetChanged();
+            List<Ladies> ladies = ((GeneralPojo) responseObj).getData().getLadies();
+
+            if(null !=gents && gents.size()>0){
+                mListAdapterGents = new ListAdapterGents(gents);
+                listRecyclerGents.setAdapter(mListAdapterGents);
+                mListAdapterGents.notifyDataSetChanged();
+            }
+            if(null != others && others.size()>0){
+                mListAdapterOthers = new ListAdapterOthers(others);
+                listRecyclerOthers.setAdapter(mListAdapterOthers);
+                mListAdapterOthers.notifyDataSetChanged();
+            }
+            if(null != ladies && ladies.size()>0){
+                mListAdapterLadies = new ListAdapterLadies(ladies);
+                listRecyclerLadies.setAdapter(mListAdapterLadies);
+                mListAdapterLadies.notifyDataSetChanged();
+            }
         }else{
             showMessage(errorMsg,R.string.ok);
         }
     }
     /**
-     * Adapter for representing list view
+     * Adapter for representing list view Gents
      */
-    public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ViewHolder>{
+    public class ListAdapterGents extends RecyclerView.Adapter<ListAdapterGents.ViewHolder>{
         private List<Gents> dataList;
-        private ListAdapter(List<Gents> data)
+        private ListAdapterGents(List<Gents> data)
         {
             this.dataList = data;
         }
         @Override
-        public ListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        public ListAdapterGents.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
         {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.price_list_item, parent, false);
             ViewHolder viewHolder;
@@ -177,7 +197,103 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
             return viewHolder;
         }
         @Override
-        public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
+        public void onBindViewHolder(ListAdapterGents.ViewHolder holder, final int position)
+        {
+            String itemName = dataList.get(holder.getAdapterPosition()).getItemName();
+            holder.textItem.setText(itemName);
+
+            String itemPrice = dataList.get(holder.getAdapterPosition()).getPrice();
+            holder.textPrice.setText(itemPrice+" "+CURRENCY);
+
+        }
+        @Override
+        public int getItemCount()
+        {
+            return dataList.size();
+        }
+        class ViewHolder extends RecyclerView.ViewHolder
+        {
+            @BindView(R.id.item_name)
+            TextView textItem;
+
+            @BindView(R.id.item_price)
+            TextView textPrice;
+
+            ViewHolder(View itemView)
+            {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+    }
+
+    /**
+     * Adapter for representing list view Ladies
+     */
+    public class ListAdapterLadies extends RecyclerView.Adapter<ListAdapterLadies.ViewHolder>{
+        private List<Ladies> dataList;
+        private ListAdapterLadies(List<Ladies> data)
+        {
+            this.dataList = data;
+        }
+        @Override
+        public ListAdapterLadies.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.price_list_item, parent, false);
+            ViewHolder viewHolder;
+            viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
+        @Override
+        public void onBindViewHolder(ListAdapterLadies.ViewHolder holder, final int position)
+        {
+            String itemName = dataList.get(holder.getAdapterPosition()).getItemName();
+            holder.textItem.setText(itemName);
+
+            String itemPrice = dataList.get(holder.getAdapterPosition()).getPrice();
+            holder.textPrice.setText(itemPrice+" "+CURRENCY);
+
+        }
+        @Override
+        public int getItemCount()
+        {
+            return dataList.size();
+        }
+        class ViewHolder extends RecyclerView.ViewHolder
+        {
+            @BindView(R.id.item_name)
+            TextView textItem;
+
+            @BindView(R.id.item_price)
+            TextView textPrice;
+
+            ViewHolder(View itemView)
+            {
+                super(itemView);
+                ButterKnife.bind(this, itemView);
+            }
+        }
+    }
+
+    /**
+     * Adapter for representing list view Others
+     */
+    public class ListAdapterOthers extends RecyclerView.Adapter<ListAdapterOthers.ViewHolder>{
+        private List<Others> dataList;
+        private ListAdapterOthers(List<Others> data)
+        {
+            this.dataList = data;
+        }
+        @Override
+        public ListAdapterOthers.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType)
+        {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.price_list_item, parent, false);
+            ViewHolder viewHolder;
+            viewHolder = new ViewHolder(view);
+            return viewHolder;
+        }
+        @Override
+        public void onBindViewHolder(ListAdapterOthers.ViewHolder holder, final int position)
         {
             String itemName = dataList.get(holder.getAdapterPosition()).getItemName();
             holder.textItem.setText(itemName);

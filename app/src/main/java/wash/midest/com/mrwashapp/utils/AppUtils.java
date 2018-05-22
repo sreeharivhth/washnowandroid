@@ -8,9 +8,14 @@ import android.net.NetworkInfo;
 import android.os.Build;
 import android.support.v4.app.ActivityCompat;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import wash.midest.com.mrwashapp.models.DateDifference;
 
 import static android.content.Context.CONNECTIVITY_SERVICE;
 
@@ -20,6 +25,7 @@ import static android.content.Context.CONNECTIVITY_SERVICE;
 
 public class AppUtils {
 
+    private static final String TAG="AppUtils";
             /*
             (?=.*\d)		#   must contains one digit from 0-9
             (?=.*[a-z])		#   must contains one lowercase characters
@@ -73,5 +79,43 @@ public class AppUtils {
             status=true;
         }
         return status;
+    }
+
+    public DateDifference printDifference(Date startDate, Date endDate) {
+
+        System.out.println("startDate : " + startDate);
+        System.out.println("endDate : "+ endDate);
+
+        //milliseconds
+        long different = endDate.getTime() - startDate.getTime();
+
+        long diffInHours = TimeUnit.MILLISECONDS.toHours(different);
+
+        Log.d(TAG,"diffInHours : " + diffInHours);
+
+        long secondsInMilli = 1000;
+        long minutesInMilli = secondsInMilli * 60;
+        long hoursInMilli = minutesInMilli * 60;
+        long daysInMilli = hoursInMilli * 24;
+
+        long elapsedDays = different / daysInMilli;
+        different = different % daysInMilli;
+
+        long elapsedHours = different / hoursInMilli;
+        different = different % hoursInMilli;
+
+        long elapsedMinutes = different / minutesInMilli;
+        different = different % minutesInMilli;
+
+        /*long elapsedSeconds = different / secondsInMilli;*/
+        Log.d(TAG,elapsedDays+" days,"+elapsedHours+" hours, "+elapsedMinutes+"minutes " );
+
+        DateDifference dateDifference=new DateDifference();
+        dateDifference.days=elapsedDays;
+        dateDifference.hours=elapsedHours;
+        dateDifference.minutes=elapsedMinutes;
+        dateDifference.differenceInHours=diffInHours;
+
+        return dateDifference;
     }
 }

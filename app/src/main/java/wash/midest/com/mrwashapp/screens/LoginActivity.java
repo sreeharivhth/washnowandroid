@@ -146,6 +146,9 @@ public class LoginActivity extends BaseActivity {
                             if(!TextUtils.isEmpty(mToken)){
                                 mSharedPreference.setPreferenceString(mSharedPreference.TOKEN_SESSION,mToken);
                             }
+                            String activeStatus="1";
+                            mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,activeStatus);
+
                             processServicesAPI();
                         }
                     }

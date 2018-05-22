@@ -247,6 +247,18 @@ public class Data implements Parcelable {
     @Expose
     private List<Others> others = null;
 
+    @SerializedName("Ladies")
+    @Expose
+    private List<Ladies> ladies = null;
+
+    public List<Ladies> getLadies() {
+        return ladies;
+    }
+
+    public void setLadies(List<Ladies> ladies) {
+        this.ladies = ladies;
+    }
+
     public List<Gents> getGents() {
         return gents;
     }

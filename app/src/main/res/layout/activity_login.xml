@@ -48,7 +48,6 @@
                 android:inputType="textEmailAddress"
                 android:textColor="@color/text_color"
                 android:maxLength="30"
-                android:text="raze@emailsy.info"
                 />
         </android.support.design.widget.TextInputLayout>
 
@@ -69,7 +68,6 @@
                 android:inputType="textPassword"
                 android:textColor="@color/text_color"
                 android:maxLength="12"
-                android:text="11abcA1@12"
                 />
         </android.support.design.widget.TextInputLayout>
 

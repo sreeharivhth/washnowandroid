@@ -44,6 +44,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,8 +52,12 @@ import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.models.Data;
+import wash.midest.com.mrwashapp.models.DateDifference;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
-
+import wash.midest.com.mrwashapp.models.WashTypes;
+import wash.midest.com.mrwashapp.screens.LandingActivity;
+import wash.midest.com.mrwashapp.utils.AppUtils;
 
 
 /**
@@ -63,8 +68,13 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
     private String TAG=PlaceOrderFrag.class.getName();
-    private int mYear, mMonth, mDay, mHour, mMinute;
-    private ArrayList mServicesList;
+    //private int mYear, mMonth, mDay, mHour, mMinute;
+    private GeneralListDataPojo mServicesList;
+    private ArrayList mServiceNames;
+    private ArrayList mDeliveryTime;
+    private int mSelectedDeliveryTimeMin;
+    private int mPickDifferenceHRS=48;
+
     @BindView(R.id.pickDate) TextView mTxtPickDate;
     @BindView(R.id.pickTime) TextView mTxtPickTime;
     @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
@@ -82,15 +92,20 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private Marker mCurrLocationMarker;
     private boolean mIsRestoredFromBackstack;
     private int PLACE_ORDER_STACK_NUMBER=2;
+    private Calendar mCPickTime;
+    private Calendar mCPickDate;
+    private Calendar mCDeliveryTime;
+    private Calendar mCDeliveryDate;
+    private String mSelectedService;
 
     public PlaceOrderFrag() {
     }
 
-    public static PlaceOrderFrag newInstance(int count, ArrayList servicesList) {
+    public static PlaceOrderFrag newInstance(int count, GeneralListDataPojo servicesList) {
         PlaceOrderFrag fragment = new PlaceOrderFrag();
         Bundle bundle = new Bundle();
         bundle.putInt(DATA, count);
-        bundle.putStringArrayList(SERVICES,servicesList);
+        bundle.putParcelable(SERVICES,servicesList);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -99,6 +114,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mIsRestoredFromBackstack = false;
+        mServiceNames=new ArrayList();
+        mDeliveryTime=new ArrayList();
         Log.d(TAG,"PlaceOrderFrag onCreate called ");
     }
 
@@ -108,8 +125,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_place_order, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        mServicesList = getArguments().getStringArrayList(SERVICES);
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServicesList);
+        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
+        mServicesList = getArguments().getParcelable(SERVICES);
+
+        for(int count=0;count<mServicesList.getData().size();count++){
+            Data serviceData = mServicesList.getData().get(count);
+            if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
+                mServiceNames.add(serviceData.getName());
+                mDeliveryTime.add(serviceData.getDeliveryTime());
+            }
+        }
+
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServiceNames);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mServicesPicker.setAdapter(dataAdapter);
         String currentDate = getCurrentDateTime(false);
@@ -118,8 +145,12 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         mTxtPickDate.setText(currentDate);
         mTxtPickTime.setText(currentTime);
 
-        mTxtDeliveryDate.setText(currentDate);
-        mTxtDeliveryTime.setText(currentTime);
+        String deliveryDate = getDeliveryDateTime(false);
+        String deliveryTime = getDeliveryDateTime(true);
+
+        mTxtDeliveryDate.setText(deliveryDate);
+        mTxtDeliveryTime.setText(deliveryTime);
+
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         try {
@@ -180,47 +211,104 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
 
     @OnItemSelected(R.id.servicesSpinner)
     void spinnerSelectAction(Spinner spinner, int position){
-        String itemSelected = (String) spinner.getItemAtPosition(position);
-        Log.d(TAG,"itemSelected === "+itemSelected);
+        mSelectedService = (String) spinner.getItemAtPosition(position);
+        mSelectedDeliveryTimeMin=Integer.valueOf(String.valueOf(mDeliveryTime.get(position)));
+        Log.d(TAG,"mSelectedDeliveryTimeMin = "+mSelectedDeliveryTimeMin);
+        Log.d(TAG,"itemSelected === "+mSelectedService+"  ||  position ="+position);
     }
 
-    @OnClick({R.id.pickDate , R.id.deliveryDate})
+    @OnClick({R.id.pickDate})
     void pickDate(){
         // Get Current Date
         final Calendar c = Calendar.getInstance();
-        mYear = c.get(Calendar.YEAR);
-        mMonth = c.get(Calendar.MONTH);
-        mDay = c.get(Calendar.DAY_OF_MONTH);
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        c.set(mYear, mMonth , mDay, 0, 0, 0);
+        mCPickDate=c;
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
-
                     @Override
                     public void onDateSet(DatePicker view, int year,
                                           int monthOfYear, int dayOfMonth) {
-                        //txtDate.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-                        Log.d(TAG,"Date = "+dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
-
+                        Log.d(TAG,"PICK || Date = "+dayOfMonth + "-" + (monthOfYear ) + "-" + year);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(year, monthOfYear , dayOfMonth , 0, 0, 0);
+                        mCPickDate=cal;
+                        mTxtPickDate.setText(year+"-"+(monthOfYear+1)+"-"+dayOfMonth);
                     }
                 }, mYear, mMonth, mDay);
         datePickerDialog.show();
     }
 
-    @OnClick({R.id.pickTime , R.id.deliveryTime})
-    void pickTime(){
-        // Get Current Time
+    @OnClick({R.id.deliveryDate})
+    void pickDateDelivery(){
         final Calendar c = Calendar.getInstance();
-        mHour = c.get(Calendar.HOUR_OF_DAY);
-        mMinute = c.get(Calendar.MINUTE);
-        // Launch Time Picker Dialog
+        int mYear = c.get(Calendar.YEAR);
+        int mMonth = c.get(Calendar.MONTH);
+        int mDay = c.get(Calendar.DAY_OF_MONTH);
+        c.set(mYear, mMonth , mDay, 0, 0, 0);
+        mCDeliveryDate=c;
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year,
+                                          int monthOfYear, int dayOfMonth) {
+                        Log.d(TAG,"DELIVERY || Date = "+dayOfMonth + "-" + (monthOfYear ) + "-" + year);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(year, monthOfYear , dayOfMonth, 0, 0, 0);
+                        mCDeliveryDate=cal;
+                       mTxtDeliveryDate.setText(year+"-"+(monthOfYear+1)+"-"+dayOfMonth);
+                    }
+                }, mYear, mMonth, mDay);
+        datePickerDialog.show();
+    }
+
+    @OnClick({R.id.pickTime})
+    void pickTime(){
+        final Calendar c = Calendar.getInstance();
+        int mHour = c.get(Calendar.HOUR_OF_DAY);
+        int mMinute = c.get(Calendar.MINUTE);
+        c.set(0, 0, 0, mHour, mMinute, 0);
+        mCPickTime=c;
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                 new TimePickerDialog.OnTimeSetListener() {
-
                     @Override
                     public void onTimeSet(TimePicker view, int hourOfDay,
                                           int minute) {
-
-                        /*txtTime.setText(hourOfDay + ":" + minute);*/
                         Log.d(TAG,"Time = "+hourOfDay + ":" + minute);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(0, 0, 0, hourOfDay, minute, 0);
+                        mCPickTime=cal;
+                        SimpleDateFormat df=new SimpleDateFormat("HH:mm");
+                        mTxtPickTime.setText(df.format(mCPickTime.getTime()));
+                    }
+                }, mHour, mMinute, false);
+        timePickerDialog.show();
+    }
+
+    @OnClick({R.id.deliveryTime})
+    void pickDeliveryTime(){
+        final Calendar c = Calendar.getInstance();
+        int mHour = c.get(Calendar.HOUR_OF_DAY);
+        int mMinute = c.get(Calendar.MINUTE);
+        c.set(0, 0, 0, mHour, mMinute, 0);
+        mCDeliveryTime=c;
+        TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
+                new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker view, int hourOfDay,
+                                          int minute) {
+                        Log.d(TAG,"Time = "+hourOfDay + ":" + minute);
+                        Calendar cal = Calendar.getInstance();
+                        cal.setTimeInMillis(0);
+                        cal.set(0, 0, 0, hourOfDay, minute, 0);
+                        mCDeliveryTime=cal;
+                        SimpleDateFormat df=new SimpleDateFormat("HH:mm");
+                        mTxtDeliveryTime.setText(df.format(mCDeliveryTime.getTime()));
                     }
                 }, mHour, mMinute, false);
         timePickerDialog.show();
@@ -228,7 +316,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
 
     String getCurrentDateTime(boolean isTime){
         Calendar c = Calendar.getInstance();
-        System.out.println("Current time => "+c.getTime());
+        Log.d(TAG,"Current time => "+c.getTime());
         SimpleDateFormat df;
         if(isTime){
             df = new SimpleDateFormat("HH:mm");
@@ -239,6 +327,19 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     }
 
 
+    String getDeliveryDateTime(boolean isTime){
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.HOUR_OF_DAY,1);
+        c.add(Calendar.DAY_OF_WEEK,1);
+        Log.d(TAG,"Current time => "+c.getTime());
+        SimpleDateFormat df;
+        if(isTime){
+            df = new SimpleDateFormat("HH:mm");
+        }else{
+            df = new SimpleDateFormat("yyyy-MM-dd ");
+        }
+        return df.format(c.getTime());
+    }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -355,7 +456,83 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
 
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder(){
-        showToast("Coming Soon");
+
+        Calendar delivery=Calendar.getInstance();
+        delivery.set(Calendar.HOUR_OF_DAY, mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
+        delivery.set(Calendar.MINUTE, mCDeliveryTime.get(Calendar.MINUTE));
+        delivery.set(Calendar.DAY_OF_MONTH, mCDeliveryDate.get(Calendar.DAY_OF_MONTH));
+        delivery.set(Calendar.MONTH, mCDeliveryDate.get(Calendar.MONTH));
+        delivery.set(Calendar.YEAR, mCDeliveryDate.get(Calendar.YEAR));
+
+        Calendar pickUp=Calendar.getInstance();
+        pickUp.set(Calendar.HOUR_OF_DAY, mCPickTime.get(Calendar.HOUR_OF_DAY));
+        pickUp.set(Calendar.MINUTE, mCPickTime.get(Calendar.MINUTE));
+        pickUp.set(Calendar.DAY_OF_MONTH, mCPickDate.get(Calendar.DAY_OF_MONTH));
+        pickUp.set(Calendar.MONTH, mCPickDate.get(Calendar.MONTH));
+        pickUp.set(Calendar.YEAR, mCPickDate.get(Calendar.YEAR));
+
+        /*Log.d(TAG,"mCDeliveryTime.get(Calendar.HOUR_OF_DAY) = "+mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
+        Log.d(TAG,"mCDeliveryTime.get(Calendar.MINUTE) = "+mCDeliveryTime.get(Calendar.MINUTE));
+        Log.d(TAG,"mCDeliveryDate.get(Calendar.DAY_OF_MONTH) = "+mCDeliveryDate.get(Calendar.DAY_OF_MONTH));
+        Log.d(TAG,"mCDeliveryDate.get(Calendar.MONTH) = "+mCDeliveryDate.get(Calendar.MONTH));
+        Log.d(TAG,"mCDeliveryDate.get(Calendar.YEAR) = "+mCDeliveryDate.get(Calendar.YEAR));
+        Log.d(TAG,"====================================================================");
+        Log.d(TAG,"mCPickTime.get(Calendar.HOUR_OF_DAY) = "+mCPickTime.get(Calendar.HOUR_OF_DAY));
+        Log.d(TAG,"mCPickTime.get(Calendar.MINUTE) = "+mCPickTime.get(Calendar.MINUTE));
+        Log.d(TAG,"mCPickDate.get(Calendar.DAY_OF_MONTH) = "+mCPickDate.get(Calendar.DAY_OF_MONTH));
+        Log.d(TAG,"mCPickDate.get(Calendar.MONTH) = "+mCPickDate.get(Calendar.MONTH));
+        Log.d(TAG,"mCPickDate.get(Calendar.YEAR) = "+mCPickDate.get(Calendar.YEAR));*/
+
+        Date deliveryDate=delivery.getTime();
+        Date pickupDate=pickUp.getTime();
+        if(pickupDate.after(deliveryDate)){
+            Log.d(TAG,"Pick up is after delivery! Invalid ");
+            showMessage(getString(R.string.pick_condition_1),R.string.ok);
+            return;
+        }else{
+            //DateDifference  dateDifference = new AppUtils().printDifference(pickupDate,deliveryDate);
+
+            /*SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            String currDateString = df.format(new Date());*/
+
+            Log.d(TAG,"===== WRT current time difference of delivery is =====");
+            //Check if pick up is valid
+            DateDifference  diffCurrentPick = new AppUtils().printDifference(Calendar.getInstance().getTime(),pickupDate);
+            if(isPickUpValid(diffCurrentPick)){
+
+                //Pick up is valid , proceed
+
+                DateDifference  dateDifference = new AppUtils().printDifference(pickupDate,deliveryDate);
+                if(dateDifference.differenceInHours>=mSelectedDeliveryTimeMin){
+                    //Proceed
+                    showToast("Can proceed with order");
+
+                }else{
+                    showMessage("Delivery and Pick up time difference should be more than "+mSelectedDeliveryTimeMin+" hours for "+mSelectedService + " !",R.string.ok);
+                }
+            }
+        }
+    }
+
+    private boolean isPickUpValid(DateDifference  dateDifference){
+        boolean status=false;
+        if(dateDifference.differenceInHours>=mPickDifferenceHRS)
+        {
+            status=true;
+            return status;
+        }else{
+            status=false;
+            showMessage("Pick up time should be more than "+mPickDifferenceHRS+" from current time!",R.string.ok);
+            return status;
+        }
+    }
+
+    private boolean isDeliveryValid(){
+        boolean status=false;
+
+
+
+        return status;
     }
 
     @Override public void onDestroyView() {

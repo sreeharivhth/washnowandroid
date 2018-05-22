@@ -158,7 +158,9 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         //FragmentManager childFragMan = getChildFragmentManager();
         FragmentManager childFragMan = getActivity().getSupportFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
+        //PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
+        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mGeneralPojo);
+
         childFragTrans.add(R.id.landing_fragment_id, fragB);
         childFragTrans.addToBackStack("PlaceOrderFrag");
         childFragTrans.commit();

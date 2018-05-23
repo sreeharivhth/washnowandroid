@@ -1,21 +1,29 @@
 package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,11 +33,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CheckedTextView;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -41,10 +52,13 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -63,7 +77,10 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected{
+public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        LocationListener {
 
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
@@ -74,7 +91,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private ArrayList mDeliveryTime;
     private int mSelectedDeliveryTimeMin;
     private int mPickDifferenceHRS=48;
-
+    private static final int PERMISSIONS_REQUEST_LOCATION = 3981;
     @BindView(R.id.pickDate) TextView mTxtPickDate;
     @BindView(R.id.pickTime) TextView mTxtPickTime;
     @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
@@ -97,6 +114,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private Calendar mCDeliveryTime;
     private Calendar mCDeliveryDate;
     private String mSelectedService;
+    private LocationManager mLocationManager;
+    private boolean isLocationReceived;
+    @BindView(R.id.progressBarLoading)
+    ProgressBar mProgressBar;
+    private Location mLastLocation;
 
     public PlaceOrderFrag() {
     }
@@ -108,6 +130,12 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         bundle.putParcelable(SERVICES,servicesList);
         fragment.setArguments(bundle);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
     }
 
     @Override
@@ -424,9 +452,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 }
             });
             dialog.show();
-
-
         }else{
+            isPermissionRequired();
             status=true;
         }
         return status;
@@ -446,12 +473,47 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     public void onResume() {
         super.onResume();
         Log.d(TAG," PlaceOrderFrag onResume() === ");
-        if(mIsRestoredFromBackstack)
+        /*if(mIsRestoredFromBackstack)
         {
 
         }else{
             Log.d(TAG," onResume mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
+        }*/
+        isLocationEnabled();
+
+    }
+
+    private void isPermissionRequired() {
+        boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getActivity().getApplicationContext());
+        if (isPermissionRequired) {
+            checkPermission();
+        } else {
+            postPermissionGranted();
         }
+    }
+
+    void checkPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_PHONE_STATE)) {
+
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_LOCATION);
+            } else {
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_LOCATION);
+            }
+        } else {
+            //Permission already granted. Proceed with functionalities
+            postPermissionGranted();
+        }
+    }
+
+    private void postPermissionGranted() {
+        if (ActivityCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
     }
 
     @OnClick(R.id.placeorder_btn)
@@ -538,5 +600,106 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+
+        Log.d(TAG,"isLocationReceived = "+isLocationReceived);
+        mProgressBar.setVisibility(View.GONE);
+
+        if(!isLocationReceived){
+            Log.d(TAG,"Inside if loop ");
+            mLastLocation = location;
+            if (mCurrLocationMarker != null) {
+                mCurrLocationMarker.remove();
+            }
+            mGoogleMap.clear();
+            Log.d(TAG, TAG+"LAT="+String.valueOf(location.getLatitude())+"||LON="+String.valueOf(location.getLongitude()));
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            //move map camera
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+
+            getAddressFromLocation(location.getLatitude(), location.getLongitude());
+        }else{
+            Log.d(TAG,"Inside Else part");
+            if(mLocationManager!=null){
+                mLocationManager.removeUpdates(this);
+                mLocationManager=null;
+            }
+            isLocationReceived=true;
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    private void getAddressFromLocation(double latitude, double longitude) {
+
+        Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            if (addresses.size() > 0) {
+                /*Address fetchedAddress = addresses.get(0);
+                StringBuilder strAddress = new StringBuilder();
+                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
+                }*/
+
+                Address address = addresses.get(0);
+                StringBuffer str = new StringBuffer();
+                str.append(address.getFeatureName()+", ");
+                //str.append("Name:"  + address.getLocality());
+                //str.append("Sub-Admin Ares: " + address.getSubAdminArea() );
+                str.append( address.getSubLocality()+", " );
+                //str.append("Admin Area: " + address.getAdminArea() );
+                str.append( address.getThoroughfare() +", ");
+                str.append( address.getLocality() +", ");
+                str.append(address.getAdminArea() +", ");
+                str.append(address.getCountryName() );
+                //str.append("Country Code: " + address.getCountryCode() );
+                String strAddress = str.toString();
+                Log.d(TAG,"Address retrieved == "+strAddress.toString());
+                mAddress.setText(strAddress.toString());
+            } else {
+                mAddress.setText("Searching Current Address");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            //printToast("Could not get address..!");
+            showToast("Could not get address..!");
+        }
     }
 }

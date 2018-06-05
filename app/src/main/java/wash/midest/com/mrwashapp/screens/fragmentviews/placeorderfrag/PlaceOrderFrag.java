@@ -237,27 +237,32 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     void updateLocation() {
         Log.d(TAG, "updateLocation  === ");
-        String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
-        if (!TextUtils.isEmpty(houseSelected)) {
-            mTxtHouseFlat.setText(houseSelected);
+
+        if(!isFirstTime){
+            String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
+            if (!TextUtils.isEmpty(houseSelected)) {
+                mTxtHouseFlat.setText(houseSelected);
+            }
+            String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
+            if (!TextUtils.isEmpty(landmarkSelected)) {
+                mTxtLandmark.setText(landmarkSelected);
+            }
+
+            double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
+            double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+            LatLng latLng = new LatLng(lat, lon);
+            mLocation = latLng;
+            mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
+            mTxtLocation.setText(mGoogleLocationAdd);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(mLocation);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            //move map camera
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocation, 16));
         }
-        String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
-        if (!TextUtils.isEmpty(landmarkSelected)) {
-            mTxtLandmark.setText(landmarkSelected);
-        }
-        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
-        LatLng latLng = new LatLng(lat, lon);
-        mLocation = latLng;
-        mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
-        mTxtLocation.setText(mGoogleLocationAdd);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(mLocation);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-        //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocation, 16));
+
     }
 
     @OnItemSelected(R.id.servicesSpinner)

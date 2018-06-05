@@ -105,6 +105,18 @@ public class Data implements Parcelable {
     @Expose
     private String deliveryTime;
 
+    @SerializedName("pickupTime")
+    @Expose
+    private String pickupTime;
+
+    public String getPickupTime() {
+        return pickupTime;
+    }
+
+    public void setPickupTime(String pickupTime) {
+        this.pickupTime = pickupTime;
+    }
+
     public String getId() {
         return id;
     }

@@ -88,8 +88,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private GeneralListDataPojo mServicesList;
     private ArrayList mServiceNames;
     private ArrayList mDeliveryTime;
+    private ArrayList mPickTime;
     private int mSelectedDeliveryTimeMin;
-    private int mPickDifferenceHRS=48;
+    private int mPickDifferenceHRS;
     private static final int PERMISSIONS_REQUEST_LOCATION = 3981;
     @BindView(R.id.pickDate) TextView mTxtPickDate;
     @BindView(R.id.pickTime) TextView mTxtPickTime;
@@ -148,6 +149,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         mIsRestoredFromBackstack = false;
         mServiceNames=new ArrayList();
         mDeliveryTime=new ArrayList();
+        mPickTime =new ArrayList();
         Log.d(TAG,"PlaceOrderFrag onCreate called ");
         isLocationPresent = mSharedPreference.getPreferenceBool(mSharedPreference.LOCATION_PRESENT);
         isFirstTime=true;
@@ -168,6 +170,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             if(serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)){
                 mServiceNames.add(serviceData.getName());
                 mDeliveryTime.add(serviceData.getDeliveryTime());
+                mPickTime.add(serviceData.getPickupTime());
             }
         }
 
@@ -276,6 +279,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     void spinnerSelectAction(Spinner spinner, int position){
         mSelectedService = (String) spinner.getItemAtPosition(position);
         mSelectedDeliveryTimeMin=Integer.valueOf(String.valueOf(mDeliveryTime.get(position)));
+        mPickDifferenceHRS=Integer.valueOf(String.valueOf(mPickTime.get(position)));
         Log.d(TAG,"mSelectedDeliveryTimeMin = "+mSelectedDeliveryTimeMin);
         Log.d(TAG,"itemSelected === "+mSelectedService+"  ||  position ="+position);
     }

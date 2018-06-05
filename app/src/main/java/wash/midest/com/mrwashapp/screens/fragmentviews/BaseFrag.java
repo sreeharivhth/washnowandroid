@@ -100,4 +100,15 @@ public class BaseFrag extends Fragment implements AlertCallBack{
             }
         });
     }
+
+    protected void showErrorAlert(String message){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+    }
 }

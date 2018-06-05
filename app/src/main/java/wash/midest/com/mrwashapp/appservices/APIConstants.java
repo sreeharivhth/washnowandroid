@@ -24,6 +24,19 @@ public class APIConstants {
     public String API_DIALINGCODE = "dialingCode";
     public String API_CODE = "code";
 
+    public String API_SERVICE_TYPE = "serviceType";
+    public String API_PICKUP_TIME = "pickUpTime";
+    public String API_DELIVERY_TIME = "deliveryTime";
+    public String API_ADDRESS = "address";
+    public String API_BUILDINGNAME = "buildingName";
+    public String API_LANDMARK = "landmark";
+    public String API_LATITIDE = "lat";
+    public String API_LONGITUDE = "lng";
+    public String API_PROMOCODE_ID = "promoCodeId";
+
+
+
+
     public String APPID_VAL = "110";
     public String DIALINGCODE_VAL = "978";
 

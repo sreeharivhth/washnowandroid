@@ -55,6 +55,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -64,11 +65,14 @@ import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APICallBack;
+import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.DateDifference;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.MyOrderFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.OrderMapFrag;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
@@ -79,7 +83,7 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
 public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,OrderMapFrag.OnLocationSelected,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener ,APICallBack {
 
     private static String DATA="DATA";
     private static String SERVICES="SERVICES";
@@ -89,6 +93,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private ArrayList mServiceNames;
     private ArrayList mDeliveryTime;
     private ArrayList mPickTime;
+    private ArrayList mServiceId;
+    private int mSelectedServiceID;
     private int mSelectedDeliveryTimeMin;
     private int mPickDifferenceHRS;
     private static final int PERMISSIONS_REQUEST_LOCATION = 3981;
@@ -121,6 +127,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     private boolean isLocationReceived;
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
+    private long mSelectedPickTime;
+    private long mSelectedDeliveryTime;
     private Location mLastLocation;
     private boolean isLocationPresent=false;
     private boolean isFirstTime;
@@ -150,6 +158,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         mServiceNames=new ArrayList();
         mDeliveryTime=new ArrayList();
         mPickTime =new ArrayList();
+        mServiceId=new ArrayList();
         Log.d(TAG,"PlaceOrderFrag onCreate called ");
         isLocationPresent = mSharedPreference.getPreferenceBool(mSharedPreference.LOCATION_PRESENT);
         isFirstTime=true;
@@ -171,6 +180,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 mServiceNames.add(serviceData.getName());
                 mDeliveryTime.add(serviceData.getDeliveryTime());
                 mPickTime.add(serviceData.getPickupTime());
+                mServiceId.add(serviceData.getId());
             }
         }
 
@@ -280,6 +290,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         mSelectedService = (String) spinner.getItemAtPosition(position);
         mSelectedDeliveryTimeMin=Integer.valueOf(String.valueOf(mDeliveryTime.get(position)));
         mPickDifferenceHRS=Integer.valueOf(String.valueOf(mPickTime.get(position)));
+        mSelectedServiceID=Integer.valueOf(String.valueOf(mServiceId.get(position)));
         Log.d(TAG,"mSelectedDeliveryTimeMin = "+mSelectedDeliveryTimeMin);
         Log.d(TAG,"itemSelected === "+mSelectedService+"  ||  position ="+position);
     }
@@ -564,24 +575,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         }*/
     }
 
-    private void setLocationInMap(double latitude,double longitude){
-        /*LatLng latLng = new LatLng(latitude, longitude);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Address");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-        //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));*/
-    }
-
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder(){
 
-        if(TextUtils.isEmpty(mTxtHouseFlat.getText().toString())){
-            showMessage("Please enter address",R.string.ok);
-            return;
-        }
         Calendar delivery=Calendar.getInstance();
         delivery.set(Calendar.HOUR_OF_DAY, mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
         delivery.set(Calendar.MINUTE, mCDeliveryTime.get(Calendar.MINUTE));
@@ -625,6 +621,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 //Pick up is valid , proceed with pick and delivery difference
                 Log.d(TAG,"Pick up is valid , proceed with pick and delivery difference");
                 if(isDeliveryValid(pickupDate,deliveryDate)){
+                    mSelectedPickTime=pickupDate.getTime();
+                    mSelectedDeliveryTime=deliveryDate.getTime();
+
                     Log.d(TAG,"Delivery and Pick up are Valid , can proceed with order placing");
                     showToast("Can proceed with order");
                     saveAddressLocation();
@@ -646,6 +645,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             mSharedPreference.setPreferenceBool(mSharedPreference.LOCATION_PRESENT,true);
 
             Log.d(TAG,"saveAddressLocation() Locations saved");
+
+            processPlaceOrderAPI();
+
         }else{
             Log.d(TAG,"saveAddressLocation() mLocation is NULL");
         }
@@ -782,6 +784,57 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             e.printStackTrace();
             //printToast("Could not get address..!");
             showToast("Error in Could not get address..!");
+        }
+    }
+
+    void processPlaceOrderAPI(){
+        if(!mAppUtils.isNetworkConnected(getActivity())){
+            showErrorAlert(getString(R.string.network_error));
+            return;
+        }
+
+        /*String imei = mAppUtils.getDeviceIMEI(getActivity());*/
+        String imei = "1122009955";
+
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
+
+        requestParams.put(mApiConstants.API_SERVICE_TYPE,String.valueOf(mSelectedServiceID));
+        requestParams.put(mApiConstants.API_PICKUP_TIME,String.valueOf(mSelectedPickTime));
+        requestParams.put(mApiConstants.API_DELIVERY_TIME,String.valueOf(mSelectedDeliveryTime));
+        requestParams.put(mApiConstants.API_ADDRESS,mGoogleLocationAdd);
+        requestParams.put(mApiConstants.API_BUILDINGNAME,mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT));
+        requestParams.put(mApiConstants.API_LANDMARK,mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK));
+        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED,0.0);
+        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED,0.0);
+        requestParams.put(mApiConstants.API_LATITIDE,String.valueOf(lat));
+        requestParams.put(mApiConstants.API_LONGITUDE,String.valueOf(lon));
+        requestParams.put(mApiConstants.API_PROMOCODE_ID,"0");
+        requestParams.put(mApiConstants.API_IMEI,imei);
+
+        APIProcessor apiProcessor=new APIProcessor();
+        apiProcessor.postGenerateOrder(this,requestParams);
+
+    }
+
+    @Override
+    public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
+        if(isSuccess) {
+            List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
+            if(dataList.size()>0){
+                if(!TextUtils.isEmpty(dataList.get(0).getOrderId())){
+                    Log.d(TAG,"Order generated with order id = "+dataList.get(0).getOrderId());
+                    showMessage("Order successfully generated with order id : "+dataList.get(0).getOrderId(),R.string.ok);
+                }else{
+                    Log.d(TAG,"Order generated");
+                    showMessage("Order successfully generated ",R.string.ok);
+                }
+            }else{
+                showMessage("Could not create order.",R.string.ok);
+            }
+
+        }else{
+            showMessage(errorMsg,R.string.ok);
         }
     }
 }

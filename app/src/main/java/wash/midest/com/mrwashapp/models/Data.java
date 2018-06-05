@@ -357,7 +357,7 @@ public class Data implements Parcelable {
         dest.writeString(this.price);
         dest.writeString(this.orderId);
         dest.writeString(this.status);
-
+        dest.writeString(this.pickupTime);
 
     }
 
@@ -386,6 +386,7 @@ public class Data implements Parcelable {
         this.price = in.readString();
         this.orderId = in.readString();
         this.status= in.readString();
+        this.pickupTime= in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

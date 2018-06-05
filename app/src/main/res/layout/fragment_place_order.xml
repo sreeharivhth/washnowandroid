@@ -263,13 +263,13 @@
                 android:layout_marginBottom="@dimen/component_margin"
 
                 />-->
-            <TextView
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tap on Map to tag location to current order"
                 android:textColor="@color/text_color_gray_light"
                 android:layout_marginBottom="@dimen/component_margin_5"
-                />
+                />-->
 
             <com.google.android.gms.maps.MapView
                 android:layout_marginTop="@dimen/component_margin_16"

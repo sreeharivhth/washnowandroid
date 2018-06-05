@@ -96,8 +96,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
     @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
     @BindView(R.id.location) TextView mTxtLocation;
-    @BindView(R.id.landmark) TextView mTxtLandmark;
-    @BindView(R.id.house_flat) TextView mTxtHouseFlat;
+    @BindView(R.id.landmark) TextInputEditText mTxtLandmark;
+    @BindView(R.id.house_flat) TextInputEditText mTxtHouseFlat;
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
     @BindView(R.id.placeorder_btn) Button mBtnPlaceOrder;
     @BindView(R.id.placeOrderMap)MapView mMapView;
@@ -215,6 +215,15 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
 
     void updateLocation(){
         Log.d(TAG,"updateLocation  === ");
+
+        String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
+        if(!TextUtils.isEmpty(houseSelected)){
+            mTxtHouseFlat.setText(houseSelected);
+        }
+        String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
+        if(!TextUtils.isEmpty(landmarkSelected)){
+            mTxtLandmark.setText(landmarkSelected);
+        }
         double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED,0.0);
         double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED,0.0);
         LatLng latLng=new LatLng(lat,lon);

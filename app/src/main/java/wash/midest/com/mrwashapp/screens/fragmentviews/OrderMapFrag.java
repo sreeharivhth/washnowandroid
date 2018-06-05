@@ -14,6 +14,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -26,6 +27,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,6 +85,14 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
     TextView mTxtAddress;
     @BindView(R.id.cardView)
     CardView mCardAddress;
+    @BindView(R.id.house_new)
+    TextInputEditText mHouseAdd;
+    @BindView(R.id.landmark_new)
+    TextInputEditText mLandmark;
+    @BindView(R.id.getCurrentLocation)
+    ImageView mGetCurrentLoc;
+    @BindView(R.id.centerMarker)
+    ImageView mCenterMarker;
 
     private LocationManager mLocationManager;
     private Marker mCurrLocationMarker;
@@ -150,6 +160,12 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         }
     }
 
+    @OnClick(R.id.getCurrentLocation)
+    void getCurrentLocation(){
+        mProgressBar.setVisibility(View.VISIBLE);
+        mCenterMarker.setVisibility(View.VISIBLE);
+        isPermissionRequired();
+    }
 
     private void postPermissionGranted() {
         if (ActivityCompat.checkSelfPermission(getActivity(),
@@ -195,8 +211,8 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         }
         mMapView.getMapAsync(this);
         //onAttachToParentFragment(mParentFrag);
-        mProgressBar.setVisibility(View.VISIBLE);
-        isPermissionRequired();
+
+
         return view;
     }
 
@@ -217,7 +233,16 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
                 mSharedPreference.setPreferenceDouble(mSharedPreference.LON_SELECTED,mLonSelected);
                 mSharedPreference.setPreferenceString(mSharedPreference.SELECTED_ADDERSS,mSelectedAddress);
 
-
+                if(!TextUtils.isEmpty(mHouseAdd.getText())){
+                    mSharedPreference.setPreferenceString(mSharedPreference.HOUSE_FLAT,mHouseAdd.getText().toString());
+                }else{
+                    mSharedPreference.setPreferenceString(mSharedPreference.HOUSE_FLAT,"");
+                }
+                if(!TextUtils.isEmpty(mLandmark.getText())){
+                    mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK,mLandmark.getText().toString());
+                }else{
+                    mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK,"");
+                }
                 return false;
             default:
                 break;
@@ -317,7 +342,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
 
             Log.d(TAG,"mGoogleMap.animateCamera animated to new : latitude= "+place.getLatLng().latitude+" || longitude:"+place.getLatLng().longitude);*/
 
-
+            mCenterMarker.setVisibility(View.VISIBLE);
             initCameraIdle(place.getLatLng().latitude,place.getLatLng().longitude);
 
         } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {

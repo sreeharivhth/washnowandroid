@@ -1,4 +1,4 @@
-package wash.midest.com.mrwashapp.screens.fragmentviews;
+package wash.midest.com.mrwashapp.screens.fragmentviews.placeorderfrag;
 
 
 import android.Manifest;
@@ -24,14 +24,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CheckedTextView;
 import android.widget.DatePicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -46,7 +45,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
@@ -69,8 +67,9 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.DateDifference;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
-import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
+import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.OrderMapFrag;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 
@@ -96,14 +95,17 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @BindView(R.id.pickTime) TextView mTxtPickTime;
     @BindView(R.id.deliveryDate) TextView mTxtDeliveryDate;
     @BindView(R.id.deliveryTime) TextView mTxtDeliveryTime;
+    @BindView(R.id.location) TextView mTxtLocation;
+    @BindView(R.id.landmark) TextView mTxtLandmark;
+    @BindView(R.id.house_flat) TextView mTxtHouseFlat;
     @BindView(R.id.servicesSpinner) Spinner mServicesPicker;
-    @BindView(R.id.address) TextInputEditText mAddress;
     @BindView(R.id.placeorder_btn) Button mBtnPlaceOrder;
     @BindView(R.id.placeOrderMap)MapView mMapView;
     private Unbinder mUnbinder;
     /*@BindView(R.id.checkbox)
     CheckBox mCheckBox;*/
     private LatLng mLocation;
+    private String mGoogleLocationAdd;
     private GoogleMap mGoogleMap;
     /*boolean mEnableMap;*/
     private Marker mCurrLocationMarker;
@@ -119,6 +121,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
     private Location mLastLocation;
+    private boolean isLocationPresent=false;
+    private boolean isFirstTime;
 
     public PlaceOrderFrag() {
     }
@@ -135,7 +139,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        //mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
     }
 
     @Override
@@ -145,6 +149,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         mServiceNames=new ArrayList();
         mDeliveryTime=new ArrayList();
         Log.d(TAG,"PlaceOrderFrag onCreate called ");
+        isLocationPresent = mSharedPreference.getPreferenceBool(mSharedPreference.LOCATION_PRESENT);
+        isFirstTime=true;
     }
 
     @Override
@@ -153,6 +159,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_place_order, container, false);
         mUnbinder = ButterKnife.bind(this, view);
+        mTxtLocation.setEnabled(false);
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
         mServicesList = getArguments().getParcelable(SERVICES);
 
@@ -192,6 +199,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             @Override
             public void onBackStackChanged() {
                 try {
+                    Log.d(TAG,"PlaceOrderFrag :: getFragmentManager().addOnBackStackChangedListener called ");
                     int backStackCount = getFragmentManager().getBackStackEntryCount();
                     if(backStackCount==PLACE_ORDER_STACK_NUMBER){
                         updateLocation();
@@ -201,13 +209,29 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 }
             }
         });
-        Toast.makeText(getActivity(),R.string.tapmap_for_location,Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getActivity(),R.string.tapmap_for_location,Toast.LENGTH_SHORT).show();
         return view;
     }
 
     void updateLocation(){
         Log.d(TAG,"updateLocation  === ");
-        if(mLocation!=null && mGoogleMap!=null ){
+        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED,0.0);
+        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED,0.0);
+        LatLng latLng=new LatLng(lat,lon);
+        mLocation = latLng;
+        mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
+
+        mTxtLocation.setText(mGoogleLocationAdd);
+
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(mLocation);
+        markerOptions.title("Current Position");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocation,16));
+
+        /*if(mLocation!=null && mGoogleMap!=null ){
             Log.d(TAG,"updateLocation mLocation and mGoogleMap are valid");
             if (mCurrLocationMarker != null) {
                 mCurrLocationMarker.remove();
@@ -221,19 +245,21 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             //move map camera
             mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocation,16));
             Log.d(TAG,"!!updateLocation  Updated marker !!");
+
+            getAddressFromLocation(mLocation.latitude, mLocation.longitude);
         }else{
             Log.d(TAG,"updateLocation Map or location is null ");
-        }
+        }*/
     }
 
     /*@OnClick(R.id.checkbox)
     void onCheckClicked(){
         if(mCheckBox.isChecked()){
             mEnableMap=true;
-            mAddress.setEnabled(false);
+            mHouseFlat.setEnabled(false);
         }else{
             mEnableMap=false;
-            mAddress.setEnabled(true);
+            mHouseFlat.setEnabled(true);
         }
     }*/
 
@@ -372,9 +398,14 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG,"onMapReady called");
-        double qatarLat = 25.240530;
-        double qatarLon = 51.126810;
-        LatLng latLng = new LatLng(qatarLat,qatarLon);
+        LatLng latLng=null;
+        if(null!=mLocation){
+            latLng = mLocation;
+        }else{
+            double qatarLat = 25.240530;
+            double qatarLon = 51.126810;
+            latLng = new LatLng(qatarLat,qatarLon);
+        }
         mGoogleMap=googleMap;
 
         MarkerOptions markerOptions = new MarkerOptions();
@@ -405,6 +436,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         //Avoided below dut to neglecting backstack by android
         //FragmentManager childFragMan = getChildFragmentManager();
         /*if(mEnableMap) {*/
+        isFirstTime=false;
             if (isLocationEnabled()) {
                 FragmentManager childFragMan = getActivity().getSupportFragmentManager();
                 FragmentTransaction childFragTrans = childFragMan.beginTransaction();
@@ -458,28 +490,17 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         }
         return status;
     }
-    @Override
+    /*@Override*/
     public void updatedLocation(LatLng location) {
         mLocation=location;
+        /*isLocationPresent=true;*/
         Log.d(TAG," updatedLocation PlaceOrderFrag lat = "+location.latitude+" || lon = "+location.longitude);
-        /*if(isResumed() && getUserVisibleHint()){
-
-        }else{
-            Log.d(TAG," PlaceOrderFrag  not onResumed");
-        }*/
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG," PlaceOrderFrag onResume() === ");
-        /*if(mIsRestoredFromBackstack)
-        {
-
-        }else{
-            Log.d(TAG," onResume mIsRestoredFromBackstack === "+mIsRestoredFromBackstack);
-        }*/
-        isLocationEnabled();
+        Log.d(TAG," PlaceOrderFrag onResume() ===11 ");
 
     }
 
@@ -513,12 +534,41 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+        /*if(!isLocationPresent) {
+            //mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+        }else{
+            //showToast("We have taken your previous address as pick up and delivery address. You can change if required for this order!");
+            String storedAddress = mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS);
+            double latitude = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LAT,0.0);
+            double longitude = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LON,0.0);
+            if(!TextUtils.isEmpty(storedAddress)){
+                mTxtHouseFlat.setText(storedAddress);
+            }
+            if(latitude!=0.0 && longitude!=0.0){
+                setLocationInMap(latitude,longitude);
+                mLocation=new LatLng(latitude,longitude);
+            }
+        }*/
+    }
+
+    private void setLocationInMap(double latitude,double longitude){
+        /*LatLng latLng = new LatLng(latitude, longitude);
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(latLng);
+        markerOptions.title("Current Address");
+        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+        //move map camera
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));*/
     }
 
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder(){
 
+        if(TextUtils.isEmpty(mTxtHouseFlat.getText().toString())){
+            showMessage("Please enter address",R.string.ok);
+            return;
+        }
         Calendar delivery=Calendar.getInstance();
         delivery.set(Calendar.HOUR_OF_DAY, mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
         delivery.set(Calendar.MINUTE, mCDeliveryTime.get(Calendar.MINUTE));
@@ -557,18 +607,14 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
             /*SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             String currDateString = df.format(new Date());*/
 
-            Log.d(TAG,"===== WRT current time difference of delivery is =====");
             //Check if pick up is valid
-            DateDifference  diffCurrentPick = new AppUtils().printDifference(Calendar.getInstance().getTime(),pickupDate);
-            if(isPickUpValid(diffCurrentPick)){
-
-                //Pick up is valid , proceed
-
-                DateDifference  dateDifference = new AppUtils().printDifference(pickupDate,deliveryDate);
-                if(dateDifference.differenceInHours>=mSelectedDeliveryTimeMin){
-                    //Proceed
+            if(isPickUpValid(pickupDate)){
+                //Pick up is valid , proceed with pick and delivery difference
+                Log.d(TAG,"Pick up is valid , proceed with pick and delivery difference");
+                if(isDeliveryValid(pickupDate,deliveryDate)){
+                    Log.d(TAG,"Delivery and Pick up are Valid , can proceed with order placing");
                     showToast("Can proceed with order");
-
+                    saveAddressLocation();
                 }else{
                     showMessage("Delivery and Pick up time difference should be more than "+mSelectedDeliveryTimeMin+" hours for "+mSelectedService + " !",R.string.ok);
                 }
@@ -576,9 +622,26 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         }
     }
 
-    private boolean isPickUpValid(DateDifference  dateDifference){
-        boolean status=false;
-        if(dateDifference.differenceInHours>=mPickDifferenceHRS)
+    private void saveAddressLocation(){
+        Log.d(TAG,"saveAddressLocation() ");
+        mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mTxtHouseFlat.getText().toString());
+        Log.d(TAG,"Updated address");
+        if(null !=mLocation){
+            mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LAT,mLocation.latitude);
+            mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LON,mLocation.longitude);
+
+            mSharedPreference.setPreferenceBool(mSharedPreference.LOCATION_PRESENT,true);
+
+            Log.d(TAG,"saveAddressLocation() Locations saved");
+        }else{
+            Log.d(TAG,"saveAddressLocation() mLocation is NULL");
+        }
+    }
+
+    private boolean isPickUpValid(Date  pickupDate){
+        boolean status;
+        DateDifference  diffCurrentPick = new AppUtils().printDifference(Calendar.getInstance().getTime(),pickupDate);
+        if(diffCurrentPick.differenceInHours>=mPickDifferenceHRS)
         {
             status=true;
             return status;
@@ -589,12 +652,16 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
         }
     }
 
-    private boolean isDeliveryValid(){
+    private boolean isDeliveryValid(Date pickupDate,Date deliveryDate){
         boolean status=false;
-
-
-
-        return status;
+        DateDifference  dateDifference = new AppUtils().printDifference(pickupDate,deliveryDate);
+        if(dateDifference.differenceInHours>=mSelectedDeliveryTimeMin){
+            status=true;
+            return status;
+        }else{
+            status=false;
+            return status;
+        }
     }
 
     @Override public void onDestroyView() {
@@ -605,35 +672,37 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
     @Override
     public void onLocationChanged(Location location) {
 
-        Log.d(TAG,"isLocationReceived = "+isLocationReceived);
+        /*Log.d(TAG,"isLocationReceived = "+isLocationReceived);
         mProgressBar.setVisibility(View.GONE);
 
-        if(!isLocationReceived){
-            Log.d(TAG,"Inside if loop ");
+        if(!isLocationReceived){*/
+            /*Log.d(TAG,"Inside if loop ");
             mLastLocation = location;
             if (mCurrLocationMarker != null) {
                 mCurrLocationMarker.remove();
             }
             mGoogleMap.clear();
             Log.d(TAG, TAG+"LAT="+String.valueOf(location.getLatitude())+"||LON="+String.valueOf(location.getLongitude()));
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+            setLocationInMap(location.getLatitude(), location.getLongitude());*/
+            /*LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
             markerOptions.title("Current Position");
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
             //move map camera
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,16));*/
 
-            getAddressFromLocation(location.getLatitude(), location.getLongitude());
-        }else{
+            /*getAddressFromLocation(location.getLatitude(), location.getLongitude());*/
+        /*}else{
             Log.d(TAG,"Inside Else part");
             if(mLocationManager!=null){
                 mLocationManager.removeUpdates(this);
                 mLocationManager=null;
             }
             isLocationReceived=true;
-        }
+        }*/
     }
 
     @Override
@@ -692,14 +761,14 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback,Order
                 //str.append("Country Code: " + address.getCountryCode() );
                 String strAddress = str.toString();
                 Log.d(TAG,"Address retrieved == "+strAddress.toString());
-                mAddress.setText(strAddress.toString());
+                mTxtHouseFlat.setText(strAddress.toString());
             } else {
-                mAddress.setText("Searching Current Address");
+                mTxtHouseFlat.setText("Searching Current Address");
             }
         } catch (IOException e) {
             e.printStackTrace();
             //printToast("Could not get address..!");
-            showToast("Could not get address..!");
+            showToast("Error in Could not get address..!");
         }
     }
 }

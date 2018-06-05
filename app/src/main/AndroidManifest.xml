@@ -17,6 +17,15 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAgE8c8oZ5hlS6YEzZkqmnOHdN23h3tVGU"/>
+
         <activity
             android:name=".screens.SplashActivity"
             android:screenOrientation="portrait"
@@ -43,7 +52,7 @@
         <activity
             android:name=".screens.BaseActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".screens.SubSplashActivity"
@@ -54,13 +63,7 @@
         <activity android:name=".screens.ForgotPassActivity" />
         <activity android:name=".screens.DemoScreenOne" />
         <activity android:name=".screens.NewPasswordActivity"></activity>
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
 
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyAgE8c8oZ5hlS6YEzZkqmnOHdN23h3tVGU"/>
 
     </application>
 

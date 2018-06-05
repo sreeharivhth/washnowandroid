@@ -3,7 +3,6 @@ package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -15,9 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +26,7 @@ import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.ViewPagerFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.placeorderfrag.PlaceOrderFrag;
 import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 /**

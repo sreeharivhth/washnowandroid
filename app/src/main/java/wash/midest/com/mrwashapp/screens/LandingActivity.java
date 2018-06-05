@@ -91,6 +91,7 @@ public class LandingActivity extends BaseActivity
         mDirectFragment.setUserVisibleHint(true);
     }
 
+
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

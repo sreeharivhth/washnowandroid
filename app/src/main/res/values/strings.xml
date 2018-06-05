@@ -55,8 +55,10 @@
     <string name="service_type">Service Type</string>
     <string name="pickup_time">Pickup time</string>
     <string name="delivery_time">Delivery time</string>
-    <string name="address">Address</string>
+    <string name="houseflat">House No/ Flat</string>
     <string name="promo_code">Promo Code</string>
+    <string name="location">Location</string>
+    <string name="landmark">Landmark</string>
     <string name="confirm">Confirm</string>
     <string name="exit_confirm">Do you want to exit MrWash?</string>
     <string name="ok">OK</string>

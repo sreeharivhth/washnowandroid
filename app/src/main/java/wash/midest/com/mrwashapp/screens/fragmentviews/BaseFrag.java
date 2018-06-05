@@ -57,7 +57,7 @@ public class BaseFrag extends Fragment implements AlertCallBack{
         mCallBackAlertDialog.show();
     }
 
-    void showMessage(String message,int positiveBtnText){
+    public void showMessage(String message,int positiveBtnText){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setMessage(message);
 
@@ -90,5 +90,14 @@ public class BaseFrag extends Fragment implements AlertCallBack{
             }
         });
     }
-
+    protected void showToast(final String msg,final int duration){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),msg,duration);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        });
+    }
 }

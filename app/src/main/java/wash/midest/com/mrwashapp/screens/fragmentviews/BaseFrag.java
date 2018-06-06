@@ -38,7 +38,7 @@ public class BaseFrag extends Fragment implements AlertCallBack{
      * @param positiveBtnText positive button text
      * @param negativeBtnText negative button text
      */
-    void showMessage(String message,int positiveBtnText,int negativeBtnText){
+    protected void showMessage(String message,int positiveBtnText,int negativeBtnText){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setMessage(message);
 

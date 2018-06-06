@@ -27,6 +27,7 @@ import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -105,6 +106,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     TextView mTxtDeliveryTime;
     @BindView(R.id.location)
     TextView mTxtLocation;
+    @BindView(R.id.locationHeadId)
+    TextView mLocationHead;
     @BindView(R.id.landmark)
     TextInputEditText mTxtLandmark;
     @BindView(R.id.house_flat)
@@ -133,7 +136,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     private long mSelectedPickTime;
     private long mSelectedDeliveryTime;
     private Location mLastLocation;
-    private boolean isLocationPresent = false;
+    private boolean isMsgShown = false;
     private boolean isFirstTime;
     private int mYear;
     private int mMonth;
@@ -166,7 +169,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mPickTime = new ArrayList();
         mServiceId = new ArrayList();
         Log.d(TAG, "PlaceOrderFrag onCreate called ");
-        isLocationPresent = mSharedPreference.getPreferenceBool(mSharedPreference.LOCATION_PRESENT);
         isFirstTime = true;
     }
 
@@ -212,7 +214,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 try {
 
                     int backStackCount = getFragmentManager().getBackStackEntryCount();
-                    Log.d(TAG, "PlaceOrderFrag addOnBackStackChangedListener backStackCount ="+backStackCount);
+                    Log.d(TAG, "PlaceOrderFrag addOnBackStackChangedListener backStackCount =" + backStackCount);
                     if (backStackCount == PLACE_ORDER_STACK_NUMBER) {
                         updateLocation();
                     }
@@ -238,31 +240,28 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     void updateLocation() {
         Log.d(TAG, "updateLocation  === ");
 
-        if(!isFirstTime){
-            String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
-            if (!TextUtils.isEmpty(houseSelected)) {
-                mTxtHouseFlat.setText(houseSelected);
+        mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
+        if (!TextUtils.isEmpty(mGoogleLocationAdd)) {
+            if (isFirstTime && !isMsgShown) {
+                showToast("We have kept your last order address as default address. You can change these as well by clicking on map", Toast.LENGTH_LONG);
+                isMsgShown = true;
             }
-            String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
-            if (!TextUtils.isEmpty(landmarkSelected)) {
-                mTxtLandmark.setText(landmarkSelected);
-            }
+        }
+        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
+        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+        LatLng latLng = new LatLng(lat, lon);
+        mLocation = latLng;
 
-            double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-            double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
-            LatLng latLng = new LatLng(lat, lon);
-            mLocation = latLng;
-            mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
-            mTxtLocation.setText(mGoogleLocationAdd);
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(mLocation);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-            //move map camera
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLocation, 16));
+        String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
+        if (!TextUtils.isEmpty(houseSelected)) {
+            mTxtHouseFlat.setText(houseSelected);
+        }
+        String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
+        if (!TextUtils.isEmpty(landmarkSelected)) {
+            mTxtLandmark.setText(landmarkSelected);
         }
 
+        mTxtLocation.setText(mGoogleLocationAdd);
     }
 
     @OnItemSelected(R.id.servicesSpinner)
@@ -411,7 +410,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         //move map camera
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 8));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -427,9 +426,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         });
     }
 
-    @OnClick(R.id.placeOrderMap)
+    @OnClick({R.id.placeOrderMap, R.id.location, R.id.locationHeadId})
     void onMapClickEvent() {
-        //Avoided below dut to neglecting backstack by android
         isFirstTime = false;
         if (isLocationEnabled()) {
             FragmentManager childFragMan = getActivity().getSupportFragmentManager();
@@ -552,11 +550,23 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 //Pick up is valid , proceed with pick and delivery difference
                 Log.d(TAG, "Pick up is valid , proceed with pick and delivery difference");
                 if (isDeliveryValid(pickupDate, deliveryDate)) {
-                    mSelectedPickTime = pickupDate.getTime();
-                    mSelectedDeliveryTime = deliveryDate.getTime();
-                    Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
-                    //showToast("Can proceed with order");
-                    saveAddressLocation();
+
+                    if (TextUtils.isEmpty(mTxtLocation.getText().toString())) {
+                        if (TextUtils.isEmpty(mTxtLandmark.getText().toString())
+                                ||
+                                TextUtils.isEmpty(mTxtHouseFlat.getText().toString()
+                                )) {
+                            showMessage("If google address is not present, House and Landmark is mandatory to place order",
+                                    R.string.ok);
+                        } else {
+                            Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
+                            //showToast("Can proceed with order");
+                            saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
+                        }
+                    } else {
+                        Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
+                        saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
+                    }
                 } else {
                     showMessage("Delivery and Pick up time difference should be more than " + mSelectedDeliveryTimeMin + " hours for " + mSelectedService + " !", R.string.ok);
                 }
@@ -564,16 +574,27 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         }
     }
 
-    private void saveAddressLocation() {
+    private void saveAddressLocation(long pickTime, long deliveryTime) {
         Log.d(TAG, "saveAddressLocation() ");
-        mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mTxtHouseFlat.getText().toString());
+        mSelectedPickTime = pickTime;
+        mSelectedDeliveryTime = deliveryTime;
+        if (!TextUtils.isEmpty(mTxtHouseFlat.getText().toString())) {
+            mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mTxtHouseFlat.getText().toString());
+        } else {
+            mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, "");
+        }
+
+        if (!TextUtils.isEmpty(mTxtLandmark.getText().toString())) {
+            mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, mTxtLandmark.getText().toString());
+        } else {
+            mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, "");
+        }
+
         Log.d(TAG, "Updated address");
         if (null != mLocation) {
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LAT, mLocation.latitude);
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LON, mLocation.longitude);
-
             mSharedPreference.setPreferenceBool(mSharedPreference.LOCATION_PRESENT, true);
-
             Log.d(TAG, "saveAddressLocation() Locations saved");
 
             processPlaceOrderAPI();

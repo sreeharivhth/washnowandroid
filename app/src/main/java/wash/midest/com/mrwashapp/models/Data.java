@@ -312,6 +312,18 @@ public class Data implements Parcelable {
     @Expose
     private String status;
 
+    @SerializedName("orderDate")
+    @Expose
+    private String orderDate;
+
+    public String getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -358,7 +370,7 @@ public class Data implements Parcelable {
         dest.writeString(this.orderId);
         dest.writeString(this.status);
         dest.writeString(this.pickupTime);
-
+        dest.writeString(this.orderDate);
     }
 
     public Data() {
@@ -387,6 +399,7 @@ public class Data implements Parcelable {
         this.orderId = in.readString();
         this.status= in.readString();
         this.pickupTime= in.readString();
+        this.orderDate= in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

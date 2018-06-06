@@ -59,7 +59,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".screens.OtpActivity" />
-        <activity android:name=".screens.PlaceOrderActivity" />
         <activity android:name=".screens.ForgotPassActivity" />
         <activity android:name=".screens.DemoScreenOne" />
         <activity android:name=".screens.NewPasswordActivity"></activity>

@@ -1,4 +1,4 @@
-package wash.midest.com.mrwashapp.screens.fragmentviews;
+package wash.midest.com.mrwashapp.screens.fragmentviews.myorder;
 
 
 import android.os.Bundle;
@@ -12,6 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,8 +26,8 @@ import wash.midest.com.mrwashapp.appservices.APICallBack;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
-import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
+import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -122,13 +125,14 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
         public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
         {
             String orderId = dataList.get(holder.getAdapterPosition()).getOrderId();
-            holder.textOrder_num.setText(orderId);
+            holder.textOrder_num.setText("Order# : "+orderId);
 
-            String time = dataList.get(holder.getAdapterPosition()).getDeliveryTime();
-            holder.textDate.setText(time);
+            String time = dataList.get(holder.getAdapterPosition()).getOrderDate();
+            time = getFormatedDate(time);
+            holder.textDate.setText("Order Date : "+time);
 
             String status = dataList.get(holder.getAdapterPosition()).getStatus();
-            holder.textStatus.setText(status);
+            holder.textStatus.setText("Order Status : "+status);
         }
         @Override
         public int getItemCount()
@@ -151,6 +155,20 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
                 super(itemView);
                 ButterKnife.bind(this, itemView);
             }
+        }
+        private String getFormatedDate(String inputDate){
+            //2018-06-06 11:02:17
+            String date="";
+            try {
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                Date newDate = format.parse(inputDate);
+
+                format = new SimpleDateFormat("dd MMM yyyy");
+                date = format.format(newDate);
+            } catch (ParseException e) {
+                Log.e(TAG,"Date ParseException = "+e.toString());
+            }
+            return date;
         }
     }
 

@@ -7,9 +7,9 @@
     app:cardCornerRadius="@dimen/component_margin_5"
     android:layout_margin="@dimen/component_margin_5"
     >
-    <RelativeLayout
+    <LinearLayout
         xmlns:android="http://schemas.android.com/apk/res/android"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/component_margin_10"
@@ -19,24 +19,36 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/order_num"
-            android:layout_alignParentLeft="true"
-            android:text="asdas"
+            android:text=""
             />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/date"
+                android:layout_alignParentLeft="true"
+                android:text=""
+                android:layout_centerVertical="true"
+                />
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/date"
-            android:layout_centerHorizontal="true"
-            android:text="sdsdfsdf"
-            />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/more_link"
+                android:src="@drawable/arrow_more"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                />
+        </RelativeLayout>
+
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/status"
-            android:layout_alignParentRight="true"
-            android:text="sdsdfsdf"
+            android:text=""
             />
-    </RelativeLayout>
+    </LinearLayout>
 </android.support.v7.widget.CardView>

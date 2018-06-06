@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/screen_back_color"
-    tools:context="wash.midest.com.mrwashapp.screens.fragmentviews.MyOrderFrag">
+    tools:context="wash.midest.com.mrwashapp.screens.fragmentviews.myorder.MyOrderFrag">
 
     <ProgressBar
         android:id="@+id/progressBarLoading"

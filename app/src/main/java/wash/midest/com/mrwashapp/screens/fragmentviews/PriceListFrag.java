@@ -54,6 +54,22 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
 
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
+
+    @BindView(R.id.headgents)
+    TextView mGentsHead;
+
+    @BindView(R.id.gents_seperator)
+    View mGentsSeperator;
+
+    @BindView(R.id.headothers)
+    TextView mOthersHead;
+
+    @BindView(R.id.others_seperator)
+    View mOthersSeperator;
+
+    @BindView(R.id.headladies)
+    TextView mLadiesHead;
+
     private ListAdapterGents mListAdapterGents;
 
     private ListAdapterOthers mListAdapterOthers;
@@ -95,9 +111,18 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         mAllService= getArguments().getParcelableArrayList(SERVICE_DATA);
         mSelectedIndex=getArguments().getInt(SELECTED_INDEX);
 
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        listRecyclerGents.setLayoutManager(layoutManager);
+        LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
+        layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
+        listRecyclerGents.setLayoutManager(layoutManager1);
+
+        LinearLayoutManager layoutManager2 = new LinearLayoutManager(getActivity());
+        layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
+        listRecyclerOthers.setLayoutManager(layoutManager2);
+
+        LinearLayoutManager layoutManager3 = new LinearLayoutManager(getActivity());
+        layoutManager3.setOrientation(LinearLayoutManager.VERTICAL);
+        listRecyclerLadies.setLayoutManager(layoutManager3);
+
         if(mAllService!=null && mAllService.size()>0){
             addListComponents();
         }
@@ -112,10 +137,19 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
             int idSel = washTypes.getId();
             Log.d(TAG,"itemSelected === "+itemSelected);
             Log.d(TAG,"Selected ID === "+idSel);
+
             getPriceListData(idSel);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    void hideSeperators(){
+        mGentsHead.setVisibility(View.GONE);
+        mGentsSeperator.setVisibility(View.GONE);
+        mOthersHead.setVisibility(View.GONE);
+        mOthersSeperator.setVisibility(View.GONE);
+        mLadiesHead.setVisibility(View.GONE);
     }
 
     void getPriceListData(int type){
@@ -154,26 +188,60 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         mProgressBar.setVisibility(View.GONE);
         if(isSuccess) {
-            List<Gents> gents = ((GeneralPojo) responseObj).getData().getGents();
-            //List<Gents> gents = dataList.get(0).getGents();
-            List<Others> others = ((GeneralPojo) responseObj).getData().getOthers();
+            hideSeperators();
 
-            List<Ladies> ladies = ((GeneralPojo) responseObj).getData().getLadies();
+            List<Gents> gents=new ArrayList<>();
+            List<Others> others=new ArrayList<>();
+            List<Ladies> ladies=new ArrayList<>();
+
+            if(null!=mListAdapterGents){
+                gents.clear();
+                mListAdapterGents.notifyDataSetChanged();
+            }
+            if(null!=mListAdapterOthers){
+                others.clear();
+                mListAdapterOthers.notifyDataSetChanged();
+            }
+            if(null!=mListAdapterLadies){
+                ladies.clear();
+                mListAdapterLadies.notifyDataSetChanged();
+            }
+
+            gents = ((GeneralPojo) responseObj).getData().getGents();
+
+            others = ((GeneralPojo) responseObj).getData().getOthers();
+
+            ladies = ((GeneralPojo) responseObj).getData().getLadies();
+
 
             if(null !=gents && gents.size()>0){
+                listRecyclerGents.setVisibility(View.VISIBLE);
+                mGentsHead.setVisibility(View.VISIBLE);
+                mGentsSeperator.setVisibility(View.VISIBLE);
                 mListAdapterGents = new ListAdapterGents(gents);
                 listRecyclerGents.setAdapter(mListAdapterGents);
                 mListAdapterGents.notifyDataSetChanged();
+            }else{
+                listRecyclerGents.setVisibility(View.GONE);
             }
             if(null != others && others.size()>0){
+                listRecyclerOthers.setVisibility(View.VISIBLE);
+                mOthersHead.setVisibility(View.VISIBLE);
+                mOthersSeperator.setVisibility(View.VISIBLE);
                 mListAdapterOthers = new ListAdapterOthers(others);
                 listRecyclerOthers.setAdapter(mListAdapterOthers);
                 mListAdapterOthers.notifyDataSetChanged();
+            }else{
+                listRecyclerOthers.setVisibility(View.GONE);
             }
             if(null != ladies && ladies.size()>0){
+                listRecyclerLadies.setVisibility(View.VISIBLE);
+                mLadiesHead.setVisibility(View.VISIBLE);
                 mListAdapterLadies = new ListAdapterLadies(ladies);
                 listRecyclerLadies.setAdapter(mListAdapterLadies);
                 mListAdapterLadies.notifyDataSetChanged();
+            }else{
+                listRecyclerLadies.setVisibility(View.GONE);
             }
         }else{
             showMessage(errorMsg,R.string.ok);

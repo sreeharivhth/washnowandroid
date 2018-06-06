@@ -2,43 +2,34 @@ package wash.midest.com.mrwashapp.screens;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.view.ViewPager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import io.reactivex.functions.Consumer;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.WashTypes;
-import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.fragmentviews.ContactFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
-import wash.midest.com.mrwashapp.screens.fragmentviews.MyOrderFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.myorder.MyOrderFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.PriceListFrag;
-import wash.midest.com.mrwashapp.uiwidgets.LandingHorizontalView;
 
 public class LandingActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {

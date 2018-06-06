@@ -83,19 +83,6 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
  */
 public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, OrderMapFrag.OnLocationSelected, APICallBack {
 
-    private static String DATA = "DATA";
-    private static String SERVICES = "SERVICES";
-    private String TAG = PlaceOrderFrag.class.getName();
-    //private int mYear, mMonth, mDay, mHour, mMinute;
-    private GeneralListDataPojo mServicesList;
-    private ArrayList mServiceNames;
-    private ArrayList mDeliveryTime;
-    private ArrayList mPickTime;
-    private ArrayList mServiceId;
-    private int mSelectedServiceID;
-    private int mSelectedDeliveryTimeMin;
-    private int mPickDifferenceHRS;
-    private static final int PERMISSIONS_REQUEST_LOCATION = 3981;
     @BindView(R.id.pickDate)
     TextView mTxtPickDate;
     @BindView(R.id.pickTime)
@@ -118,24 +105,33 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     Button mBtnPlaceOrder;
     @BindView(R.id.placeOrderMap)
     MapView mMapView;
+
+    private static String DATA = "DATA";
+    private static String SERVICES = "SERVICES";
+    private String TAG = PlaceOrderFrag.class.getName();
+    private GeneralListDataPojo mServicesList;
+    private ArrayList mServiceNames;
+    private ArrayList mDeliveryTime;
+    private ArrayList mPickTime;
+    private ArrayList mServiceId;
+    private int mSelectedServiceID;
+    private int mSelectedDeliveryTimeMin;
+    private int mPickDifferenceHRS;
+    private static final int PERMISSIONS_REQUEST_LOCATION = 3981;
     private Unbinder mUnbinder;
     private LatLng mLocation;
     private String mGoogleLocationAdd;
     private GoogleMap mGoogleMap;
-    private Marker mCurrLocationMarker;
     private int PLACE_ORDER_STACK_NUMBER = 2;
     private Calendar mCPickTime;
     private Calendar mCPickDate;
     private Calendar mCDeliveryTime;
     private Calendar mCDeliveryDate;
     private String mSelectedService;
-    private LocationManager mLocationManager;
-    private boolean isLocationReceived;
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
     private long mSelectedPickTime;
     private long mSelectedDeliveryTime;
-    private Location mLastLocation;
     private boolean isMsgShown = false;
     private boolean isFirstTime;
     private int mYear;
@@ -239,7 +235,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     void updateLocation() {
         Log.d(TAG, "updateLocation  === ");
-
         mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
         if (!TextUtils.isEmpty(mGoogleLocationAdd)) {
             if (isFirstTime && !isMsgShown) {
@@ -260,7 +255,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         if (!TextUtils.isEmpty(landmarkSelected)) {
             mTxtLandmark.setText(landmarkSelected);
         }
-
         mTxtLocation.setText(mGoogleLocationAdd);
     }
 
@@ -295,12 +289,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick({R.id.deliveryDate})
     void pickDateDelivery() {
-        /*final Calendar c = Calendar.getInstance();
-        int mYear = c.get(Calendar.YEAR);
-        int mMonth = c.get(Calendar.MONTH);
-        int mDay = c.get(Calendar.DAY_OF_MONTH);
-        c.set(mYear, mMonth , mDay, 0, 0, 0);
-        mCDeliveryDate=c;*/
         DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(),
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
@@ -319,11 +307,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick({R.id.pickTime})
     void pickTime() {
-        /*final Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
-        c.set(0, 0, 0, mHour, mMinute, 0);
-        mCPickTime=c;*/
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -343,11 +326,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick({R.id.deliveryTime})
     void pickDeliveryTime() {
-        /*final Calendar c = Calendar.getInstance();
-        int mHour = c.get(Calendar.HOUR_OF_DAY);
-        int mMinute = c.get(Calendar.MINUTE);
-        c.set(0, 0, 0, mHour, mMinute, 0);
-        mCDeliveryTime=c;*/
         TimePickerDialog timePickerDialog = new TimePickerDialog(getActivity(),
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -377,7 +355,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         return df.format(c.getTime());
     }
 
-
     String getDeliveryDateTime(boolean isTime) {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.HOUR_OF_DAY, 1);
@@ -404,12 +381,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             latLng = new LatLng(qatarLat, qatarLon);
         }
         mGoogleMap = googleMap;
+        mGoogleMap.clear();
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
-        markerOptions.title("Click to tag location also");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-        //move map camera
+        mGoogleMap.addMarker(markerOptions);
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
@@ -481,14 +457,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         }
         return status;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, " PlaceOrderFrag onResume() ===11 ");
-
-    }
-
     private void isPermissionRequired() {
         boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getActivity().getApplicationContext());
         if (isPermissionRequired) {
@@ -523,7 +491,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder() {
-
         Calendar delivery = Calendar.getInstance();
         delivery.set(Calendar.HOUR_OF_DAY, mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
         delivery.set(Calendar.MINUTE, mCDeliveryTime.get(Calendar.MINUTE));
@@ -583,22 +550,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         } else {
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, "");
         }
-
         if (!TextUtils.isEmpty(mTxtLandmark.getText().toString())) {
             mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, mTxtLandmark.getText().toString());
         } else {
             mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, "");
         }
-
         Log.d(TAG, "Updated address");
         if (null != mLocation) {
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LAT, mLocation.latitude);
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LON, mLocation.longitude);
             mSharedPreference.setPreferenceBool(mSharedPreference.LOCATION_PRESENT, true);
             Log.d(TAG, "saveAddressLocation() Locations saved");
-
             processPlaceOrderAPI();
-
         } else {
             Log.d(TAG, "saveAddressLocation() mLocation is NULL");
         }
@@ -635,55 +598,15 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mUnbinder.unbind();
     }
 
-    private void getAddressFromLocation(double latitude, double longitude) {
-
-        Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
-        try {
-            List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            if (addresses.size() > 0) {
-                /*Address fetchedAddress = addresses.get(0);
-                StringBuilder strAddress = new StringBuilder();
-                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
-                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
-                }*/
-
-                Address address = addresses.get(0);
-                StringBuffer str = new StringBuffer();
-                str.append(address.getFeatureName() + ", ");
-                //str.append("Name:"  + address.getLocality());
-                //str.append("Sub-Admin Ares: " + address.getSubAdminArea() );
-                str.append(address.getSubLocality() + ", ");
-                //str.append("Admin Area: " + address.getAdminArea() );
-                str.append(address.getThoroughfare() + ", ");
-                str.append(address.getLocality() + ", ");
-                str.append(address.getAdminArea() + ", ");
-                str.append(address.getCountryName());
-                //str.append("Country Code: " + address.getCountryCode() );
-                String strAddress = str.toString();
-                Log.d(TAG, "Address retrieved == " + strAddress.toString());
-                mTxtHouseFlat.setText(strAddress.toString());
-            } else {
-                mTxtHouseFlat.setText("Searching Current Address");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            //printToast("Could not get address..!");
-            showToast("Error in Could not get address..!");
-        }
-    }
-
     void processPlaceOrderAPI() {
         if (!mAppUtils.isNetworkConnected(getActivity())) {
             showErrorAlert(getString(R.string.network_error));
             return;
         }
-
         /*String imei = mAppUtils.getDeviceIMEI(getActivity());*/
         String imei = "1122009955";
-
         HashMap<String, String> requestParams = new HashMap<>();
         requestParams.put(mApiConstants.API_MEMBERID, mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
-
         requestParams.put(mApiConstants.API_SERVICE_TYPE, String.valueOf(mSelectedServiceID));
         requestParams.put(mApiConstants.API_PICKUP_TIME, String.valueOf(mSelectedPickTime));
         requestParams.put(mApiConstants.API_DELIVERY_TIME, String.valueOf(mSelectedDeliveryTime));
@@ -696,10 +619,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         requestParams.put(mApiConstants.API_LONGITUDE, String.valueOf(lon));
         requestParams.put(mApiConstants.API_PROMOCODE_ID, "0");
         requestParams.put(mApiConstants.API_IMEI, imei);
-
         APIProcessor apiProcessor = new APIProcessor();
         apiProcessor.postGenerateOrder(this, requestParams);
-
     }
 
     @Override

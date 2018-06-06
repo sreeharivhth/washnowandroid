@@ -638,7 +638,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             } else {
                 showMessage("Could not create order.", R.string.ok);
             }
-
         } else {
             showMessage(errorMsg, R.string.ok);
         }

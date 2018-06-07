@@ -86,16 +86,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     TextView mTxtLocation;
     @BindView(R.id.locationHeadId)
     TextView mLocationHead;
-    @BindView(R.id.landmark)
+    /*@BindView(R.id.landmark)
     TextInputEditText mTxtLandmark;
     @BindView(R.id.house_flat)
-    TextInputEditText mTxtHouseFlat;
+    TextInputEditText mTxtHouseFlat;*/
     @BindView(R.id.servicesSpinner)
     Spinner mServicesPicker;
     @BindView(R.id.placeorder_btn)
     Button mBtnPlaceOrder;
     @BindView(R.id.placeOrderMap)
     MapView mMapView;
+    @BindView(R.id.locationSeparator)
+    View mLocationSeparator;
 
     private static String DATA = "DATA";
     private static String SERVICES = "SERVICES";
@@ -165,7 +167,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_place_order, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-        mTxtLocation.setEnabled(false);
+
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
         mServicesList = getArguments().getParcelable(SERVICES);
         for (int count = 0; count < mServicesList.getData().size(); count++) {
@@ -210,25 +212,24 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         Log.d(TAG, "updateLocation  === ");
         mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
         if (!TextUtils.isEmpty(mGoogleLocationAdd)) {
-            if (isFirstTime && !isMsgShown) {
-                showToast("We have kept your last order address as default address. You can change these as well by clicking on map", Toast.LENGTH_LONG);
-                isMsgShown = true;
+            if (isMsgShown) {
+                //showToast("We have kept your last order address as default address. You can change these as well by clicking on map", Toast.LENGTH_LONG);
+                mTxtLocation.setText(mGoogleLocationAdd);
+                double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
+                double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+                LatLng latLng = new LatLng(lat, lon);
+                mLocation = latLng;
             }
         }
-        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
-        LatLng latLng = new LatLng(lat, lon);
-        mLocation = latLng;
-
-        String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
+        /*String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
         if (!TextUtils.isEmpty(houseSelected)) {
             mTxtHouseFlat.setText(houseSelected);
         }
         String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
         if (!TextUtils.isEmpty(landmarkSelected)) {
             mTxtLandmark.setText(landmarkSelected);
-        }
-        mTxtLocation.setText(mGoogleLocationAdd);
+        }*/
+
     }
 
     @OnItemSelected(R.id.servicesSpinner)
@@ -466,9 +467,19 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         });
     }
 
-    @OnClick({R.id.placeOrderMap, R.id.location, R.id.locationHeadId})
+    @OnClick({R.id.placeOrderMap, R.id.locationHeadId , R.id.locationSeparator ,R.id.location})
     void onMapClickEvent() {
-        isFirstTime = false;
+        Log.d(TAG,"onMapClickEvent() called !!!");
+        if(isFirstTime){
+            isMsgShown = true;
+            isFirstTime = false;
+            showMessage("Would you like to show the location of last order?",R.string.ok,R.string.cancel);
+        }else{
+            pushMapFrag();
+        }
+    }
+
+    void pushMapFrag(){
         if (isLocationEnabled()) {
             FragmentManager childFragMan = getActivity().getSupportFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
@@ -583,11 +594,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 if (isDeliveryValid(pickupDate, deliveryDate)) {
 
                     if (TextUtils.isEmpty(mTxtLocation.getText().toString())) {
-                        if (TextUtils.isEmpty(mTxtLandmark.getText().toString())
+                        if (TextUtils.isEmpty(mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK).toString())
                                 ||
-                                TextUtils.isEmpty(mTxtHouseFlat.getText().toString()
+                                TextUtils.isEmpty(mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT).toString()
                                 )) {
-                            showMessage("If google address is not present, House and Landmark is mandatory to place order",
+                            showMessage("If google address is not present, House and Landmark is mandatory to place order!",
                                     R.string.ok);
                         } else {
                             Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
@@ -609,7 +620,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         Log.d(TAG, "saveAddressLocation() ");
         mSelectedPickTime = pickTime;
         mSelectedDeliveryTime = deliveryTime;
-        if (!TextUtils.isEmpty(mTxtHouseFlat.getText().toString())) {
+        /*if (!TextUtils.isEmpty(mTxtHouseFlat.getText().toString())) {
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mTxtHouseFlat.getText().toString());
         } else {
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, "");
@@ -618,7 +629,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, mTxtLandmark.getText().toString());
         } else {
             mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, "");
-        }
+        }*/
         Log.d(TAG, "Updated address");
         if (null != mLocation) {
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LAT, mLocation.latitude);
@@ -705,5 +716,21 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         } else {
             showMessage(errorMsg, R.string.ok);
         }
+    }
+
+    @Override
+    public void handleNegativeAlertCallBack() {
+        Log.d(TAG,"handleNegativeAlertCallBack");
+        pushMapFrag();
+    }
+
+    @Override
+    public void handlePositiveAlertCallBack() {
+        Log.d(TAG,"handlePositiveAlertCallBack");
+        mTxtLocation.setText(mGoogleLocationAdd);
+        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
+        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+        LatLng latLng = new LatLng(lat, lon);
+        mLocation = latLng;
     }
 }

@@ -134,7 +134,7 @@
                 android:layout_marginBottom="10dp"
                 android:background="@color/colorAccent" />
 
-            <android.support.design.widget.TextInputLayout
+            <!--<android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/component_margin_16"
@@ -154,10 +154,10 @@
                     android:textColor="@color/text_color"
                     android:text=""
                     />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>-->
 
 
-            <android.support.design.widget.TextInputLayout
+            <!--<android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/component_margin_16"
@@ -177,12 +177,12 @@
                     android:textColor="@color/text_color"
                     android:text=""
                     />
-            </android.support.design.widget.TextInputLayout>
+            </android.support.design.widget.TextInputLayout>-->
 
 
             <TextView
                 android:id="@+id/locationHeadId"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Location"
                 android:textColor="@color/text_color_gray_light"
@@ -191,7 +191,7 @@
 
             <TextView
                 android:id="@+id/location"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Selected Location"
                 android:textColor="@color/text_color_gray_light"
@@ -199,6 +199,7 @@
                 />
 
             <View
+                android:id="@+id/locationSeparator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginBottom="10dp"

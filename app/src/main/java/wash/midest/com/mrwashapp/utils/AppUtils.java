@@ -83,8 +83,8 @@ public class AppUtils {
 
     public DateDifference printDifference(Date startDate, Date endDate) {
 
-        System.out.println("startDate : " + startDate);
-        System.out.println("endDate : "+ endDate);
+        Log.d(TAG,"startDate : " + startDate);
+        Log.d(TAG,"endDate : "+ endDate);
 
         //milliseconds
         long different = endDate.getTime() - startDate.getTime();

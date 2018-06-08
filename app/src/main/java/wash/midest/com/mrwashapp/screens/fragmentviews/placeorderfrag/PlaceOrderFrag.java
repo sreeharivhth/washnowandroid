@@ -219,6 +219,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
                 LatLng latLng = new LatLng(lat, lon);
                 mLocation = latLng;
+                reloadMap();
             }
         }
         /*String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
@@ -379,7 +380,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                             }
                         }
                         ,hourOfDay,minPickTime,false);
-        timePickerDialog.setMinTime(new Timepoint(minPickTime,0,0));
+        /*timePickerDialog.setMinTime(new Timepoint(minPickTime,0,0));*/
         timePickerDialog.show(getActivity().getFragmentManager(),"pickTime");
 
     }
@@ -404,7 +405,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                         mTxtDeliveryTime.setText(df.format(mCDeliveryTime.getTime()));
                     }
                 }, mHour, minDeliveryTime, false);
-        timePickerDialog.setMinTime(new Timepoint(minDeliveryTime,0,0));
+        /*timePickerDialog.setMinTime(new Timepoint(minDeliveryTime,0,0));*/
         timePickerDialog.show(getActivity().getFragmentManager(),"pickDeliveryTime");
     }
 
@@ -437,21 +438,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     @Override
     public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady called");
-        LatLng latLng = null;
-        if (null != mLocation) {
-            latLng = mLocation;
-        } else {
-            double qatarLat = 25.240530;
-            double qatarLon = 51.126810;
-            latLng = new LatLng(qatarLat, qatarLon);
-        }
         mGoogleMap = googleMap;
-        mGoogleMap.clear();
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mGoogleMap.addMarker(markerOptions);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 16));
         mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng latLng) {
@@ -465,6 +452,27 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 return true;
             }
         });
+        mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
+    }
+
+    void reloadMap(){
+        try {
+            LatLng latLng;
+            if (null != mLocation) {
+                latLng = mLocation;
+            } else {
+                double qatarLat = 25.240530;
+                double qatarLon = 51.126810;
+                latLng = new LatLng(qatarLat, qatarLon);
+            }
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mGoogleMap.addMarker(markerOptions);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        } catch (Exception e) {
+            Log.e(TAG,"reloadMap() EXCE = "+e.toString());
+        }
     }
 
     @OnClick({R.id.placeOrderMap, R.id.locationHeadId , R.id.locationSeparator ,R.id.location})
@@ -473,7 +481,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         if(isFirstTime){
             isMsgShown = true;
             isFirstTime = false;
-            showMessage("Would you like to show the location of last order?",R.string.ok,R.string.cancel);
+            showMessage("Would you like to show the details of last order?",R.string.ok,R.string.cancel);
         }else{
             pushMapFrag();
         }
@@ -732,5 +740,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
         LatLng latLng = new LatLng(lat, lon);
         mLocation = latLng;
+        reloadMap();
     }
 }

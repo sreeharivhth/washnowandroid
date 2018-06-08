@@ -5,12 +5,16 @@ package wash.midest.com.mrwashapp.appservices;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import wash.midest.com.mrwashapp.utils.AppUtils;
 
 /**
  * Created by Sreehari.KV on 3/14/2018.
@@ -67,4 +71,22 @@ public class APIServiceFactory {
         GsonBuilder gsonBuilder = new GsonBuilder();
         return GsonConverterFactory.create(gsonBuilder.create());
     }
+
+    private static final Interceptor cache_control_interceptor = new Interceptor() {
+        @Override public Response intercept(Chain chain) throws IOException {
+            Response originalResponse = chain.proceed(chain.request());
+            /*if (new AppUtils().isNetworkConnected()) {
+                int maxAge = 60; // read from cache for 1 minute
+                return originalResponse.newBuilder()
+                        .header("Cache-Control", "public, max-age=" + maxAge)
+                        .build();
+            } else {
+                int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+                return originalResponse.newBuilder()
+                        .header("Cache-Control", "public, only-if-cached, max-stale=" + maxStale)
+                        .build();
+            }*/
+
+            return null;
+        }};
 }

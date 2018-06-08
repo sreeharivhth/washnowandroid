@@ -52,13 +52,12 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:background="@color/colorAccent" />
 
 
             <!--PickUp Time-->
             <TextView
-                android:layout_marginTop="@dimen/component_margin_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/pickup_time"
@@ -91,14 +90,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:background="@color/colorAccent" />
 
             <!-- Delivery Time-->
 
 
             <TextView
-                android:layout_marginTop="@dimen/component_margin_16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/delivery_time"
@@ -131,7 +129,7 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:background="@color/colorAccent" />
 
             <!--<android.support.design.widget.TextInputLayout
@@ -202,7 +200,7 @@
                 android:id="@+id/locationSeparator"
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:background="@color/colorAccent" />
             <!--<android.support.design.widget.TextInputLayout
 
@@ -230,8 +228,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/component_margin_16"
-                android:layout_marginBottom="@dimen/component_margin"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:visibility="gone"
                 >
                 <android.support.design.widget.TextInputEditText
@@ -274,7 +271,7 @@
                 />-->
 
             <com.google.android.gms.maps.MapView
-                android:layout_marginTop="@dimen/component_margin_16"
+                android:layout_marginBottom="@dimen/component_margin_10"
                 android:id="@+id/placeOrderMap"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"

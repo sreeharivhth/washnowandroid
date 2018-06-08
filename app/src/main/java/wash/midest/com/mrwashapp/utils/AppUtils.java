@@ -38,7 +38,8 @@ public class AppUtils {
     public boolean isValidPassword(String password) {
         Pattern pattern;
         Matcher matcher;
-        String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*['*()=@#$%!^&_\"]).{8,12})";
+        //String PASSWORD_PATTERN = "((?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*['*()=@#$%!^&_\"]).{8,12})";
+        String PASSWORD_PATTERN = "[0-9a-zA-Z].{8,12}";
         pattern = Pattern.compile(PASSWORD_PATTERN);
         matcher = pattern.matcher(password);
         return matcher.matches();

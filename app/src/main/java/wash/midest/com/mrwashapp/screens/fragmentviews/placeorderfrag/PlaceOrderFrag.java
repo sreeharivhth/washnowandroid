@@ -481,7 +481,16 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         if(isFirstTime){
             isMsgShown = true;
             isFirstTime = false;
-            showMessage("Would you like to show the details of last order?",R.string.ok,R.string.cancel);
+
+            mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
+            if(!TextUtils.isEmpty(mGoogleLocationAdd))
+            {
+                showMessage("Would you like to show the details of last order?",R.string.ok,R.string.cancel);
+            }
+            else
+            {
+                pushMapFrag();
+            }
         }else{
             pushMapFrag();
         }

@@ -280,6 +280,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         tempHomeAddress = house;
         tempLandmark = landmark;
         tempLocation = location;
+
     }
 
     @OnItemSelected(R.id.servicesSpinner)
@@ -322,9 +323,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             cDelivery = Calendar.getInstance();
             int delYear = cDelivery.get(Calendar.YEAR);
             int delMonth = cDelivery.get(Calendar.MONTH);
-            cDelivery.add(Calendar.DAY_OF_MONTH,1);
+            int delDate = cDelivery.get(Calendar.DAY_OF_MONTH);
+            /*cDelivery.add(Calendar.DAY_OF_MONTH,1);*/
 
-            String deliveryDate = getStringDateFormatted(delYear, delMonth, cDelivery.get(Calendar.DAY_OF_MONTH));
+            //String deliveryDate = getStringDateFormatted(delYear, delMonth, cDelivery.get(Calendar.DAY_OF_MONTH));
+            String deliveryDate = getStringDateFormatted(delYear, delMonth, delDate);
             mTxtDeliveryDate.setText(deliveryDate);
         } catch (ParseException e) {
             e.printStackTrace();
@@ -672,6 +675,26 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder() {
+
+        if (TextUtils.isEmpty(mTxtLocation.getText().toString())) {
+            if (TextUtils.isEmpty(tempLandmark)
+                    ||
+                    TextUtils.isEmpty(tempHomeAddress)) {
+                showMessage("If Location is not present, Please select map and enter House and Landmark to place order!",
+                        R.string.ok, CASE_0);
+
+                return;
+            } /*else {
+                Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
+                //showToast("Can proceed with order");
+                //saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
+            }*/
+        } /*else {
+            Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
+            //saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
+        }*/
+
+
         Calendar delivery = Calendar.getInstance();
         delivery.set(Calendar.HOUR_OF_DAY, mCDeliveryTime.get(Calendar.HOUR_OF_DAY));
         delivery.set(Calendar.MINUTE, mCDeliveryTime.get(Calendar.MINUTE));
@@ -698,22 +721,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 //Pick up is valid , proceed with pick and delivery difference
                 Log.d(TAG, "Pick up is valid , proceed with pick and delivery difference");
                 if (isDeliveryValid(pickupDate, deliveryDate)) {
-
-                    if (TextUtils.isEmpty(mTxtLocation.getText().toString())) {
-                        if (TextUtils.isEmpty(tempLandmark)
-                                ||
-                                TextUtils.isEmpty(tempHomeAddress)) {
-                            showMessage("If Location is not present, Please select map and enter House and Landmark to place order!",
-                                    R.string.ok, CASE_0);
-                        } else {
-                            Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
-                            //showToast("Can proceed with order");
-                            saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
-                        }
-                    } else {
-                        Log.d(TAG, "Delivery and Pick up are Valid , can proceed with order placing");
-                        saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
-                    }
+                    saveAddressLocation(pickupDate.getTime(), deliveryDate.getTime());
                 } else {
                     showMessage("Delivery and Pick up time difference should be more than " + mSelectedDeliveryTimeMin + " hours for " + mSelectedService + " !",
                             R.string.ok, CASE_0);
@@ -747,10 +755,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             mSharedPreference.setPreferenceDouble(mSharedPreference.COORDINATES_LON, mLocation.longitude);
             mSharedPreference.setPreferenceBool(mSharedPreference.LOCATION_PRESENT, true);
             Log.d(TAG, "saveAddressLocation() Locations saved");
-            processPlaceOrderAPI();
+
         } else {
             Log.d(TAG, "saveAddressLocation() mLocation is NULL");
         }
+        processPlaceOrderAPI();
     }
 
     private boolean isPickUpValid(Date pickupDate) {
@@ -799,8 +808,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         requestParams.put(mApiConstants.API_ADDRESS, mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS));
         requestParams.put(mApiConstants.API_BUILDINGNAME, mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT));
         requestParams.put(mApiConstants.API_LANDMARK, mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK));
-        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+        double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LAT, 0.0);
+        double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LON, 0.0);
         requestParams.put(mApiConstants.API_LATITIDE, String.valueOf(lat));
         requestParams.put(mApiConstants.API_LONGITUDE, String.valueOf(lon));
 

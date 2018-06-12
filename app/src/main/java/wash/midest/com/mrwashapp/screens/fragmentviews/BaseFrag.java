@@ -58,6 +58,7 @@ public class BaseFrag extends Fragment implements AlertCallBack{
     }
 
     public void showMessage(String message,int positiveBtnText,final int caseNum){
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setMessage(message);
 

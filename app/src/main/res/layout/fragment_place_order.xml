@@ -191,7 +191,7 @@
                 android:id="@+id/location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Selected Location"
+                android:text=""
                 android:textColor="@color/text_color_gray_light"
                 android:layout_marginBottom="@dimen/component_margin_10"
                 />

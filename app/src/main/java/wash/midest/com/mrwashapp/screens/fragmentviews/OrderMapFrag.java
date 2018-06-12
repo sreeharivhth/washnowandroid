@@ -479,8 +479,8 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
             initCameraIdle(place.getLatLng().latitude,place.getLatLng().longitude);
 
         } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
-            showToast("Error in retrieving place info");
-
+            //showToast("Error in retrieving place info, Please try searching again or enter House and Landmark to proceed");
+            showErrorAlert("Error in retrieving place info, Please try searching again or enter House and Landmark to proceed");
         }
 
         /*switch (requestCode){

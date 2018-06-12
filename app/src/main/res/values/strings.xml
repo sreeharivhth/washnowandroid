@@ -90,6 +90,7 @@
     <string name="gps_network_not_enabled">Location is not enabled</string>
     <string name="open_location_settings">Open location settings</string>
     <string name="pick_condition_1">Delivery time should be after pick up time !</string>
+    <string name="apply">Apply</string>
 
 
 </resources>

@@ -99,7 +99,7 @@ public class FAQFrag extends BaseFrag implements APICallBack {
                 }
             });
         }else{
-            showMessage(errorMsg,R.string.ok);
+            showMessage(errorMsg,R.string.ok,0);
         }
     }
     /**

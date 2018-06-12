@@ -155,7 +155,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     void getPriceListData(int type){
         Log.d(TAG,"type selected = "+type);
         if(!mAppUtils.isNetworkConnected(getActivity())){
-            showMessage(getString(R.string.network_error),R.string.ok);
+            showMessage(getString(R.string.network_error),R.string.ok,0);
             return;
         }
         mProgressBar.setVisibility(View.VISIBLE);
@@ -244,7 +244,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
                 listRecyclerLadies.setVisibility(View.GONE);
             }
         }else{
-            showMessage(errorMsg,R.string.ok);
+            showMessage(errorMsg,R.string.ok,0);
         }
     }
     /**

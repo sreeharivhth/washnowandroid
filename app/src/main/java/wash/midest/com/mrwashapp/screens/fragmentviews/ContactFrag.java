@@ -104,7 +104,7 @@ public class ContactFrag extends BaseFrag implements APICallBack{
             mAddress.setText(data.getAddress());
 
         }else{
-            showMessage(errorMsg,R.string.ok);
+            showMessage(errorMsg,R.string.ok,0);
         }
     }
 }

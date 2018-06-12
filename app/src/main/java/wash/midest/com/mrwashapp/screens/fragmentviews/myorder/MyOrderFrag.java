@@ -75,7 +75,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     void getPriceListData(){
         if(!mAppUtils.isNetworkConnected(getActivity())){
-            showMessage(getString(R.string.network_error),R.string.ok);
+            showMessage(getString(R.string.network_error),R.string.ok,0);
             return;
         }
         mProgressBar.setVisibility(View.VISIBLE);
@@ -96,11 +96,11 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
                 listRecycler.setAdapter(mListAdapter);
                 mListAdapter.notifyDataSetChanged();
             }else{
-                showMessage("No orders made till now ",R.string.ok);
+                showMessage("No orders made till now ",R.string.ok,0);
             }
 
         }else{
-            showMessage(errorMsg,R.string.ok);
+            showMessage(errorMsg,R.string.ok,0);
         }
     }
 

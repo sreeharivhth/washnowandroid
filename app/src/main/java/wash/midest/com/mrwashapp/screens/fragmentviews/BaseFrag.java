@@ -38,18 +38,18 @@ public class BaseFrag extends Fragment implements AlertCallBack{
      * @param positiveBtnText positive button text
      * @param negativeBtnText negative button text
      */
-    protected void showMessage(String message,int positiveBtnText,int negativeBtnText){
+    protected void showMessage(String message,int positiveBtnText,int negativeBtnText,final int caseNum){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setMessage(message);
 
         dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                handlePositiveAlertCallBack();
+                handlePositiveAlertCallBack(caseNum);
             }
         });
         dialogBuilder.setNegativeButton(negativeBtnText, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                handleNegativeAlertCallBack();
+                handleNegativeAlertCallBack(caseNum);
             }
         });
         mCallBackAlertDialog = dialogBuilder.create();
@@ -57,13 +57,13 @@ public class BaseFrag extends Fragment implements AlertCallBack{
         mCallBackAlertDialog.show();
     }
 
-    public void showMessage(String message,int positiveBtnText){
+    public void showMessage(String message,int positiveBtnText,final int caseNum){
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
         dialogBuilder.setMessage(message);
 
         dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                handlePositiveAlertCallBack();
+                handlePositiveAlertCallBack(caseNum);
             }
         });
         mCallBackAlertDialog = dialogBuilder.create();
@@ -71,12 +71,12 @@ public class BaseFrag extends Fragment implements AlertCallBack{
         mCallBackAlertDialog.show();
     }
     @Override
-    public void handleNegativeAlertCallBack() {
+    public void handleNegativeAlertCallBack(int caseNum) {
 
     }
 
     @Override
-    public void handlePositiveAlertCallBack() {
+    public void handlePositiveAlertCallBack(int caseNum) {
 
     }
 

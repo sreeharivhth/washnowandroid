@@ -6,7 +6,7 @@ package wash.midest.com.mrwashapp.screens.uiutility;
 
 public interface AlertCallBack {
 
-    void handleNegativeAlertCallBack() ;
+    void handleNegativeAlertCallBack(int caseNum) ;
 
-    void handlePositiveAlertCallBack();
+    void handlePositiveAlertCallBack(int caseNum);
 }

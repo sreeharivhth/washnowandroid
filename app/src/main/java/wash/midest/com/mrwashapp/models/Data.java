@@ -346,6 +346,57 @@ public class Data implements Parcelable {
         return 0;
     }
 
+    //=================== My Offers ========================//
+
+    @SerializedName("promoCodeId")
+    @Expose
+    private String promoCodeId;
+
+    @SerializedName("title")
+    @Expose
+    private String title;
+
+    @SerializedName("offer")
+    @Expose
+    private String offer;
+
+    @SerializedName("code")
+    @Expose
+    private String code;
+
+    public String getPromoCodeId() {
+        return promoCodeId;
+    }
+
+    public void setPromoCodeId(String promoCodeId) {
+        this.promoCodeId = promoCodeId;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getOffer() {
+        return offer;
+    }
+
+    public void setOffer(String offer) {
+        this.offer = offer;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.memberId);
@@ -371,6 +422,10 @@ public class Data implements Parcelable {
         dest.writeString(this.status);
         dest.writeString(this.pickupTime);
         dest.writeString(this.orderDate);
+        dest.writeString(this.promoCodeId);
+        dest.writeString(this.title);
+        dest.writeString(this.offer);
+        dest.writeString(this.code);
     }
 
     public Data() {
@@ -400,6 +455,10 @@ public class Data implements Parcelable {
         this.status= in.readString();
         this.pickupTime= in.readString();
         this.orderDate= in.readString();
+        this.promoCodeId= in.readString();
+        this.title= in.readString();
+        this.offer= in.readString();
+        this.code= in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

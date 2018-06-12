@@ -180,10 +180,10 @@ public class MyProfileFrag extends BaseFrag implements APICallBack{
                 if(!TextUtils.isEmpty(phone))
                     mPhone.setText(phone);
             }else{
-                showMessage(getString(R.string.profile_updated),R.string.ok);
+                showMessage(getString(R.string.profile_updated),R.string.ok,0);
             }
         }else{
-            showMessage(errorMsg,R.string.ok);
+            showMessage(errorMsg,R.string.ok,0);
         }
     }
 }

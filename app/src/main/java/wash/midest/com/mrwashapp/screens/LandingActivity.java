@@ -30,6 +30,8 @@ import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.myorder.MyOrderFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.PriceListFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.offers.OfferFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.placeorderfrag.PlaceOrderFrag;
 
 public class LandingActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -174,7 +176,8 @@ public class LandingActivity extends BaseActivity
             }
         } else if (id == R.id.nav_offers) {
             if(isConnectedToNet()){
-
+                popTillBackStack(1);
+                replaceLandingContent(null, OfferFrag.newInstance(),"OfferFrag");
             }
         } else if (id == R.id.nav_faq) {
             if(isConnectedToNet()){
@@ -192,6 +195,18 @@ public class LandingActivity extends BaseActivity
         return true;
     }
 
+
+    public void pushMyOrderFrag(String couponCode){
+        popTillBackStack(1);
+        FragmentManager childFragMan = getSupportFragmentManager();
+        FragmentTransaction childFragTrans = childFragMan.beginTransaction();
+        //PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
+        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(0,mServicesData,couponCode);
+        childFragTrans.add(R.id.landing_fragment_id, fragB);
+        childFragTrans.addToBackStack("PlaceOrderFrag");
+        childFragTrans.commit();
+        fragB.setUserVisibleHint(true);
+    }
     private ArrayList<WashTypes> getServiceTypes(){
         ArrayList<WashTypes> types = new ArrayList<>();
         for(int count=0;count<mServicesData.getData().size();count++){

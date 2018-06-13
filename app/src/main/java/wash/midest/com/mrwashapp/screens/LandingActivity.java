@@ -195,6 +195,17 @@ public class LandingActivity extends BaseActivity
         return true;
     }
 
+    public void pushMyOrderFrag(int selectedServiceType){
+        popTillBackStack(1);
+        FragmentManager childFragMan = getSupportFragmentManager();
+        FragmentTransaction childFragTrans = childFragMan.beginTransaction();
+        //PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
+        PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(0,mServicesData,selectedServiceType);
+        childFragTrans.add(R.id.landing_fragment_id, fragB);
+        childFragTrans.addToBackStack("PlaceOrderFrag");
+        childFragTrans.commit();
+        fragB.setUserVisibleHint(true);
+    }
 
     public void pushMyOrderFrag(String couponCode){
         popTillBackStack(1);
@@ -216,6 +227,8 @@ public class LandingActivity extends BaseActivity
                 washType.setId(Integer.parseInt(serviceData.getId()));
                 washType.setTime("@ "+serviceData.getDeliveryTime()+" hrs");
                 washType.setWashType(serviceData.getName());
+                washType.setDeliveryTime(Integer.parseInt(serviceData.getDeliveryTime()));
+                washType.setPickupTime(Integer.parseInt(serviceData.getPickupTime()));
                 types.add(washType);
             }
         }

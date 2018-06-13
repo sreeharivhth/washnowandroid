@@ -55,8 +55,8 @@ dependencies {
     api 'com.google.android.gms:play-services-maps:12.0.1'
     api 'com.google.android.gms:play-services-places:12.0.1'
     api 'com.google.android.gms:play-services:12.0.1'
+    api 'com.google.android.gms:play-services-location:11.8.0'
 
     api 'com.wdullaer:materialdatetimepicker:3.6.0'
     api 'com.android.support:multidex:1.0.3'
-
 }

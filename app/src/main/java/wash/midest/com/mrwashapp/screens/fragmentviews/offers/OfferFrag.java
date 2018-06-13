@@ -193,6 +193,5 @@ public class OfferFrag extends BaseFrag implements APICallBack {
     }
     private void pushOfferFrag(String offerCode){
         ((LandingActivity)getActivity()).pushMyOrderFrag(offerCode);
-
     }
 }

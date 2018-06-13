@@ -105,7 +105,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     MapView mMapView;
     @BindView(R.id.locationSeparator)
     View mLocationSeparator;
-
+    private int mServiceTypeDefault=-1;
+    private int mServiceDefaultIndex=-1;
+    private static String SERVICE_TYPE = "SERVICE_TYPE";
     private static String DATA = "DATA";
     private static String COUPON = "CODE";
     private static String SERVICES = "SERVICES";
@@ -161,6 +163,15 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         return fragment;
     }
 
+    public static PlaceOrderFrag newInstance(int count, GeneralListDataPojo servicesList,int serviceSelected) {
+        PlaceOrderFrag fragment = new PlaceOrderFrag();
+        Bundle bundle = new Bundle();
+        bundle.putInt(DATA, count);
+        bundle.putInt(SERVICE_TYPE, serviceSelected);
+        bundle.putParcelable(SERVICES, servicesList);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -188,22 +199,28 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mServicesList = getArguments().getParcelable(SERVICES);
 
         try {
+            mServiceTypeDefault = getArguments().getInt(SERVICE_TYPE);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
             mCouponCode = getArguments().getString(COUPON);
 
-            Log.d(TAG,"Coupon Code = "+mCouponCode);
+            Log.d(TAG, "Coupon Code = " + mCouponCode);
 
-            if(!TextUtils.isEmpty(mCouponCode)){
+            if (!TextUtils.isEmpty(mCouponCode)) {
                 mPromoLayout.setVisibility(View.VISIBLE);
                 mPromoCode.setText(mCouponCode);
                 mPromoCode.setEnabled(false);
-            }else{
+            } else {
                 mPromoLayout.setVisibility(View.GONE);
-                mCouponCode=null;
+                mCouponCode = null;
             }
         } catch (Exception e) {
-            mCouponCode=null;
+            mCouponCode = null;
             mPromoLayout.setVisibility(View.GONE);
-            Log.e(TAG,"Coupon code not available = "+e.toString());
+            Log.e(TAG, "Coupon code not available = " + e.toString());
         }
 
         for (int count = 0; count < mServicesList.getData().size(); count++) {
@@ -218,6 +235,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServiceNames);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mServicesPicker.setAdapter(dataAdapter);
+
+        //set service selected
+        if (mServiceTypeDefault != 0 || mServiceTypeDefault != -1){
+            mServicesPicker.setSelection(mServiceTypeDefault);
+        }
 
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
@@ -364,6 +386,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                         }
                     }
                 }, mYear, mMonth, mDay);
+
+        datePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
+//        datePickerDialog.set(R.attr.colorPrimary);
         datePickerDialog.setMinDate(cal);
         datePickerDialog.show(getActivity().getFragmentManager(),"pickDate");
     }
@@ -396,6 +421,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                     }
                 }, mYear, mMonth, mDay);
         datePickerDialog.setMinDate(cal);
+        datePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
+//        datePickerDialog.setAccentColor(R.attr.colorPrimary);
         datePickerDialog.show(getActivity().getFragmentManager(),"pickDateDelivery");
     }
 
@@ -433,6 +460,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                         }
                         ,hourOfDay,minPickTime,false);
         /*timePickerDialog.setMinTime(new Timepoint(minPickTime,0,0));*/
+        timePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
         timePickerDialog.show(getActivity().getFragmentManager(),"pickTime");
 
     }
@@ -458,6 +486,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                     }
                 }, mHour, minDeliveryTime, false);
         /*timePickerDialog.setMinTime(new Timepoint(minDeliveryTime,0,0));*/
+        timePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
         timePickerDialog.show(getActivity().getFragmentManager(),"pickDeliveryTime");
     }
 
@@ -535,7 +564,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             isFirstTime = false;
 
             /*mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);*/
-            if(!TextUtils.isEmpty(mGoogleLocationAdd))
+            if(!TextUtils.isEmpty(mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS)))
             {
                 showMessage("Would you like to show the details of last order?",R.string.ok,R.string.cancel, CASE_1);
             }
@@ -735,8 +764,12 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mSelectedPickTime = pickTime;
         mSelectedDeliveryTime = deliveryTime;
         if (!TextUtils.isEmpty(tempGoogleAddress)) {
+            //mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS)
+
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, tempGoogleAddress);
-        } else {
+        } else if(!TextUtils.isEmpty(mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS))){
+            mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS));
+        }else{
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, "");
         }
         if (!TextUtils.isEmpty(tempLandmark)) {
@@ -855,10 +888,10 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     public void handlePositiveAlertCallBack(int caseNum) {
         Log.d(TAG,"handlePositiveAlertCallBack");
         if(caseNum == CASE_1){
-            mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
+            mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS);
             mTxtLocation.setText(mGoogleLocationAdd);
-            double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-            double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
+            double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LAT, 0.0);
+            double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LON, 0.0);
             LatLng latLng = new LatLng(lat, lon);
             mLocation = latLng;
             reloadMap();

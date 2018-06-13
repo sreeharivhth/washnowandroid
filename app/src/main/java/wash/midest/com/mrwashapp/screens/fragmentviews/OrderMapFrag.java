@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,6 +17,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
@@ -44,7 +46,12 @@ import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlacePicker;
@@ -78,9 +85,7 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
 
     private static final int PERMISSIONS_REQUEST_LOCATION = 2773;
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 1;
@@ -90,25 +95,17 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
     MapView mMapView;
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
-    /*@BindView(R.id.txtLocationAddress)
-    TextView mTxtAddress;
-    @BindView(R.id.cardView)
-    CardView mCardAddress;*/
     @BindView(R.id.house_new)
     TextInputEditText mHouseAdd;
     @BindView(R.id.landmark_new)
     TextInputEditText mLandmark;
-    /*@BindView(R.id.getCurrentLocation)
-    ImageView mGetCurrentLoc;*/
-    /*@BindView(R.id.centerMarker)
-    ImageView mCenterMarker;*/
     @BindView(R.id.searchLayout)
     LinearLayout mSearchLayout;
     @BindView(R.id.currentAddress)
     TextView mCurrentAddressRetrieved;
     @BindView(R.id.confirm_btn)
     Button mConfirm;
-    private LocationManager mLocationManager;
+
     private Marker mCurrLocationMarker;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
@@ -120,7 +117,11 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
     private double mLatSelected;
     private double mLonSelected;
     LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
+    LocationReceiver mLocationReceiver;
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+
+    private FusedLocationProviderClient mfusedLocationProviderclient;
 
     public OrderMapFrag() {
     }
@@ -128,26 +129,17 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
     }
 
     @Override
     public void onResume() {
         super.onResume();
+        isPermissionRequired();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        if (mLocationManager != null) {
-            try {
-                mLocationManager.removeUpdates(this);
-                mLocationManager = null;
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-            }
-        }
     }
 
     void isPermissionRequired() {
@@ -159,11 +151,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         }
     }
 
-    //||
-    //                ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
-
     void checkPermission() {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
                 && getActivity().checkSelfPermission(
                 Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -173,44 +161,41 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         } else {
             postPermissionGranted();
         }
-
-
-        /*if (ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
-
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_LOCATION);
-            } else {
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_PHONE_STATE}, PERMISSIONS_REQUEST_LOCATION);
-            }
-        } else {
-            //Permission already granted. Proceed with functionalities
-            postPermissionGranted();
-        }*/
     }
-
-
-    /*@OnClick(R.id.getCurrentLocation)
-    void getCurrentLocation(){
-        mProgressBar.setVisibility(View.VISIBLE);
-        mCenterMarker.setVisibility(View.VISIBLE);
-        isPermissionRequired();
-    }*/
-
-    /*@SuppressLint("MissingPermission")*/
     private void postPermissionGranted() {
-
+        Log.d(TAG,"postPermissionGranted called");
         if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
-        /*mGoogleMap.setMyLocationEnabled(true);*/
-        mLocationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        mLocationManager.requestSingleUpdate(LocationManager.NETWORK_PROVIDER, this, null);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        // Create LocationSettingsRequest object using location request
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+        SettingsClient settingsClient = LocationServices.getSettingsClient(getActivity());
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+        mfusedLocationProviderclient = LocationServices.getFusedLocationProviderClient(getActivity());
+        Log.d(TAG,"mfusedLocationProviderclient.requestLocationUpdates");
+        if(isLocationReceived){
+            mfusedLocationProviderclient.removeLocationUpdates(mLocationReceiver);
+            Log.d(TAG,"Location already received,So not requesting again");
+        }else{
+            mfusedLocationProviderclient.requestLocationUpdates(mLocationRequest,mLocationReceiver,Looper.myLooper());
+            Log.d(TAG,"Location requested");
+        }
     }
 
-
-
+    class LocationReceiver extends LocationCallback
+    {
+        @Override
+        public void onLocationResult(LocationResult locationResult) {
+            Log.d(TAG,"mfusedLocationProviderclient onLocationResult called");
+            onLocationChanged(locationResult.getLastLocation());
+        }
+    }
     public static OrderMapFrag newInstance(Fragment parentFrag) {
         OrderMapFrag fragment = new OrderMapFrag();
         mParentFrag = parentFrag;
@@ -219,22 +204,14 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         return fragment;
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_order_map, container, false);
-
         mUnbinder = ButterKnife.bind(this, view);
         mMapView.onCreate(savedInstanceState);
-
-        /*mTxtAddress.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-        mTxtAddress.setSingleLine(true);
-        mTxtAddress.setMarqueeRepeatLimit(-1);
-        mTxtAddress.setSelected(true);*/
-        isPermissionRequired();
-        isLocationReceived = false;
+        mLocationReceiver = new LocationReceiver();
         setHasOptionsMenu(true);
         mMapView.onResume();
         try {
@@ -244,137 +221,49 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         }
         mMapView.getMapAsync(this);
         onAttachToParentFragment(mParentFrag);
-
         return view;
     }
 
-    /*@Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.location_set, menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-
-            case R.id.action_done:
-                getActivity().getSupportFragmentManager().popBackStack();
-                //getChildFragmentManager().popBackStack();
-
-                mSharedPreference.setPreferenceDouble(mSharedPreference.LAT_SELECTED, mLatSelected);
-                mSharedPreference.setPreferenceDouble(mSharedPreference.LON_SELECTED, mLonSelected);
-                mSharedPreference.setPreferenceString(mSharedPreference.SELECTED_ADDERSS, mSelectedAddress);
-
-                if (!TextUtils.isEmpty(mHouseAdd.getText())) {
-                    mSharedPreference.setPreferenceString(mSharedPreference.HOUSE_FLAT, mHouseAdd.getText().toString());
-                } else {
-                    mSharedPreference.setPreferenceString(mSharedPreference.HOUSE_FLAT, "");
-                }
-                if (!TextUtils.isEmpty(mLandmark.getText())) {
-                    mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, mLandmark.getText().toString());
-                } else {
-                    mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, "");
-                }
-                return false;
-            default:
-                break;
-        }
-        return false;
-    }*/
-
     @OnClick(R.id.confirm_btn)
     void onSubmission(){
-        //mSharedPreference.setPreferenceDouble(mSharedPreference.LAT_SELECTED, mLatSelected);
-        //mSharedPreference.setPreferenceDouble(mSharedPreference.LON_SELECTED, mLonSelected);
-        //mSharedPreference.setPreferenceString(mSharedPreference.SELECTED_ADDERSS, mSelectedAddress);
         String tempHouse="";
         String tempLandmark="";
         if (!TextUtils.isEmpty(mHouseAdd.getText())) {
-            //mSharedPreference.setPreferenceString(mSharedPreference.HOUSE_FLAT, mHouseAdd.getText().toString());
             tempHouse = mHouseAdd.getText().toString();
         }
         if (!TextUtils.isEmpty(mLandmark.getText())) {
-            //mSharedPreference.setPreferenceString(mSharedPreference.LANDMARK, mLandmark.getText().toString());
             tempLandmark = mLandmark.getText().toString();
         }
         mChangedLocationToUpdate.updatedLocation(new LatLng(mLatSelected,mLonSelected),mSelectedAddress,tempHouse,tempLandmark);
-
-        /*public String TEMP_SELECTED_ADDERSS="TEMP_SELECTED_ADDERSS";
-        public String TEMP_LAT_SELECTED="TEMP_LAT_SELECTED";
-        public String TEMP_LON_SELECTED="TEMP_LON_SELECTED";*/
         getActivity().getSupportFragmentManager().popBackStack();
     }
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            //User has previously accepted this permission
             if (ActivityCompat.checkSelfPermission(getActivity(),
                     Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
                 mGoogleMap.setMyLocationEnabled(true);
             }
         } else {
-            //Not in api-23, no need to prompt
             mGoogleMap.setMyLocationEnabled(true);
         }
-
         mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
                 isPermissionRequired();
-                return false;
+                return true;
             }
         });
-
         if (mMapView != null &&
                 mMapView.findViewById(Integer.parseInt("1")) != null) {
             View locationButton = ((View) mMapView.findViewById(Integer.parseInt("1")).getParent()).findViewById(Integer.parseInt("2"));
             RelativeLayout.LayoutParams rlp = (RelativeLayout.LayoutParams) locationButton.getLayoutParams();
-            // position on right bottom
             rlp.addRule(RelativeLayout.ALIGN_PARENT_TOP, 0);
             rlp.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
             rlp.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             rlp.setMargins(5, 5, 5, 5);
         }
-
-        /*if (ActivityCompat.checkSelfPermission(getActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(getActivity(),
-                        Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mGoogleMap.setMyLocationEnabled(true);*/
-        //mGoogleMap.getUiSettings().setScrollGesturesEnabled(false);
-
-        //Enable zoom in / out
-        /*mGoogleMap.getUiSettings().setZoomGesturesEnabled(false);*/
-        /*LatLng sydney = new LatLng(-33.852, 151.211);
-        googleMap.addMarker(new MarkerOptions().position(sydney)
-                .title("Marker in Sydney")
-        );
-        
-        googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
-
-        /*mGoogleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng latLng) {
-                // Creating a marker
-                MarkerOptions markerOptions = new MarkerOptions();
-                // Setting the position for the marker
-                markerOptions.position(latLng);
-                // Setting the title for the marker.
-                // This will be displayed on taping the marker
-                markerOptions.title(latLng.latitude + " : " + latLng.longitude);
-                // Clears the previously touched position
-                mGoogleMap.clear();
-                // Animating to the touched position
-                mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-                // Placing a marker on the touched position
-                mGoogleMap.addMarker(markerOptions);
-                mChangedLocationToUpdate.updatedLocation(latLng);
-            }
-        });*/
     }
 
     @Override
@@ -386,11 +275,8 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
                     if (ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             && ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
                             ) {
-
                         mGoogleMap.setMyLocationEnabled(true);
-
                         postPermissionGranted();
-
                     }
                 } else {
                     android.support.v7.app.AlertDialog.Builder alertBuilder = new android.support.v7.app.AlertDialog.Builder(getActivity());
@@ -421,32 +307,17 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         mUnbinder.unbind();
     }
 
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
-    }
-
     @OnClick({R.id.searchLayout})
     void addressClickEvent() {
         try{
-
-            /*PlacePicker.IntentBuilder placeIntent = new PlacePicker.IntentBuilder();
-            Intent intent = placeIntent.build(getActivity());*/
-
-        Intent intent =
-                new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+           Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
                         .build(getActivity());
-
+            try {
+                intent.putExtra("primary_color", getResources().getColor(R.color.colorPrimary));
+                intent.putExtra("primary_color_dark", getResources().getColor(R.color.colorPrimaryDark));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
     } catch (GooglePlayServicesRepairableException e) {
         showToast("Google Play Service Repair");
@@ -457,51 +328,25 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         Log.d(TAG,"OrderMapFrag onActivityResult getting called");
         if (resultCode == RESULT_OK) {
             Place place = PlaceAutocomplete.getPlace(getActivity(), data);
-            /*
-            if (!place.getAddress().toString().contains(place.getName())) {
-
-                Log.d(TAG,"PLACE SELECTED = "+place.getName() + ", " + place.getAddress());
-                mTxtAddress.setText(place.getName() + ", " + place.getAddress());
-            } else {
-                mTxtAddress.setText(place.getAddress());
-            }
-
-            CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(place.getLatLng(), 16);
-            mGoogleMap.animateCamera(cameraUpdate);
-
-            Log.d(TAG,"mGoogleMap.animateCamera animated to new : latitude= "+place.getLatLng().latitude+" || longitude:"+place.getLatLng().longitude);*/
-
-            /*mCenterMarker.setVisibility(View.VISIBLE);*/
             initCameraIdle(place.getLatLng().latitude,place.getLatLng().longitude);
-
         } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
             //showToast("Error in retrieving place info, Please try searching again or enter House and Landmark to proceed");
             showErrorAlert("Error in retrieving place info, Please try searching again or enter House and Landmark to proceed");
         }
-
-        /*switch (requestCode){
-            case PLACE_AUTOCOMPLETE_REQUEST_CODE:
-
-                break;
-
-                default:
-                    super.onActivityResult(requestCode, resultCode, data);
-        }*/
-        /*if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
-
-
-        }*/
     }
 
-    @Override
     public void onLocationChanged(Location location) {
+        if(isLocationReceived){
+            Log.d(TAG,"Location already received,So not requesting again");
+            mfusedLocationProviderclient.removeLocationUpdates(mLocationReceiver);
+        }
         Log.d(TAG,"isLocationReceived = "+isLocationReceived);
         mProgressBar.setVisibility(View.GONE);
         if(!isLocationReceived){
+            isLocationReceived=true;
             Log.d(TAG,"Inside if loop ");
             mLastLocation = location;
             if (mCurrLocationMarker != null) {
@@ -515,37 +360,13 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
             markerOptions.title("Current Position");
             markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
             mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-
-            //move map camera
-
-            //For timebeing commented to checkl Place order picker handling
-            //mChangedLocationToUpdate.updatedLocation(latLng);
-
             initCameraIdle(mLastLocation.getLatitude(),mLastLocation.getLongitude());
-
-        }else{
-
-            Log.d(TAG,"Inside Else part");
-            if(mLocationManager!=null){
-                mLocationManager.removeUpdates(this);
-                mLocationManager=null;
-
-            }
-            isLocationReceived=true;
         }
-
     }
 
     private void initCameraIdle(final double latitude, final double longitude) {
         Log.d(TAG,"OrderMapFrag initCameraIdle");
-        /*mGoogleMap.setOnCameraIdleListener(new GoogleMap.OnCameraIdleListener() {
-            @Override
-            public void onCameraIdle() {
-            }
-        });*/
-
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),16));
-
         LatLng latLng = new LatLng(latitude,longitude);
         MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
@@ -553,17 +374,14 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
         mCurrLocationMarker.setPosition(new LatLng(latitude,longitude));
-
         getAddressFromLoc(latitude, longitude);
     }
 
     private void getAddressFromLoc(double latitude, double longitude) {
-
         Log.d(TAG,"OrderMapFrag getAddressFromLoc");
         Geocoder geocoder = new Geocoder(getActivity(), Locale.ENGLISH);
         try {
             List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-
             if (addresses.size() > 0) {
                 Address address = addresses.get(0);
                 StringBuffer str = new StringBuffer();
@@ -583,40 +401,21 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback, Google
                 mLatSelected = latitude;
                 mLonSelected = longitude;
                 Log.d(TAG,"Update Address = "+mSelectedAddress.toString());
-                //mTxtAddress.setText(mSelectedAddress.toString());
                 mCurrentAddressRetrieved.setText(mSelectedAddress.toString());
             } else {
-                //mTxtAddress.setText("Searching Current Address");
                 mCurrentAddressRetrieved.setText("");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            //printToast("Could not get address..!");
             showToast("Could not get address..!", Toast.LENGTH_LONG);
-
         }
     }
 
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
     public void onAttachToParentFragment(Fragment fragment)
     {
         try
         {
             mChangedLocationToUpdate = (OnLocationSelected)fragment;
-
         }
         catch (ClassCastException e)
         {

@@ -50,9 +50,10 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         fragment.setArguments(bundle);
         return fragment;
     }
-    public LandingFrag() {
-    }
 
+    public LandingFrag() {
+        //
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +63,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
 
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.app_title));
 
-        mGeneralPojo= getArguments().getParcelable(LANDING_DATA);
+        mGeneralPojo = getArguments().getParcelable(LANDING_DATA);
+
         mApiConstants=new APIConstants();
         /*ViewPager pager =  view.findViewById(R.id.viewpager_home);*/
         mPager.setAdapter(new ViewPagerAdapter(getChildFragmentManager()));

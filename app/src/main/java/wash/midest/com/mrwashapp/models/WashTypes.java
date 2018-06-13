@@ -22,6 +22,32 @@ public class WashTypes implements Parcelable {
     @Expose
     int id;
 
+    @SerializedName("deliveryTime")
+    @Expose
+    int deliveryTime;
+
+    @SerializedName("pickupTime")
+    @Expose
+    int pickupTime;
+
+
+    public int getDeliveryTime() {
+        return deliveryTime;
+    }
+
+    public void setDeliveryTime(int deliveryTime) {
+        this.deliveryTime = deliveryTime;
+    }
+
+    public int getPickupTime() {
+        return pickupTime;
+    }
+
+    public void setPickupTime(int pickupTime) {
+        this.pickupTime = pickupTime;
+    }
+
+
     public int getId() { return id;     }
 
     public void setId(int id) { this.id = id;     }
@@ -53,6 +79,8 @@ public class WashTypes implements Parcelable {
         dest.writeString(this.washType);
         dest.writeString(this.time);
         dest.writeInt(this.id);
+        dest.writeInt(this.deliveryTime);
+        dest.writeInt(this.pickupTime);
     }
 
     public WashTypes() {
@@ -62,6 +90,8 @@ public class WashTypes implements Parcelable {
         this.washType = in.readString();
         this.time = in.readString();
         this.id = in.readInt();
+        this.deliveryTime = in.readInt();
+        this.pickupTime = in.readInt();
     }
 
     public static final Parcelable.Creator<WashTypes> CREATOR = new Parcelable.Creator<WashTypes>() {

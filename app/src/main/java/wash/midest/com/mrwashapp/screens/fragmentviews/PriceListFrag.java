@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -22,6 +23,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import butterknife.OnItemSelected;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
@@ -70,6 +72,15 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     @BindView(R.id.headladies)
     TextView mLadiesHead;
 
+    @BindView(R.id.pickUpTime)
+    TextView mPickTime;
+
+    @BindView(R.id.deliveryTime)
+    TextView mDeliveryTime;
+
+    @BindView(R.id.place_order_btn)
+    Button mPlaceOrder;
+
     private ListAdapterGents mListAdapterGents;
 
     private ListAdapterOthers mListAdapterOthers;
@@ -86,13 +97,13 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     Spinner mSpinner;
     private final String CURRENCY = "QR";
     private int mSelectedIndex=-1;
+    private int mServiceTypeIndex;
 
     public PriceListFrag() {
         // Required empty public constructor
     }
 
     public static PriceListFrag newInstance(ArrayList<WashTypes> serviceTypes,int selectedPos){
-
         PriceListFrag priceListFrag=new PriceListFrag();
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(SERVICE_DATA, serviceTypes);
@@ -108,8 +119,8 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         View view =  inflater.inflate(R.layout.fragment_price_list, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.action_price_list));
-        mAllService= getArguments().getParcelableArrayList(SERVICE_DATA);
-        mSelectedIndex=getArguments().getInt(SELECTED_INDEX);
+        mAllService = getArguments().getParcelableArrayList(SERVICE_DATA);
+        mSelectedIndex = getArguments().getInt(SELECTED_INDEX);
 
         LinearLayoutManager layoutManager1 = new LinearLayoutManager(getActivity());
         layoutManager1.setOrientation(LinearLayoutManager.VERTICAL);
@@ -129,16 +140,23 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
         return view;
     }
 
+    @OnClick(R.id.place_order_btn)
+    void onPlaceOrderButton(){
+        ((LandingActivity)getActivity()).pushMyOrderFrag(mServiceTypeIndex);
+    }
+
     @OnItemSelected(R.id.serviceType)
     void spinnerSelectAction(Spinner spinner, int position){
         try {
             String itemSelected = (String) spinner.getItemAtPosition(position);
+            mServiceTypeIndex = position;
             WashTypes washTypes = mAllService.get(position);
-            int idSel = washTypes.getId();
+            int mServiceTypeSelected = washTypes.getId();
             Log.d(TAG,"itemSelected === "+itemSelected);
-            Log.d(TAG,"Selected ID === "+idSel);
-
-            getPriceListData(idSel);
+            Log.d(TAG,"Selected ID === "+mServiceTypeSelected);
+            mPickTime.setText("Within "+washTypes.getPickupTime()+" hrs");
+            mDeliveryTime.setText("Within "+washTypes.getDeliveryTime()+" hrs");
+            getPriceListData(mServiceTypeSelected);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -106,6 +106,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
     @BindView(R.id.confirm_btn)
     Button mConfirm;
 
+    private boolean isLocationClicked;
     private Marker mCurrLocationMarker;
     private Location mLastLocation;
     private GoogleMap mGoogleMap;
@@ -134,7 +135,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
     @Override
     public void onResume() {
         super.onResume();
-        isPermissionRequired();
+        isPermissionRequired(false);
     }
 
     @Override
@@ -142,7 +143,8 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         super.onPause();
     }
 
-    void isPermissionRequired() {
+    void isPermissionRequired(boolean locationClicked) {
+        isLocationClicked = locationClicked;
         boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getActivity().getApplicationContext());
         if (isPermissionRequired) {
             checkPermission();
@@ -168,6 +170,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
                 && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
         }
+        mLocationRequest = LocationRequest.create();
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
@@ -179,7 +182,11 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         settingsClient.checkLocationSettings(locationSettingsRequest);
         mfusedLocationProviderclient = LocationServices.getFusedLocationProviderClient(getActivity());
         Log.d(TAG,"mfusedLocationProviderclient.requestLocationUpdates");
-        if(isLocationReceived){
+        if(isLocationClicked){
+            Log.d(TAG,"Location requested , isLocationClicked ="+isLocationClicked);
+            mfusedLocationProviderclient.requestLocationUpdates(mLocationRequest,mLocationReceiver,Looper.myLooper());
+        }
+        else if(isLocationReceived){
             mfusedLocationProviderclient.removeLocationUpdates(mLocationReceiver);
             Log.d(TAG,"Location already received,So not requesting again");
         }else{
@@ -251,7 +258,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         mGoogleMap.setOnMyLocationButtonClickListener(new GoogleMap.OnMyLocationButtonClickListener() {
             @Override
             public boolean onMyLocationButtonClick() {
-                isPermissionRequired();
+                isPermissionRequired(true);
                 return true;
             }
         });
@@ -345,7 +352,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         }
         Log.d(TAG,"isLocationReceived = "+isLocationReceived);
         mProgressBar.setVisibility(View.GONE);
-        if(!isLocationReceived){
+        if(isLocationClicked || !isLocationReceived){
             isLocationReceived=true;
             Log.d(TAG,"Inside if loop ");
             mLastLocation = location;

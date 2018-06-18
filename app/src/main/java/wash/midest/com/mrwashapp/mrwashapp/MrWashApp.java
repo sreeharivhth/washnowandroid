@@ -17,7 +17,7 @@ public class MrWashApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        registerActivityLifecycleCallbacks(new WashActivityLifecycleCallBack());
+        //registerActivityLifecycleCallbacks(new WashActivityLifecycleCallBack());
     }
 
     @Override

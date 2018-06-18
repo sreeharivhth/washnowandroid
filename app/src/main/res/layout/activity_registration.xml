@@ -139,7 +139,7 @@
                 android:text="@string/register"
                 android:layout_gravity="center"
                 android:textSize="@dimen/text_size_13"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="@dimen/component_margin_16"
                 android:layout_marginLeft="@dimen/component_margin_25"
                 android:layout_marginRight="@dimen/component_margin_25"
                 android:layout_marginBottom="@dimen/component_margin_10"

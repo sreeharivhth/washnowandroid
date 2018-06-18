@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,10 +39,11 @@ public class ContactFrag extends BaseFrag implements APICallBack{
     TextView mPhone;
     @BindView(R.id.contact_address)
     TextView mAddress;
-
     @BindView(R.id.progressBarLoading)
     ProgressBar mProgressBar;
     private Unbinder mUnbinder;
+    private static final String TAG="ContactFrag";
+    private boolean isVisible;
 
     public ContactFrag(){
     }
@@ -94,17 +96,32 @@ public class ContactFrag extends BaseFrag implements APICallBack{
     }
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess) {
-            GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
-            Data data = ((GeneralListDataPojo) responseObj).getData().get(0);
+        if(isVisible){
+            mProgressBar.setVisibility(View.GONE);
+            if(isSuccess) {
+                GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
+                Data data = ((GeneralListDataPojo) responseObj).getData().get(0);
 
-            mEmail.setText(data.getEmail());
-            mPhone.setText(data.getPhone());
-            mAddress.setText(data.getAddress());
+                mEmail.setText(data.getEmail());
+                mPhone.setText(data.getPhone());
+                mAddress.setText(data.getAddress());
 
-        }else{
-            showMessage(errorMsg,R.string.ok,0);
+            }else{
+                showMessage(errorMsg,R.string.ok,0);
+            }
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
     }
 }

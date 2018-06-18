@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.appservices;
 import java.util.Map;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.Headers;
@@ -127,7 +128,7 @@ public interface APIConfiguration {
             "Content-Type:application/x-www-form-urlencoded"})
     @FormUrlEncoded
     @POST("member/my-offers")
-    Observable<GeneralListDataPojo> getMyOffers(@FieldMap(encoded = true) Map<String, String> params);
+    Single<GeneralListDataPojo> getMyOffers(@FieldMap(encoded = true) Map<String, String> params);
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})

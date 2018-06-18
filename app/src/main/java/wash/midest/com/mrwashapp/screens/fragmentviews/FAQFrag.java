@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -46,6 +47,8 @@ public class FAQFrag extends BaseFrag implements APICallBack {
     ProgressBar mProgressBar;
     private Unbinder mUnbinder;
     private List<Data> data;
+    private static final String TAG="FAQFrag";
+    private boolean isVisible;
 
     public FAQFrag() {
         // Required empty public constructor
@@ -80,26 +83,28 @@ public class FAQFrag extends BaseFrag implements APICallBack {
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess){
+        if(isVisible){
+            mProgressBar.setVisibility(View.GONE);
+            if(isSuccess){
 
-            GeneralListDataPojo pojo=(GeneralListDataPojo)responseObj;
-            data =  pojo.getData();
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                    mRecyclerView.setLayoutManager(layoutManager);
-                    if(data!=null && data.size()>0){
-                        mListAdapter = new ListAdapter(data);
-                        mRecyclerView.setAdapter(mListAdapter);
-                        mListAdapter.notifyDataSetChanged();
+                GeneralListDataPojo pojo=(GeneralListDataPojo)responseObj;
+                data =  pojo.getData();
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        final LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+                        mRecyclerView.setLayoutManager(layoutManager);
+                        if(data!=null && data.size()>0){
+                            mListAdapter = new ListAdapter(data);
+                            mRecyclerView.setAdapter(mListAdapter);
+                            mListAdapter.notifyDataSetChanged();
+                        }
                     }
-                }
-            });
-        }else{
-            showMessage(errorMsg,R.string.ok,0);
+                });
+            }else{
+                showMessage(errorMsg,R.string.ok,0);
+            }
         }
     }
     /**
@@ -155,5 +160,17 @@ public class FAQFrag extends BaseFrag implements APICallBack {
             }
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
+    }
 }

@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
+import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
@@ -300,9 +301,9 @@ public class APIProcessor {
         serviceFactory.getAPIConfiguration().getMyOffers(requestParams)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new DisposableObserver<GeneralListDataPojo>() {
+                .subscribeWith(new DisposableSingleObserver<GeneralListDataPojo>() {
                     @Override
-                    public void onNext(GeneralListDataPojo generalPojo) {
+                    public void onSuccess(GeneralListDataPojo generalPojo) {
                         int statusCode = generalPojo.getStatusCode();
                         //Check for error
                         if(statusCode!=mApiConstants.SUCCESS){
@@ -317,16 +318,14 @@ public class APIProcessor {
                             callBack.processedResponse(generalPojo,true,null);
                         }
                     }
+
                     @Override
                     public void onError(Throwable e) {
                         Log.e(TAG, "### The API service error"+e.toString());
                         callBack.processedResponse(null,false,"Error in processing request. Want to try again");
                     }
-                    @Override
-                    public void onComplete() {
-
-                    }
                 });
+
     }
 
     public void validatePromoCode(final APICallBack callBack, HashMap<String,String> requestParams){

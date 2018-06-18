@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
+import com.crashlytics.android.Crashlytics;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -42,6 +44,7 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     private APIConstants mApiConstants;
     private ArrayList<String> mServices;
     private Unbinder mUnbinder;
+    private boolean isVisible;
 
     public static LandingFrag newInstance(GeneralListDataPojo generalPojo) {
         LandingFrag fragment = new LandingFrag();
@@ -155,10 +158,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     public void onButtonClicked(int index) {
         Log.d(TAG,"Button clicked on index = "+index);
         //Avoided below dut to neglecting backstack by android
-        //FragmentManager childFragMan = getChildFragmentManager();
         FragmentManager childFragMan = getActivity().getSupportFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
-        //PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mServices);
         PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mGeneralPojo,null);
         childFragTrans.add(R.id.landing_fragment_id, fragB);
         childFragTrans.addToBackStack("PlaceOrderFrag");
@@ -178,5 +179,18 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     @Override public void onDestroyView() {
         super.onDestroyView();
         mUnbinder.unbind();
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
     }
 }

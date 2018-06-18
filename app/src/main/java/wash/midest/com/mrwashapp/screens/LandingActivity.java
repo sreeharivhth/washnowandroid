@@ -44,6 +44,7 @@ public class LandingActivity extends BaseActivity
     private String TAG=LandingActivity.class.getName();
     private LinearLayout mLandingReplaceableContent;
     private LandingFrag mDirectFragment;
+    private NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,10 +59,13 @@ public class LandingActivity extends BaseActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mNavigationView = (NavigationView) findViewById(R.id.nav_view);
+        mNavigationView.setNavigationItemSelectedListener(this);
         //Disable default title which will be near to navigation drawer icon
         setTitle("");
+
+        updateUserProfile();
+
         //Set custom title in center of screen
         mTitleText=findViewById(R.id.toolbar_title);
         mTitleText.setText(getString(R.string.app_title));
@@ -130,6 +134,28 @@ public class LandingActivity extends BaseActivity
         alertDialog2.show();
     }
 
+    public void updateUserProfile(){
+        try {
+            LinearLayout headerLayout = (LinearLayout) mNavigationView.getHeaderView(0);
+            TextView un = headerLayout.findViewById(R.id.user_name);
+            TextView email = headerLayout.findViewById(R.id.user_email);
+            TextView mob = headerLayout.findViewById(R.id.user_mobile);
+
+            String e = mSharedPreference.getPreferenceString(mSharedPreference.USER_EMAIL);
+            String m = mSharedPreference.getPreferenceString(mSharedPreference.USER_MOBILE);
+            String n = mSharedPreference.getPreferenceString(mSharedPreference.USER_NAME);
+
+            if(!TextUtils.isEmpty(e))
+                email.setText(e);
+            if(!TextUtils.isEmpty(n))
+                un.setText(n);
+            if(!TextUtils.isEmpty(m))
+                mob.setText(m);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {

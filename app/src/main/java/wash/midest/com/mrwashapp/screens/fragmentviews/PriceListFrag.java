@@ -98,6 +98,7 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
     private final String CURRENCY = "QR";
     private int mSelectedIndex=-1;
     private int mServiceTypeIndex;
+    private boolean isVisible;
 
     public PriceListFrag() {
         // Required empty public constructor
@@ -204,65 +205,60 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess) {
-            hideSeperators();
-
-            List<Gents> gents=new ArrayList<>();
-            List<Others> others=new ArrayList<>();
-            List<Ladies> ladies=new ArrayList<>();
-
-            if(null!=mListAdapterGents){
-                gents.clear();
-                mListAdapterGents.notifyDataSetChanged();
-            }
-            if(null!=mListAdapterOthers){
-                others.clear();
-                mListAdapterOthers.notifyDataSetChanged();
-            }
-            if(null!=mListAdapterLadies){
-                ladies.clear();
-                mListAdapterLadies.notifyDataSetChanged();
-            }
-
-            gents = ((GeneralPojo) responseObj).getData().getGents();
-
-            others = ((GeneralPojo) responseObj).getData().getOthers();
-
-            ladies = ((GeneralPojo) responseObj).getData().getLadies();
-
-
-            if(null !=gents && gents.size()>0){
-                listRecyclerGents.setVisibility(View.VISIBLE);
-                mGentsHead.setVisibility(View.VISIBLE);
-                mGentsSeperator.setVisibility(View.VISIBLE);
-                mListAdapterGents = new ListAdapterGents(gents);
-                listRecyclerGents.setAdapter(mListAdapterGents);
-                mListAdapterGents.notifyDataSetChanged();
+        if(isVisible){
+            mProgressBar.setVisibility(View.GONE);
+            if(isSuccess) {
+                hideSeperators();
+                List<Gents> gents=new ArrayList<>();
+                List<Others> others=new ArrayList<>();
+                List<Ladies> ladies=new ArrayList<>();
+                if(null!=mListAdapterGents){
+                    gents.clear();
+                    mListAdapterGents.notifyDataSetChanged();
+                }
+                if(null!=mListAdapterOthers){
+                    others.clear();
+                    mListAdapterOthers.notifyDataSetChanged();
+                }
+                if(null!=mListAdapterLadies){
+                    ladies.clear();
+                    mListAdapterLadies.notifyDataSetChanged();
+                }
+                gents = ((GeneralPojo) responseObj).getData().getGents();
+                others = ((GeneralPojo) responseObj).getData().getOthers();
+                ladies = ((GeneralPojo) responseObj).getData().getLadies();
+                if(null !=gents && gents.size()>0){
+                    listRecyclerGents.setVisibility(View.VISIBLE);
+                    mGentsHead.setVisibility(View.VISIBLE);
+                    mGentsSeperator.setVisibility(View.VISIBLE);
+                    mListAdapterGents = new ListAdapterGents(gents);
+                    listRecyclerGents.setAdapter(mListAdapterGents);
+                    mListAdapterGents.notifyDataSetChanged();
+                }else{
+                    listRecyclerGents.setVisibility(View.GONE);
+                }
+                if(null != others && others.size()>0){
+                    listRecyclerOthers.setVisibility(View.VISIBLE);
+                    mOthersHead.setVisibility(View.VISIBLE);
+                    mOthersSeperator.setVisibility(View.VISIBLE);
+                    mListAdapterOthers = new ListAdapterOthers(others);
+                    listRecyclerOthers.setAdapter(mListAdapterOthers);
+                    mListAdapterOthers.notifyDataSetChanged();
+                }else{
+                    listRecyclerOthers.setVisibility(View.GONE);
+                }
+                if(null != ladies && ladies.size()>0){
+                    listRecyclerLadies.setVisibility(View.VISIBLE);
+                    mLadiesHead.setVisibility(View.VISIBLE);
+                    mListAdapterLadies = new ListAdapterLadies(ladies);
+                    listRecyclerLadies.setAdapter(mListAdapterLadies);
+                    mListAdapterLadies.notifyDataSetChanged();
+                }else{
+                    listRecyclerLadies.setVisibility(View.GONE);
+                }
             }else{
-                listRecyclerGents.setVisibility(View.GONE);
+                showMessage(errorMsg,R.string.ok,0);
             }
-            if(null != others && others.size()>0){
-                listRecyclerOthers.setVisibility(View.VISIBLE);
-                mOthersHead.setVisibility(View.VISIBLE);
-                mOthersSeperator.setVisibility(View.VISIBLE);
-                mListAdapterOthers = new ListAdapterOthers(others);
-                listRecyclerOthers.setAdapter(mListAdapterOthers);
-                mListAdapterOthers.notifyDataSetChanged();
-            }else{
-                listRecyclerOthers.setVisibility(View.GONE);
-            }
-            if(null != ladies && ladies.size()>0){
-                listRecyclerLadies.setVisibility(View.VISIBLE);
-                mLadiesHead.setVisibility(View.VISIBLE);
-                mListAdapterLadies = new ListAdapterLadies(ladies);
-                listRecyclerLadies.setAdapter(mListAdapterLadies);
-                mListAdapterLadies.notifyDataSetChanged();
-            }else{
-                listRecyclerLadies.setVisibility(View.GONE);
-            }
-        }else{
-            showMessage(errorMsg,R.string.ok,0);
         }
     }
     /**
@@ -408,4 +404,18 @@ public class PriceListFrag extends BaseFrag implements APICallBack{
             }
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
+    }
 }
+

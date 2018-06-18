@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +43,8 @@ public class MyProfileFrag extends BaseFrag implements APICallBack{
     private boolean isEditing;
     private boolean mEditService;
     private Unbinder mUnbinder;
+    private boolean isVisible;
+    private static final String TAG="MyProfileFrag";
 
     public MyProfileFrag() {
         // Required empty public constructor
@@ -128,20 +131,22 @@ public class MyProfileFrag extends BaseFrag implements APICallBack{
         mFName.setEnabled(status);
         mPhone.setEnabled(status);
         mLName.setEnabled(status);
-        mEmail.setEnabled(status);
+        mEmail.setEnabled(false);
     }
     void processEditService(){
-        mProgressBar.setVisibility(View.VISIBLE);
-        HashMap<String,String> requestParams=new HashMap<>();
-        //TODO keep actual mToken, once handled from backend
-        String appId = mApiConstants.APPID_VAL;
-        requestParams.put(mApiConstants.API_APPID,appId);
-        requestParams.put(mApiConstants.API_FIRSTNAME,mFName.getText().toString().trim());
-        requestParams.put(mApiConstants.API_LASTNAME,mLName.getText().toString().trim());
-        requestParams.put(mApiConstants.API_MOBILE,mPhone.getText().toString().trim());
-        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
-        APIProcessor apiProcessor=new APIProcessor();
-        apiProcessor.updateMyProfile(MyProfileFrag.this,requestParams);
+        if(isVisible){
+            mProgressBar.setVisibility(View.VISIBLE);
+            HashMap<String,String> requestParams=new HashMap<>();
+            //TODO keep actual mToken, once handled from backend
+            String appId = mApiConstants.APPID_VAL;
+            requestParams.put(mApiConstants.API_APPID,appId);
+            requestParams.put(mApiConstants.API_FIRSTNAME,mFName.getText().toString().trim());
+            requestParams.put(mApiConstants.API_LASTNAME,mLName.getText().toString().trim());
+            requestParams.put(mApiConstants.API_MOBILE,mPhone.getText().toString().trim());
+            requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
+            APIProcessor apiProcessor=new APIProcessor();
+            apiProcessor.updateMyProfile(MyProfileFrag.this,requestParams);
+        }
     }
     boolean isValidEntry(){
         boolean isValid=true;
@@ -162,28 +167,60 @@ public class MyProfileFrag extends BaseFrag implements APICallBack{
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess) {
-            GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
-            if(!mEditService){
-                Data data = responsePojo.getData().get(0);
-                String fn = data.getFirstName();
-                if(!TextUtils.isEmpty(fn))
-                    mFName.setText(fn);
-                String ln = data.getLastName();
-                if(!TextUtils.isEmpty(ln))
-                    mLName.setText(ln);
-                String email = data.getEmail();
-                if(!TextUtils.isEmpty(email))
-                    mEmail.setText(email);
-                String phone = data.getMobile();
-                if(!TextUtils.isEmpty(phone))
-                    mPhone.setText(phone);
-            }else{
-                showMessage(getString(R.string.profile_updated),R.string.ok,0);
+        if(isVisible){
+            mProgressBar.setVisibility(View.GONE);
+            if(isVisible) {
+                if (isSuccess) {
+                    GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
+                    if (!mEditService) {
+                        Data data = responsePojo.getData().get(0);
+                        String fn = data.getFirstName();
+                        if (!TextUtils.isEmpty(fn))
+                            mFName.setText(fn);
+                        String ln = data.getLastName();
+                        if (!TextUtils.isEmpty(ln))
+                            mLName.setText(ln);
+                        String email = data.getEmail();
+                        if (!TextUtils.isEmpty(email))
+                            mEmail.setText(email);
+                        String phone = data.getMobile();
+                        if (!TextUtils.isEmpty(phone))
+                            mPhone.setText(phone);
+                    } else {
+                        String name = mFName.getText().toString().trim()+" "+mLName.getText().toString().trim();
+                        String mobile = mPhone.getText().toString().trim();
+                        String email = mEmail.getText().toString().trim();
+
+                        mSharedPreference.setPreferenceString(mSharedPreference.USER_EMAIL, email);
+                        mSharedPreference.setPreferenceString(mSharedPreference.USER_MOBILE, mobile);
+                        mSharedPreference.setPreferenceString(mSharedPreference.USER_NAME, name);
+
+                        updateNavigationContent();
+
+                        showMessage(getString(R.string.profile_updated), R.string.ok, 0);
+                    }
+                } else {
+                    showMessage(errorMsg, R.string.ok, 0);
+                }
             }
-        }else{
-            showMessage(errorMsg,R.string.ok,0);
         }
+    }
+
+    private void updateNavigationContent(){
+        ((LandingActivity)getActivity()).updateUserProfile();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
     }
 }

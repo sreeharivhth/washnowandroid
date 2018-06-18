@@ -121,7 +121,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
     LocationReceiver mLocationReceiver;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
-
+    private boolean isVisible;
     private FusedLocationProviderClient mfusedLocationProviderclient;
 
     public OrderMapFrag() {
@@ -130,17 +130,6 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        isPermissionRequired(false);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
     }
 
     void isPermissionRequired(boolean locationClicked) {
@@ -351,37 +340,33 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
             mfusedLocationProviderclient.removeLocationUpdates(mLocationReceiver);
         }
         Log.d(TAG,"isLocationReceived = "+isLocationReceived);
-        mProgressBar.setVisibility(View.GONE);
+        //mProgressBar.setVisibility(View.GONE);
         if(isLocationClicked || !isLocationReceived){
             isLocationReceived=true;
-            Log.d(TAG,"Inside if loop ");
             mLastLocation = location;
-            if (mCurrLocationMarker != null) {
-                mCurrLocationMarker.remove();
-            }
-            mGoogleMap.clear();
-            Log.d(TAG, TAG+"LAT="+String.valueOf(location.getLatitude())+"||LON="+String.valueOf(location.getLongitude()));
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            Log.d(TAG,"Inside if loop ");
             initCameraIdle(mLastLocation.getLatitude(),mLastLocation.getLongitude());
         }
     }
 
     private void initCameraIdle(final double latitude, final double longitude) {
-        Log.d(TAG,"OrderMapFrag initCameraIdle");
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),16));
-        LatLng latLng = new LatLng(latitude,longitude);
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
-        mCurrLocationMarker.setPosition(new LatLng(latitude,longitude));
-        getAddressFromLoc(latitude, longitude);
+        //OnResume getting called after onActivityResult, so isVisible is false
+        /*if(isVisible){*/
+            Log.d(TAG,"OrderMapFrag initCameraIdle");
+            if (mCurrLocationMarker != null) {
+                mCurrLocationMarker.remove();
+            }
+            mGoogleMap.clear();
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(latitude,longitude),16));
+            LatLng latLng = new LatLng(latitude,longitude);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(latLng);
+            markerOptions.title("Current Position");
+            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+            mCurrLocationMarker.setPosition(new LatLng(latitude,longitude));
+            getAddressFromLoc(latitude, longitude);
+        /*}*/
     }
 
     private void getAddressFromLoc(double latitude, double longitude) {
@@ -435,4 +420,19 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
     {
         public void updatedLocation(LatLng location,String googleAddress,String house,String landmark);
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+        isPermissionRequired(false);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
+    }
 }
+

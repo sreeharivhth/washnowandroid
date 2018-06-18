@@ -47,6 +47,7 @@ public class OfferFrag extends BaseFrag implements APICallBack {
     ProgressBar mProgressBar;
     boolean isPromoCodeServiceAction;
     private String mPromoCode;
+    private boolean isVisible;
 
     public OfferFrag() {
         // Required empty public constructor
@@ -106,25 +107,27 @@ public class OfferFrag extends BaseFrag implements APICallBack {
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess) {
-            List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
-            if(dataList.size()>0){
-                if(isPromoCodeServiceAction){
-                    pushOfferFrag(mPromoCode);
-                }else{
-                    mListAdapter = new ListAdapter(dataList);
-                    listRecycler.setAdapter(mListAdapter);
-                    mListAdapter.notifyDataSetChanged();
+        if(isVisible) {
+            mProgressBar.setVisibility(View.GONE);
+            if (isSuccess) {
+                List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
+                if (dataList.size() > 0) {
+                    if (isPromoCodeServiceAction) {
+                        pushOfferFrag(mPromoCode);
+                    } else {
+                        mListAdapter = new ListAdapter(dataList);
+                        listRecycler.setAdapter(mListAdapter);
+                        mListAdapter.notifyDataSetChanged();
+                    }
+                } else {
+                    showMessage("No offers available !", R.string.ok, 0);
                 }
-            }else{
-                showMessage("No offers available !",R.string.ok,0);
-            }
-        }else{
-            if(isPromoCodeServiceAction){
-                showErrorAlert(errorMsg);
-            }else{
-                showMessage(errorMsg,R.string.ok,0);
+            } else {
+                if (isPromoCodeServiceAction) {
+                    showErrorAlert(errorMsg);
+                } else {
+                    showMessage(errorMsg, R.string.ok, 0);
+                }
             }
         }
     }
@@ -193,5 +196,18 @@ public class OfferFrag extends BaseFrag implements APICallBack {
     }
     private void pushOfferFrag(String offerCode){
         ((LandingActivity)getActivity()).pushMyOrderFrag(offerCode);
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
     }
 }

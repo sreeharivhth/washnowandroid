@@ -56,13 +56,14 @@ public class SplashActivity extends BaseActivity {
     }
     private void checkDB(){
         //Check user registration and proceed
-        boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getApplicationContext());
+        /*boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getApplicationContext());
 
         if(isPermissionRequired) {
             checkPermission();
         }else{
             postPermissionGranted();
-        }
+        }*/
+        postPermissionGranted();
     }
 
     void checkPermission(){

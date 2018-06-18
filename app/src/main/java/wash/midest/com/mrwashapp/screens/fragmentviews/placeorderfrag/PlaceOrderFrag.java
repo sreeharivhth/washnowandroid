@@ -111,7 +111,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     private static String DATA = "DATA";
     private static String COUPON = "CODE";
     private static String SERVICES = "SERVICES";
-    private String TAG = PlaceOrderFrag.class.getName();
     private GeneralListDataPojo mServicesList;
     private ArrayList mServiceNames;
     private ArrayList mDeliveryTime;
@@ -147,6 +146,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     private String tempHomeAddress="";
     private String tempLandmark="";
     private LatLng tempLocation;
+    private static final String TAG="PlaceOrderFrag";
+    private boolean isVisible;
 
     public PlaceOrderFrag() {
     }
@@ -858,21 +859,23 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        if (isSuccess) {
-            List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
-            if (dataList.size() > 0) {
-                if (!TextUtils.isEmpty(dataList.get(0).getOrderId())) {
-                    Log.d(TAG, "Order generated with order id = " + dataList.get(0).getOrderId());
-                    showMessage("Order successfully generated with order id : " + dataList.get(0).getOrderId(), R.string.ok, CASE_0);
+        if(isVisible){
+            if (isSuccess) {
+                List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
+                if (dataList.size() > 0) {
+                    if (!TextUtils.isEmpty(dataList.get(0).getOrderId())) {
+                        Log.d(TAG, "Order generated with order id = " + dataList.get(0).getOrderId());
+                        showMessage("Order successfully generated with order id : " + dataList.get(0).getOrderId(), R.string.ok, CASE_0);
+                    } else {
+                        Log.d(TAG, "Order generated");
+                        showMessage("Order successfully generated ", R.string.ok, CASE_0);
+                    }
                 } else {
-                    Log.d(TAG, "Order generated");
-                    showMessage("Order successfully generated ", R.string.ok, CASE_0);
+                    showMessage("Could not create order.", R.string.ok, CASE_0);
                 }
             } else {
-                showMessage("Could not create order.", R.string.ok, CASE_0);
+                showMessage(errorMsg, R.string.ok, CASE_0);
             }
-        } else {
-            showMessage(errorMsg, R.string.ok, CASE_0);
         }
     }
 
@@ -896,5 +899,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             mLocation = latLng;
             reloadMap();
         }
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
     }
 }

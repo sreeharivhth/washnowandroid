@@ -30,6 +30,10 @@ public class AppSharedPreferences {
     public String HOUSE_FLAT="HOUSE_FLAT";
     public String LANDMARK="LANDMARK";
 
+    public String USER_NAME="USER_NAME";
+    public String USER_MOBILE="USER_MOBILE";
+    public String USER_EMAIL="USER_EMAIL";
+
     private AppSharedPreferences(Context context){
         mSharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         mEditor = mSharedPref.edit();

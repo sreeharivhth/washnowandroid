@@ -186,6 +186,13 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void showOTPScreen(){
+        String name = mFName.getText().toString().trim()+"  "+mLName.getText().toString().trim();
+        String email = mEmail.getText().toString().trim();
+        String mob =mPhone.getText().toString().trim().substring(4,13);
+        mSharedPreference.setPreferenceString(mSharedPreference.USER_EMAIL, email);
+        mSharedPreference.setPreferenceString(mSharedPreference.USER_MOBILE, mob);
+        mSharedPreference.setPreferenceString(mSharedPreference.USER_NAME, name);
+
         Log.d(TAG,TAG+" showOTPScreen()");
         Intent i = new Intent(RegistrationActivity.this, OtpActivity.class);
         i.putExtra("EMAIL",mEmail.getText().toString().trim());

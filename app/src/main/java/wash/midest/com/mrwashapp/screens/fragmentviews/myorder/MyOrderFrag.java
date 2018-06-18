@@ -43,6 +43,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
     private static final String TAG="MyOrderFrag";
     private Unbinder mUnbinder;
     private ListAdapter mListAdapter;
+    private boolean isVisible;
 
     public MyOrderFrag() {
         // Required empty public constructor
@@ -88,19 +89,21 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        mProgressBar.setVisibility(View.GONE);
-        if(isSuccess) {
-            List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
-            if(dataList.size()>0){
-                mListAdapter = new ListAdapter(dataList);
-                listRecycler.setAdapter(mListAdapter);
-                mListAdapter.notifyDataSetChanged();
-            }else{
-                showMessage("No orders made till now ",R.string.ok,0);
-            }
+        if(isVisible){
+            mProgressBar.setVisibility(View.GONE);
+            if(isSuccess) {
+                List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
+                if(dataList.size()>0){
+                    mListAdapter = new ListAdapter(dataList);
+                    listRecycler.setAdapter(mListAdapter);
+                    mListAdapter.notifyDataSetChanged();
+                }else{
+                    showMessage("No orders made till now ",R.string.ok,0);
+                }
 
-        }else{
-            showMessage(errorMsg,R.string.ok,0);
+            }else{
+                showMessage(errorMsg,R.string.ok,0);
+            }
         }
     }
 
@@ -171,5 +174,17 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
             return date;
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        isVisible=true;
+        Log.d(TAG,"onResume "+TAG);
+    }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        isVisible=false;
+        Log.d(TAG,"onPause "+TAG);
+    }
 }

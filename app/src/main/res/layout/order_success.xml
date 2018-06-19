@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.constraint.Guideline
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_constraint"
+        app:layout_constraintGuide_percent=".20"
+        android:orientation="horizontal"
+        />
+
+    <android.support.constraint.Guideline
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/mid_constraint"
+        app:layout_constraintGuide_percent=".50"
+        android:orientation="horizontal"
+        />
+
+    <android.support.constraint.Guideline
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/bottom_constraint"
+        app:layout_constraintGuide_percent=".80"
+        android:orientation="horizontal"
+        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/top_text"
+        android:text="Thank you for choosing Mr.Wash"
+        android:textColor="@color/order_text_color"
+        android:textSize="@dimen/text_size_14"
+        app:layout_constraintTop_toBottomOf="@id/top_constraint"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        />
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/top_text"
+        android:src="@drawable/logonotext"
+        android:layout_marginTop="@dimen/component_margin_16"
+        />
+
+    <TextView
+        android:id="@+id/order_success_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_16"
+        android:text="@string/your_order_has_been_placed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/mid_constraint"
+
+        />
+    <TextView
+        android:id="@+id/order_success_sub"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_16"
+        android:text="@string/has_been_placed"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mid_constraint"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/order_text_color"
+        android:textSize="@dimen/text_size_12"
+        android:text="@string/customer_service_contact"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/order_success_sub"
+        />
+
+
+
+    <Button
+        android:id="@+id/btn_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/bottom_constraint"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:theme="@style/AppButtonTheme"
+        android:background="@drawable/button_bg_rounded_corners"
+        android:text="CLOSE"
+        android:textAllCaps="true"
+        />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@id/bottom_constraint"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="parent"
+        android:layout_marginTop="@dimen/component_margin_25"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View "
+            android:textColor="@color/order_text_color"
+            android:textSize="@dimen/text_size_12"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/my_order_link"
+            android:text=" My Orders "
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_12"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=" here "
+            android:textColor="@color/order_text_color"
+            android:textSize="@dimen/text_size_12"
+            />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

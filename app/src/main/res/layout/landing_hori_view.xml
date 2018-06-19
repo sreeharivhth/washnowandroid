@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/button_bg_rounded_corners"
         android:text="@string/place_order"
+        android:textAllCaps="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/txt_washtype"
         android:theme="@style/AppButtonTheme"

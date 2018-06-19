@@ -150,6 +150,10 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     private LatLng tempLocation;
     private static final String TAG="PlaceOrderFrag";
     private boolean isVisible;
+    DatePickerDialog datePickerDialog;
+    int selectedDay;
+    int selectedMonth;
+    int selectedYear;
 
     public PlaceOrderFrag() {
     }
@@ -197,21 +201,16 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_place_order, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
         mServicesList = getArguments().getParcelable(SERVICES);
-
         try {
             mServiceTypeDefault = getArguments().getInt(SERVICE_TYPE);
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         try {
             mCouponCode = getArguments().getString(COUPON);
-
             Log.d(TAG, "Coupon Code = " + mCouponCode);
-
             if (!TextUtils.isEmpty(mCouponCode)) {
                 mPromoLayout.setVisibility(View.VISIBLE);
                 mPromoCode.setText(mCouponCode);
@@ -225,7 +224,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             mPromoLayout.setVisibility(View.GONE);
             Log.e(TAG, "Coupon code not available = " + e.toString());
         }
-
         for (int count = 0; count < mServicesList.getData().size(); count++) {
             Data serviceData = mServicesList.getData().get(count);
             if (serviceData.getActive().equalsIgnoreCase(mApiConstants.STATUS_1)) {
@@ -238,12 +236,10 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, mServiceNames);
         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mServicesPicker.setAdapter(dataAdapter);
-
         //set service selected
         if (mServiceTypeDefault != 0 || mServiceTypeDefault != -1){
             mServicesPicker.setSelection(mServiceTypeDefault);
         }
-
         mMapView.onCreate(savedInstanceState);
         mMapView.onResume();
         try {
@@ -265,38 +261,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                 }
             }
         });
-
         return view;
     }
 
     void updateLocation() {
         Log.d(TAG, "updateLocation  === ");
-        /*mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS);
-
-        Log.d(TAG,"SELECTED_ADDERSS GOOGLE = "+mSharedPreference.getPreferenceString(mSharedPreference.SELECTED_ADDERSS));
-        Log.d(TAG,"HOUSE_FLAT = "+mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT));
-        Log.d(TAG,"LANDMARK = "+mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK));*/
-
         if (!TextUtils.isEmpty(tempGoogleAddress)) {
             if (isMsgShown) {
-                //showToast("We have kept your last order address as default address. You can change these as well by clicking on map", Toast.LENGTH_LONG);
                 mTxtLocation.setText(tempGoogleAddress);
-                /*double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.LAT_SELECTED, 0.0);
-                double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.LON_SELECTED, 0.0);
-                LatLng latLng = new LatLng(lat, lon);*/
                 mLocation = tempLocation;
                 reloadMap();
             }
         }
-        /*String houseSelected = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
-        if (!TextUtils.isEmpty(houseSelected)) {
-            mTxtHouseFlat.setText(houseSelected);
-        }
-        String landmarkSelected = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
-        if (!TextUtils.isEmpty(landmarkSelected)) {
-            mTxtLandmark.setText(landmarkSelected);
-        }*/
-
     }
 
     @Override
@@ -350,7 +326,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             int delMonth = cDelivery.get(Calendar.MONTH);
             int delDate = cDelivery.get(Calendar.DAY_OF_MONTH);
             /*cDelivery.add(Calendar.DAY_OF_MONTH,1);*/
-
             //String deliveryDate = getStringDateFormatted(delYear, delMonth, cDelivery.get(Calendar.DAY_OF_MONTH));
             String deliveryDate = getStringDateFormatted(delYear, delMonth, delDate);
             mTxtDeliveryDate.setText(deliveryDate);
@@ -371,7 +346,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mDay = cal.get(Calendar.DAY_OF_MONTH);
         cal.set(mYear, mMonth, mDay, 0, 0, 0);
 
-        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+        datePickerDialog = DatePickerDialog.newInstance(
                 new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
@@ -384,6 +359,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                             String date = getStringDateFormatted(year, monthOfYear, dayOfMonth);
                             mTxtPickDate.setText(date);
 
+                            selectedDay = datePickerDialog.getSelectedDay().getDay();
+                            selectedMonth = datePickerDialog.getSelectedDay().getMonth();
+                            selectedYear = datePickerDialog.getSelectedDay().getYear();
+
+                            pickTime();
                         } catch (ParseException e) {
                             e.printStackTrace();
                         }
@@ -393,49 +373,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         datePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
 //        datePickerDialog.set(R.attr.colorPrimary);
         datePickerDialog.setMinDate(cal);
+        datePickerDialog.setTitle("Select Pick Up Date");
         datePickerDialog.show(getActivity().getFragmentManager(),"pickDate");
-    }
 
-    @OnClick({R.id.deliveryDate})
-    void pickDateDelivery() {
-        Calendar cal = Calendar.getInstance();
-        mYear = cal.get(Calendar.YEAR);
-        mMonth = cal.get(Calendar.MONTH);
-        mDay = cal.get(Calendar.DAY_OF_MONTH);
-        cal.set(mYear, mMonth, mDay, 0, 0, 0);
-        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
-                new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
-                        try {
-                            Log.d(TAG, "DELIVERY || Date = " + dayOfMonth + "-" + (monthOfYear) + "-" + year);
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTimeInMillis(0);
-                            cal.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                            mCDeliveryDate = cal;
-
-                            String date = getStringDateFormatted(year, monthOfYear, dayOfMonth);
-                            mTxtDeliveryDate.setText(date);
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        /*mTxtPickDate.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);*/
-                    }
-                }, mYear, mMonth, mDay);
-        datePickerDialog.setMinDate(cal);
-        datePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
-//        datePickerDialog.setAccentColor(R.attr.colorPrimary);
-        datePickerDialog.show(getActivity().getFragmentManager(),"pickDateDelivery");
-    }
-
-    private String getStringDateFormatted(int year, int monthOfYear, int dayOfMonth) throws ParseException {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-        String inputDate = new String(year+"-"+(monthOfYear + 1)+"-"+dayOfMonth+" 00:00:00");
-
-        Date newDate = dateFormat.parse(inputDate);
-        dateFormat = new SimpleDateFormat("dd MMM yyyy");
-        return dateFormat.format(newDate);
     }
 
     @OnClick({R.id.pickTime})
@@ -459,13 +399,56 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                                 mCPickTime = cal;
                                 SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
                                 mTxtPickTime.setText(df.format(mCPickTime.getTime()));
+                                pickDateDelivery();
                             }
                         }
                         ,hourOfDay,minPickTime,false);
         /*timePickerDialog.setMinTime(new Timepoint(minPickTime,0,0));*/
         timePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
         timePickerDialog.show(getActivity().getFragmentManager(),"pickTime");
+        timePickerDialog.setTitle("Select Pick Up Time");
+    }
 
+    @OnClick({R.id.deliveryDate})
+    void pickDateDelivery() {
+        Calendar cal = Calendar.getInstance();
+        mYear = cal.get(Calendar.YEAR);
+        mMonth = cal.get(Calendar.MONTH);
+        mDay = cal.get(Calendar.DAY_OF_MONTH);
+
+        if(selectedDay==0|| selectedMonth==0 ||selectedYear==0){
+
+            cal.set(mYear, mMonth, mDay, 0, 0, 0);
+
+        }else{
+            cal.set(selectedYear, selectedMonth, selectedDay, 0, 0, 0);
+        }
+
+        DatePickerDialog datePickerDialog = DatePickerDialog.newInstance(
+                new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePickerDialog view, int year, int monthOfYear, int dayOfMonth) {
+                        try {
+                            Log.d(TAG, "DELIVERY || Date = " + dayOfMonth + "-" + (monthOfYear) + "-" + year);
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTimeInMillis(0);
+                            cal.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                            mCDeliveryDate = cal;
+                            String date = getStringDateFormatted(year, monthOfYear, dayOfMonth);
+                            mTxtDeliveryDate.setText(date);
+                            pickDeliveryTime();
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        /*mTxtPickDate.setText(year + "-" + (monthOfYear + 1) + "-" + dayOfMonth);*/
+                    }
+                }, mYear, mMonth, mDay);
+
+        datePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
+        datePickerDialog.setMinDate(cal);
+        datePickerDialog.setTitle("Select Delivery Date");
+        datePickerDialog.show(getActivity().getFragmentManager(),"pickDateDelivery");
     }
 
     @OnClick({R.id.deliveryTime})
@@ -474,7 +457,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         int hourOfDay = cal.get(Calendar.HOUR_OF_DAY);
         int minDeliveryTime = hourOfDay+mPickDifferenceHRS;//Kept same as pickup difference
         //Validity between pick and delivery difference will be calculated in Button click
-
         TimePickerDialog timePickerDialog = TimePickerDialog.newInstance(
                 new TimePickerDialog.OnTimeSetListener() {
                     @Override
@@ -491,7 +473,18 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         /*timePickerDialog.setMinTime(new Timepoint(minDeliveryTime,0,0));*/
         timePickerDialog.setAccentColor(getResources().getColor(R.color.colorAccentPicker));
         timePickerDialog.show(getActivity().getFragmentManager(),"pickDeliveryTime");
+        timePickerDialog.setTitle("Select Delivery Time");
     }
+
+    private String getStringDateFormatted(int year, int monthOfYear, int dayOfMonth) throws ParseException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+        String inputDate = new String(year+"-"+(monthOfYear + 1)+"-"+dayOfMonth+" 00:00:00");
+
+        Date newDate = dateFormat.parse(inputDate);
+        dateFormat = new SimpleDateFormat("dd MMM yyyy");
+        return dateFormat.format(newDate);
+    }
+
 
     String getCurrentDateTime(boolean isTime) {
         Calendar c = Calendar.getInstance();
@@ -767,8 +760,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         mSelectedPickTime = pickTime;
         mSelectedDeliveryTime = deliveryTime;
         if (!TextUtils.isEmpty(tempGoogleAddress)) {
-            //mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS)
-
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, tempGoogleAddress);
         } else if(!TextUtils.isEmpty(mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS))){
             mSharedPreference.setPreferenceString(mSharedPreference.ADDRESS, mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS));
@@ -834,6 +825,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             showErrorAlert(getString(R.string.network_error));
             return;
         }
+        mProgressBar.setVisibility(View.VISIBLE);
         /*String imei = mAppUtils.getDeviceIMEI(getActivity());*/
         String imei = "1122009955";
         HashMap<String, String> requestParams = new HashMap<>();
@@ -853,7 +845,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             requestParams.put(mApiConstants.API_PROMOCODE_ID, mCouponCode);
         else
             requestParams.put(mApiConstants.API_PROMOCODE_ID, "0");
-
         requestParams.put(mApiConstants.API_IMEI, imei);
         APIProcessor apiProcessor = new APIProcessor();
         apiProcessor.postGenerateOrder(this, requestParams);
@@ -862,16 +853,21 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         if(isVisible){
+            mProgressBar.setVisibility(View.INVISIBLE);
             if (isSuccess) {
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
                 if (dataList.size() > 0) {
+
                     if (!TextUtils.isEmpty(dataList.get(0).getOrderId())) {
                         Log.d(TAG, "Order generated with order id = " + dataList.get(0).getOrderId());
-                        showMessage("Order successfully generated with order id : " + dataList.get(0).getOrderId(), R.string.ok, CASE_0);
+                        //showMessage("Order successfully generated with order id : " + dataList.get(0).getOrderId(), R.string.ok, CASE_0);
                     } else {
                         Log.d(TAG, "Order generated");
-                        showMessage("Order successfully generated ", R.string.ok, CASE_0);
+                        //showMessage("Order successfully generated ", R.string.ok, CASE_0);
                     }
+
+                    pushOrderSuccessFrag();
+
                 } else {
                     showMessage("Could not create order.", R.string.ok, CASE_0);
                 }
@@ -881,6 +877,17 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         }
     }
 
+    void pushOrderSuccessFrag(){
+        FragmentManager childFragMan = getActivity().getSupportFragmentManager();
+        FragmentTransaction childFragTrans = childFragMan.beginTransaction();
+        OrderSuccessFrag frag = OrderSuccessFrag.newInstance();
+        childFragTrans.add(R.id.place_order_frag, frag);
+        childFragTrans.addToBackStack("OrderSuccessFrag");
+        childFragTrans.commit();
+        frag.setUserVisibleHint(true);
+        this.setUserVisibleHint(false);
+
+    }
     @Override
     public void handleNegativeAlertCallBack(int caseNum) {
         Log.d(TAG,"handleNegativeAlertCallBack");
@@ -894,10 +901,13 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         Log.d(TAG,"handlePositiveAlertCallBack");
         if(caseNum == CASE_1){
             mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS);
+            tempLandmark = mSharedPreference.getPreferenceString(mSharedPreference.LANDMARK);
+            tempHomeAddress = mSharedPreference.getPreferenceString(mSharedPreference.HOUSE_FLAT);
             mTxtLocation.setText(mGoogleLocationAdd);
             double lat = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LAT, 0.0);
             double lon = mSharedPreference.getPreferenceDouble(mSharedPreference.COORDINATES_LON, 0.0);
             LatLng latLng = new LatLng(lat, lon);
+
             mLocation = latLng;
             reloadMap();
         }

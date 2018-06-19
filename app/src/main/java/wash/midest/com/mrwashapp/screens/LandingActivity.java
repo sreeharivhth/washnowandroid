@@ -221,6 +221,11 @@ public class LandingActivity extends BaseActivity
         return true;
     }
 
+    public void pushOrderDetailsFrag(){
+        popTillBackStack(1);
+        replaceLandingContent(null, MyOrderFrag.newInstance(),"MyOrderFrag");
+    }
+
     public void pushMyOrderFrag(int selectedServiceType){
         popTillBackStack(1);
         FragmentManager childFragMan = getSupportFragmentManager();
@@ -260,13 +265,6 @@ public class LandingActivity extends BaseActivity
         }
         return types;
     }
-    /*private void popAllFragBackStack(String name){
-        FragmentManager fragMan = getSupportFragmentManager();
-        if(TextUtils.isEmpty(name))
-            fragMan.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        else
-            fragMan.popBackStack(name, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-    }*/
 
     public void pushPriceListWithIndex(int index){
         if(isConnectedToNet()) {
@@ -299,29 +297,4 @@ public class LandingActivity extends BaseActivity
         }
         return status;
     }
-
-    /*private class ViewPagerAdapter extends FragmentPagerAdapter{
-        public ViewPagerAdapter(FragmentManager fragmentManager){
-            super(fragmentManager);
-        }
-        @Override
-        public Fragment getItem(int position) {
-            switch (position){
-                case 0:
-                    return ViewPagerFrag.newInstance("20","ON FIRST ORDER");
-                case 1:
-                    return ViewPagerFrag.newInstance("30","ON SECOND ORDER");
-                case 2:
-                    return ViewPagerFrag.newInstance("40","ON THIRD ORDER");
-                case 3:
-                    return ViewPagerFrag.newInstance("50","ON FOURTH ORDER");
-                default:
-                    return ViewPagerFrag.newInstance("def","def");
-            }
-        }
-        @Override
-        public int getCount() {
-            return 4;
-        }
-    }*/
 }

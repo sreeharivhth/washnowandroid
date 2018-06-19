@@ -91,6 +91,10 @@
     <string name="open_location_settings">Open location settings</string>
     <string name="pick_condition_1">Delivery time should be after pick up time !</string>
     <string name="apply">Apply</string>
+    <string name="your_order_has_been_placed">Your Order</string>
+    <string name="has_been_placed">has been placed</string>
+    <string name="customer_service_contact">Our customer service will contact you shortly</string>
+    <string name="order_confirmation">Order Confirmation</string>
 
 
 </resources>

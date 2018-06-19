@@ -8,10 +8,11 @@ android {
         applicationId "wash.midest.com.mrwashapp"
         minSdkVersion 19
         targetSdkVersion 27
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true
+
     }
     buildTypes {
         release {
@@ -28,7 +29,7 @@ dependencies {
     api 'com.android.support:support-v4:27.1.1'
     api 'com.android.support:design:27.1.1'
     api 'com.android.support.constraint:constraint-layout:1.0.2'
-
+    api 'com.android.support:multidex:1.0.3'
 
 
 
@@ -63,7 +64,6 @@ dependencies {
     api 'com.google.android.gms:play-services-location:12.0.1'
 
     api 'com.wdullaer:materialdatetimepicker:3.6.0'
-    api 'com.android.support:multidex:1.0.3'
 
     //crash analytics
     api 'com.crashlytics.sdk.android:crashlytics:2.9.3'

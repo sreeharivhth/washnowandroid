@@ -6,6 +6,9 @@
     android:id="@+id/place_order_frag"
     tools:context="wash.midest.com.mrwashapp.screens.fragmentviews.placeorderfrag.PlaceOrderFrag">
 
+    <!--//https://stackoverflow.com/questions/16706076/different-resolution-support-android
+    //https://stackoverflow.com/questions/32860815/how-to-define-dimens-xml-for-every-different-screen-size-in-android-->
+
     <ProgressBar
         android:id="@+id/progressBarLoading"
         style="@style/Widget.AppCompat.ProgressBar"

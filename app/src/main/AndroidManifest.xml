@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
-        android:name=".mrwashapp.MrWashApp"
+        android:name="android.support.multidex.MultiDexApplication"
         android:allowBackup="true"
         android:icon="@mipmap/wash_launch_icon"
         android:label="@string/app_title"

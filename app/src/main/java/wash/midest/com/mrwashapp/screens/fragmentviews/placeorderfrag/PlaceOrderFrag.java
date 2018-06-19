@@ -74,6 +74,8 @@ import wash.midest.com.mrwashapp.utils.AppUtils;
  */
 public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, OrderMapFrag.OnLocationSelected, APICallBack {
 
+    //https://stackoverflow.com/questions/16706076/different-resolution-support-android
+    //https://stackoverflow.com/questions/32860815/how-to-define-dimens-xml-for-every-different-screen-size-in-android
     private static final int CASE_0 = 0;
     private static final int CASE_1 = 1;
     @BindView(R.id.pickDate)

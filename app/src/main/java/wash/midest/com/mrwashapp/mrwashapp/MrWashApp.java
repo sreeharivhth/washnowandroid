@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import wash.midest.com.mrwashapp.appservices.RxEventBus;
@@ -12,7 +13,7 @@ import wash.midest.com.mrwashapp.appservices.RxEventBus;
  * Created by Sreehari.KV on 3/27/2018.
  */
 
-public class MrWashApp extends Application {
+public class MrWashApp extends MultiDexApplication {
 
     @Override
     public void onCreate() {

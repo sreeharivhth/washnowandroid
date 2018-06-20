@@ -85,7 +85,7 @@ public class LandingActivity extends BaseActivity
         fragTrans.replace(R.id.landing_view, mDirectFragment);
         fragTrans.addToBackStack("LandingFrag");
         fragTrans.commit();
-        mDirectFragment.setUserVisibleHint(true);
+        /*mDirectFragment.setUserVisibleHint(true);*/
     }
 
 

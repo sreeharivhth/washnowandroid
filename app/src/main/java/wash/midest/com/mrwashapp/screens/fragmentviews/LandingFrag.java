@@ -164,8 +164,8 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         childFragTrans.add(R.id.landing_fragment_id, fragB);
         childFragTrans.addToBackStack("PlaceOrderFrag");
         childFragTrans.commit();
-        fragB.setUserVisibleHint(true);
-        this.setUserVisibleHint(false);
+        /*fragB.setUserVisibleHint(true);
+        this.setUserVisibleHint(false);*/
     }
 
     @Override

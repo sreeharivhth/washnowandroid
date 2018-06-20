@@ -581,8 +581,8 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             childFragTrans.add(R.id.place_order_frag, frag);
             childFragTrans.addToBackStack("OrderMapFrag");
             childFragTrans.commit();
-            frag.setUserVisibleHint(true);
-            this.setUserVisibleHint(false);
+            /*frag.setUserVisibleHint(true);
+            this.setUserVisibleHint(false);*/
         }
     }
 
@@ -628,11 +628,12 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
     private void isPermissionRequired() {
         boolean isPermissionRequired = new AppUtils().isVersionGreaterThanM(getActivity().getApplicationContext());
-        if (isPermissionRequired) {
+        /*if (isPermissionRequired) {
             checkPermission();
         } else {
             postPermissionGranted();
-        }
+        }*/
+        postPermissionGranted();
     }
 
     void checkPermission() {
@@ -690,11 +691,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
 
     private void postPermissionGranted() {
-        if (ActivityCompat.checkSelfPermission(getActivity(),
+        /*if (ActivityCompat.checkSelfPermission(getActivity(),
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return;
-        }
+        }*/
 
     }
 

@@ -399,7 +399,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
                                 mCPickTime = cal;
                                 SimpleDateFormat df = new SimpleDateFormat("hh:mm a");
                                 mTxtPickTime.setText(df.format(mCPickTime.getTime()));
-                                pickDateDelivery();
+                                /*pickDateDelivery();*/
                             }
                         }
                         ,hourOfDay,minPickTime,false);

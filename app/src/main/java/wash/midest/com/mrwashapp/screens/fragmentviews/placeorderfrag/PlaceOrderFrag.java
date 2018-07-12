@@ -926,4 +926,13 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
         isVisible=false;
         Log.d(TAG,"onPause "+TAG);
     }
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if(isVisibleToUser){
+            Log.d(TAG,TAG+" is visible");
+        }else{
+            Log.d(TAG,TAG+" is NOT visible");
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
 }

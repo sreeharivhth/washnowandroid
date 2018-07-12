@@ -56,7 +56,7 @@ public class ViewPagerFrag extends Fragment {
         txtViewSub.setText(getArguments().getString(ARG_PARAM2));
 
         TextView txtViewMini = view.findViewById(R.id.minitextcontent);
-        txtViewMini.setText(getActivity().getResources().getString(R.string.offer_validity));
+        /*txtViewMini.setText(getActivity().getResources().getString(R.string.offer_validity));*/
 
 
 

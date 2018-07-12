@@ -396,6 +396,91 @@ public class Data implements Parcelable {
         this.code = code;
     }
 
+    //=================== Order details ========================//
+    @SerializedName("categoryName")
+    @Expose
+    private String categoryName;
+
+    @SerializedName("productName")
+    @Expose
+    private String productName;
+
+    @SerializedName("count")
+    @Expose
+    private String count;
+
+    @SerializedName("rate")
+    @Expose
+    private String rate;
+
+    @SerializedName("comment")
+    @Expose
+    private String comment;
+
+    @SerializedName("meter")
+    @Expose
+    private String meter;
+
+    @SerializedName("amount")
+    @Expose
+    private String amount;
+
+    public String getCategoryName() {
+        return categoryName;
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getCount() {
+        return count;
+    }
+
+    public void setCount(String count) {
+        this.count = count;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+
+    public String getMeter() {
+        return meter;
+    }
+
+    public void setMeter(String meter) {
+        this.meter = meter;
+    }
+
+    public String getAmount() {
+        return amount;
+    }
+
+    public void setAmount(String amount) {
+        this.amount = amount;
+    }
+
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -426,6 +511,13 @@ public class Data implements Parcelable {
         dest.writeString(this.title);
         dest.writeString(this.offer);
         dest.writeString(this.code);
+        dest.writeString(this.categoryName);
+        dest.writeString(this.productName);
+        dest.writeString(this.count);
+        dest.writeString(this.rate);
+        dest.writeString(this.comment);
+        dest.writeString(this.meter);
+        dest.writeString(this.amount);
     }
 
     public Data() {
@@ -459,6 +551,13 @@ public class Data implements Parcelable {
         this.title= in.readString();
         this.offer= in.readString();
         this.code= in.readString();
+        this.categoryName= in.readString();
+        this.productName= in.readString();
+        this.count= in.readString();
+        this.rate= in.readString();
+        this.comment= in.readString();
+        this.meter= in.readString();
+        this.amount= in.readString();
     }
 
     public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {

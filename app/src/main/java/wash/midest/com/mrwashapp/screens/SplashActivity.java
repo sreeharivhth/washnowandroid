@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ProgressBar;
 
 import java.util.HashMap;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -26,11 +29,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APICallBack;
+import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.models.PromotionData;
+import wash.midest.com.mrwashapp.screens.fragmentviews.offers.OfferFrag;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
-public class SplashActivity extends BaseActivity {
+public class SplashActivity extends BaseActivity implements APICallBack{
 
     private static final String TAG = "SplashActivity";
     // Splash screen timer
@@ -38,6 +46,8 @@ public class SplashActivity extends BaseActivity {
     private static final int PERMISSIONS_REQUEST_READ_PHONE_STATE = 999;
     @BindView(R.id.progressBar) ProgressBar mProgressBar;
     private boolean mIsProgressShown =false;
+    private GeneralListDataPojo mGeneralPojo;
+    private PromotionData promotionData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -175,8 +185,10 @@ public class SplashActivity extends BaseActivity {
                             }
                         }else{
                             Log.d(TAG," onNext success statusCode = "+statusCode);
+                            mGeneralPojo = generalPojo;
                             //Send data using RxEvent Bus
-                            doLandingAction(generalPojo);
+                            //doLandingAction(generalPojo);
+                            getOfferData();
                         }
                     }
                     @Override
@@ -191,18 +203,40 @@ public class SplashActivity extends BaseActivity {
                     }
                 });
     }
-    private void doLandingAction(GeneralListDataPojo generalPojo){
-        Log.d(TAG,TAG+" doLandingAction");
 
-        Intent i = new Intent(SplashActivity.this, LandingActivity.class);
-        i.putExtra("LandingData",generalPojo);
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(i);
-        finish();
+    void getOfferData(){
+        if(!mAppUtils.isNetworkConnected(this)){
+            showErrorAlert(getString(R.string.network_error));
+            return;
+        }
+        mProgressBar.setVisibility(View.VISIBLE);
+        HashMap<String,String> requestParams=new HashMap<>();
+        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
+        APIProcessor apiProcessor=new APIProcessor();
+        apiProcessor.getOffersResponse(this,requestParams);
     }
 
     void closeApp(){
         finishAffinity();
     }
 
+    @Override
+    public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
+        promotionData = new PromotionData();
+        if (isSuccess) {
+            List<Data>list = ((GeneralListDataPojo) responseObj).getData();
+            promotionData.setPromotionData(list);
+        }
+        doLandingAction();
+    }
+
+    private void doLandingAction(){
+        Log.d(TAG,TAG+" doLandingAction");
+        Intent i = new Intent(SplashActivity.this, LandingActivity.class);
+        i.putExtra("LandingData",mGeneralPojo);
+        i.putExtra("PromotionData",promotionData);
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(i);
+        finish();
+    }
 }

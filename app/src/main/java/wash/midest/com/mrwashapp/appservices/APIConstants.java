@@ -33,6 +33,8 @@ public class APIConstants {
     public String API_LATITIDE = "lat";
     public String API_LONGITUDE = "lng";
     public String API_PROMOCODE_ID = "promoCodeId";
+    public String API_ORDER_ID = "orderId";
+
 
 
 

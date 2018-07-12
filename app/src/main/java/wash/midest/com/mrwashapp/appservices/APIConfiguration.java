@@ -117,6 +117,12 @@ public interface APIConfiguration {
     @POST("member/my-orders")
     Observable<GeneralListDataPojo> myOrder(@FieldMap(encoded = true) Map<String, String> params);
 
+    @Headers({"Accept:application/json",
+            "Content-Type:application/x-www-form-urlencoded"})
+    @FormUrlEncoded
+    @POST("member/order-details")
+    Observable<GeneralListDataPojo> orderDetails(@FieldMap(encoded = true) Map<String, String> params);
+
 
     @Headers({"Accept:application/json",
             "Content-Type:application/x-www-form-urlencoded"})

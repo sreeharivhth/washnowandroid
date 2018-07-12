@@ -479,5 +479,15 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         super.onDetach();
         Log.d(TAG,"onDestroyView of "+TAG);
     }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        if(isVisibleToUser){
+            Log.d(TAG,TAG+" is visible");
+        }else{
+            Log.d(TAG,TAG+" is NOT visible");
+        }
+        super.setUserVisibleHint(isVisibleToUser);
+    }
 }
 

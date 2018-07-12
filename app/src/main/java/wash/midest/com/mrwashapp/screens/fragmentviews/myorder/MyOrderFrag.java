@@ -44,6 +44,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
     private Unbinder mUnbinder;
     private ListAdapter mListAdapter;
     private boolean isVisible;
+    private boolean isDetailAPI;
 
     public MyOrderFrag() {
         // Required empty public constructor
@@ -75,6 +76,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
     }
 
     void getPriceListData(){
+        isDetailAPI=false;
         if(!mAppUtils.isNetworkConnected(getActivity())){
             showMessage(getString(R.string.network_error),R.string.ok,0);
             return;
@@ -93,14 +95,26 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
             mProgressBar.setVisibility(View.GONE);
             if(isSuccess) {
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
-                if(dataList.size()>0){
-                    mListAdapter = new ListAdapter(dataList);
-                    listRecycler.setAdapter(mListAdapter);
-                    mListAdapter.notifyDataSetChanged();
-                }else{
-                    showMessage("No orders made till now ",R.string.ok,0);
-                }
 
+                if(isDetailAPI){
+                    for (int count =0;count<dataList.size();count++) {
+                        Log.d(TAG,""+dataList.get(count).getCategoryName());
+                        Log.d(TAG,""+dataList.get(count).getProductName());
+                        Log.d(TAG,""+dataList.get(count).getCount());
+                        Log.d(TAG,""+dataList.get(count).getAmount());
+                    }
+
+                    isDetailAPI=false;
+                }else{
+
+                    if(dataList.size()>0){
+                        mListAdapter = new ListAdapter(dataList);
+                        listRecycler.setAdapter(mListAdapter);
+                        mListAdapter.notifyDataSetChanged();
+                    }else{
+                        showMessage("No orders made till now ",R.string.ok,0);
+                    }
+                }
             }else{
                 showMessage(errorMsg,R.string.ok,0);
             }
@@ -127,7 +141,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
         @Override
         public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
         {
-            String orderId = dataList.get(holder.getAdapterPosition()).getOrderId();
+            final String orderId = dataList.get(holder.getAdapterPosition()).getOrderId();
             holder.textOrder_num.setText("Order# : "+orderId);
 
             String time = dataList.get(holder.getAdapterPosition()).getOrderDate();
@@ -136,6 +150,16 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
             String status = dataList.get(holder.getAdapterPosition()).getStatus();
             holder.textStatus.setText("Order Status : "+status);
+
+            holder.itemView.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View v)
+                {
+                    Log.d(TAG,"Clicked orderId ="+orderId);
+                    processDetail(orderId);
+                }
+            });
         }
         @Override
         public int getItemCount()
@@ -173,6 +197,16 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
             }
             return date;
         }
+    }
+
+    void processDetail(String orderNum){
+        isDetailAPI=true;
+        HashMap<String,String> requestParams=new HashMap<>();
+        //requestParams.put(mApiConstants.API_ORDER_ID, orderNum);
+        requestParams.put(mApiConstants.API_ORDER_ID, "47");
+        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
+        APIProcessor apiProcessor=new APIProcessor();
+        apiProcessor.getOrderDetails(MyOrderFrag.this,requestParams);
     }
     @Override
     public void onResume() {

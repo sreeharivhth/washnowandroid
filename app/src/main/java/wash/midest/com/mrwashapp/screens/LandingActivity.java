@@ -23,6 +23,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.models.PromotionData;
 import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.fragmentviews.ContactFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
@@ -40,6 +41,7 @@ public class LandingActivity extends BaseActivity
     private LinearLayout mScrollLinearView;
     private boolean mDidReceivedObject=false;
     private GeneralListDataPojo mServicesData;
+    private PromotionData mPromotionData;
     private APIConstants mApiConstants;
     private String TAG=LandingActivity.class.getName();
     private LinearLayout mLandingReplaceableContent;
@@ -75,17 +77,20 @@ public class LandingActivity extends BaseActivity
         mApiConstants=new APIConstants();
         Log.d(TAG,TAG+" LandingActivity launched");
         mServicesData = getIntent().getExtras().getParcelable("LandingData");
+        //PromotionData
+        mPromotionData = getIntent().getExtras().getParcelable("PromotionData");
+
         replaceLandingContent(mServicesData);
     }
 
     private void replaceLandingContent(GeneralListDataPojo mServicesData){
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTrans = fragMan.beginTransaction();
-        mDirectFragment = LandingFrag.newInstance(mServicesData);
+        mDirectFragment = LandingFrag.newInstance(mServicesData,mPromotionData);
         fragTrans.replace(R.id.landing_view, mDirectFragment);
         fragTrans.addToBackStack("LandingFrag");
         fragTrans.commit();
-        /*mDirectFragment.setUserVisibleHint(true);*/
+        //mDirectFragment.setUserVisibleHint(true);
     }
 
 

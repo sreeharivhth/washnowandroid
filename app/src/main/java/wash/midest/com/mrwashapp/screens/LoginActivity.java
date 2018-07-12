@@ -21,12 +21,16 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.appservices.APICallBack;
+import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
+import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
 import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
+import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements APICallBack{
 
     private static final String TAG = LoginActivity.class.getName();
     @BindView(R.id.email) TextInputEditText mEmail;
@@ -149,7 +153,8 @@ public class LoginActivity extends BaseActivity {
                             String activeStatus="1";
                             mSharedPreference.setPreferenceString(mSharedPreference.ACTIVE_STATUS,activeStatus);
 
-                            processServicesAPI();
+                            requestProfileDetails();
+                            //processServicesAPI();
                         }
                     }
                     @Override
@@ -163,6 +168,50 @@ public class LoginActivity extends BaseActivity {
                         Log.d(TAG, TAG+"### The API service Observable has ended!");
                     }
                 });
+    }
+
+    void requestProfileDetails(){
+
+        alterProgressBar();
+        HashMap<String,String> requestParams=new HashMap<>();
+        //TODO keep actual mToken, once handled from backend
+        String appId = mApiConstants.APPID_VAL;
+        requestParams.put(mApiConstants.API_APPID,appId);
+        requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
+        APIProcessor apiProcessor=new APIProcessor();
+        apiProcessor.processMyProfile(LoginActivity.this,requestParams);
+    }
+
+    @Override
+    public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
+        alterProgressBar();
+        try {
+            if (isSuccess) {
+                GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
+                Data data = responsePojo.getData().get(0);
+                String fn = data.getFirstName();
+                String ln = data.getLastName();
+                if ((!TextUtils.isEmpty(fn))  && (!TextUtils.isEmpty(ln)))
+                {
+                    mSharedPreference.setPreferenceString(mSharedPreference.USER_NAME, fn+" "+ln);
+                }
+                String email = data.getEmail();
+                if (!TextUtils.isEmpty(email))
+                {
+                    mSharedPreference.setPreferenceString(mSharedPreference.USER_EMAIL, email);
+                }
+                String phone = data.getMobile();
+                if (!TextUtils.isEmpty(phone))
+                {
+                    mSharedPreference.setPreferenceString(mSharedPreference.USER_MOBILE, phone);
+                }
+            }
+        } catch(Exception e) {
+            Log.d(TAG,"Error in retrieving, populating user data!");
+        }finally{
+            //Even if processing is success or not, proceed with services api
+            processServicesAPI();
+        }
     }
 
     void processServicesAPI(){
@@ -222,4 +271,6 @@ public class LoginActivity extends BaseActivity {
         startActivity(i);
         finish();
     }
+
+
 }

@@ -72,6 +72,7 @@ public class MyProfileFrag extends BaseFrag implements APICallBack{
 
         mProgressBar.setVisibility(View.VISIBLE);
         mEditService=false;
+
         HashMap<String,String> requestParams=new HashMap<>();
         //TODO keep actual mToken, once handled from backend
         String appId = mApiConstants.APPID_VAL;

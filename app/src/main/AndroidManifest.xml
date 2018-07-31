@@ -10,13 +10,15 @@
     <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
-        android:name="android.support.multidex.MultiDexApplication"
+        android:name=".mrwashapp.MrWashApp"
         android:allowBackup="true"
         android:icon="@mipmap/wash_launch_icon"
         android:label="@string/app_title"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+
+        >
 
         <meta-data
             android:name="com.google.android.gms.version"

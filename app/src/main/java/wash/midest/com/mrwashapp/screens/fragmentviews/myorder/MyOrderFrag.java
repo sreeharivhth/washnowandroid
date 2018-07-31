@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.screens.fragmentviews.myorder;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -26,6 +27,7 @@ import wash.midest.com.mrwashapp.appservices.APICallBack;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.models.ItemDetail;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 
@@ -97,14 +99,24 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
 
                 if(isDetailAPI){
-                    for (int count =0;count<dataList.size();count++) {
-                        Log.d(TAG,""+dataList.get(count).getCategoryName());
-                        Log.d(TAG,""+dataList.get(count).getProductName());
-                        Log.d(TAG,""+dataList.get(count).getCount());
-                        Log.d(TAG,""+dataList.get(count).getAmount());
-                    }
 
                     isDetailAPI=false;
+                    OrderDetailFragment orderDetailFragment=OrderDetailFragment.getInstance((GeneralListDataPojo) responseObj);
+                    FragmentManager fragmentManager=getFragmentManager();
+                    orderDetailFragment.show(fragmentManager,"OrderDetailFragment");
+
+                    /*List<ItemDetail> itemDetail= dataList.get(0).getItemDetails();
+                    for (int count =0;count<itemDetail.size();count++) {
+
+                        Log.d(TAG,"getCategoryName = "+itemDetail.get(count).getCategoryName());
+                        Log.d(TAG,"getProductName = "+itemDetail.get(count).getProductName());
+                        Log.d(TAG,"getCount = "+itemDetail.get(count).getCount());
+                        Log.d(TAG,"getAmount = "+itemDetail.get(count).getAmount());
+                        Log.d(TAG,"==============");
+                    }
+
+                    Log.d(TAG,"getNetAmount = "+dataList.get(0).getNetAmount());*/
+
                 }else{
 
                     if(dataList.size()>0){
@@ -201,8 +213,10 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     void processDetail(String orderNum){
         isDetailAPI=true;
+        mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();
         //requestParams.put(mApiConstants.API_ORDER_ID, orderNum);
+        //TODO remove below one param , and keep above one
         requestParams.put(mApiConstants.API_ORDER_ID, "47");
         requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
         APIProcessor apiProcessor=new APIProcessor();

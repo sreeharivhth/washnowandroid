@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -341,11 +342,6 @@ public class Data implements Parcelable {
         this.orderId = orderId;
     }
 
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
     //=================== My Offers ========================//
 
     @SerializedName("promoCodeId")
@@ -397,7 +393,44 @@ public class Data implements Parcelable {
     }
 
     //=================== Order details ========================//
-    @SerializedName("categoryName")
+
+    @SerializedName("itemDetails")
+    @Expose
+    private List<ItemDetail> itemDetails;
+
+    @SerializedName("netAmount")
+    @Expose
+    private Integer netAmount;
+
+    @SerializedName("orderDetails")
+    @Expose
+    private List<OrderDetail> orderDetails = null;
+
+    public List<ItemDetail> getItemDetails() {
+        return itemDetails;
+    }
+
+    public void setItemDetails(List<ItemDetail> itemDetails) {
+        this.itemDetails = itemDetails;
+    }
+
+    public Integer getNetAmount() {
+        return netAmount;
+    }
+
+    public void setNetAmount(Integer netAmount) {
+        this.netAmount = netAmount;
+    }
+
+    public List<OrderDetail> getOrderDetails() {
+        return orderDetails;
+    }
+
+    public void setOrderDetails(List<OrderDetail> orderDetails) {
+        this.orderDetails = orderDetails;
+    }
+
+    /*@SerializedName("categoryName")
     @Expose
     private String categoryName;
 
@@ -479,8 +512,16 @@ public class Data implements Parcelable {
 
     public void setAmount(String amount) {
         this.amount = amount;
+    }*/
+
+
+    public Data() {
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
@@ -495,6 +536,7 @@ public class Data implements Parcelable {
         dest.writeString(this.id);
         dest.writeString(this.name);
         dest.writeString(this.deliveryTime);
+        dest.writeString(this.pickupTime);
         dest.writeString(this.firstName);
         dest.writeString(this.lastName);
         dest.writeString(this.mobile);
@@ -503,24 +545,19 @@ public class Data implements Parcelable {
         dest.writeString(this.address);
         dest.writeString(this.itemName);
         dest.writeString(this.price);
+        dest.writeList(this.gents);
+        dest.writeList(this.others);
+        dest.writeList(this.ladies);
         dest.writeString(this.orderId);
         dest.writeString(this.status);
-        dest.writeString(this.pickupTime);
         dest.writeString(this.orderDate);
         dest.writeString(this.promoCodeId);
         dest.writeString(this.title);
         dest.writeString(this.offer);
         dest.writeString(this.code);
-        dest.writeString(this.categoryName);
-        dest.writeString(this.productName);
-        dest.writeString(this.count);
-        dest.writeString(this.rate);
-        dest.writeString(this.comment);
-        dest.writeString(this.meter);
-        dest.writeString(this.amount);
-    }
-
-    public Data() {
+        dest.writeTypedList(this.itemDetails);
+        dest.writeValue(this.netAmount);
+        dest.writeTypedList(this.orderDetails);
     }
 
     protected Data(Parcel in) {
@@ -535,6 +572,7 @@ public class Data implements Parcelable {
         this.id = in.readString();
         this.name = in.readString();
         this.deliveryTime = in.readString();
+        this.pickupTime = in.readString();
         this.firstName = in.readString();
         this.lastName = in.readString();
         this.mobile = in.readString();
@@ -543,24 +581,25 @@ public class Data implements Parcelable {
         this.address = in.readString();
         this.itemName = in.readString();
         this.price = in.readString();
+        this.gents = new ArrayList<Gents>();
+        in.readList(this.gents, Gents.class.getClassLoader());
+        this.others = new ArrayList<Others>();
+        in.readList(this.others, Others.class.getClassLoader());
+        this.ladies = new ArrayList<Ladies>();
+        in.readList(this.ladies, Ladies.class.getClassLoader());
         this.orderId = in.readString();
-        this.status= in.readString();
-        this.pickupTime= in.readString();
-        this.orderDate= in.readString();
-        this.promoCodeId= in.readString();
-        this.title= in.readString();
-        this.offer= in.readString();
-        this.code= in.readString();
-        this.categoryName= in.readString();
-        this.productName= in.readString();
-        this.count= in.readString();
-        this.rate= in.readString();
-        this.comment= in.readString();
-        this.meter= in.readString();
-        this.amount= in.readString();
+        this.status = in.readString();
+        this.orderDate = in.readString();
+        this.promoCodeId = in.readString();
+        this.title = in.readString();
+        this.offer = in.readString();
+        this.code = in.readString();
+        this.itemDetails = in.createTypedArrayList(ItemDetail.CREATOR);
+        this.netAmount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.orderDetails = in.createTypedArrayList(OrderDetail.CREATOR);
     }
 
-    public static final Parcelable.Creator<Data> CREATOR = new Parcelable.Creator<Data>() {
+    public static final Creator<Data> CREATOR = new Creator<Data>() {
         @Override
         public Data createFromParcel(Parcel source) {
             return new Data(source);

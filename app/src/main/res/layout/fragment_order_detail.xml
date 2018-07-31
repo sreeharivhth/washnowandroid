@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context=".screens.fragmentviews.myorder.OrderDetailFragment">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/component_margin_5">
+
+        <TextView
+            android:id="@+id/detailOrderNum"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/component_margin_10"
+            android:text="ABC"
+            android:textStyle="bold"
+            android:textAlignment="center" />
+
+        <ScrollView
+            android:id="@+id/scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/detailOrderNum">
+
+            <LinearLayout
+                android:id="@+id/detailLinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+        <Button
+            android:layout_marginTop="@dimen/component_margin_10"
+            android:layout_marginRight="@dimen/component_margin_10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/scrollView"
+            android:layout_alignParentRight="true"
+            android:id="@+id/btnDoneId"
+            android:text="@string/done"
+            android:theme="@style/AppButtonTheme"
+            android:background="@drawable/button_bg_rounded_corners"
+            />
+    </RelativeLayout>
+</FrameLayout>

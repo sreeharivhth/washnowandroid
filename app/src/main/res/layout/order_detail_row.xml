@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:weightSum="1"
+    >
+    <!--android:background="@drawable/linear_rounded_corner_back"-->
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.33"
+        android:text="1"
+        android:id="@+id/cell_1"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:layout_margin="@dimen/component_margin_5"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.33"
+        android:text="2"
+        android:id="@+id/cell_2"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:layout_margin="@dimen/component_margin_5"
+        />
+    <TextView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.33"
+        android:text="3"
+        android:id="@+id/cell_3"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:layout_margin="@dimen/component_margin_5"
+        />
+</LinearLayout>

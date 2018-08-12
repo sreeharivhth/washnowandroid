@@ -187,6 +187,7 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setUserVisibleHint(false);
         mServiceNames = new ArrayList();
         mDeliveryTime = new ArrayList();
         mPickTime = new ArrayList();
@@ -578,11 +579,11 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             FragmentManager childFragMan = getActivity().getSupportFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
             OrderMapFrag frag = OrderMapFrag.newInstance(this);
-            childFragTrans.add(R.id.place_order_frag, frag);
-            childFragTrans.addToBackStack("OrderMapFrag");
+            childFragTrans.add(R.id.place_order_frag, frag,"OrderMapFrag");
+            childFragTrans.addToBackStack(null);
             childFragTrans.commit();
-            /*frag.setUserVisibleHint(true);
-            this.setUserVisibleHint(false);*/
+            frag.setUserVisibleHint(true);
+
         }
     }
 
@@ -928,11 +929,29 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        if(isVisibleToUser){
-            Log.d(TAG,TAG+" is visible");
-        }else{
-            Log.d(TAG,TAG+" is NOT visible");
-        }
         super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG,TAG+"121 setUserVisibleHint called ");
+        if(isVisibleToUser){
+            Log.d(TAG,TAG+"121 is visible");
+            try {
+                ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart "+TAG);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG,"onViewStateRestored "+TAG);
     }
 }

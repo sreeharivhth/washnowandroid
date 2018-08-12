@@ -3,6 +3,7 @@ package wash.midest.com.mrwashapp.screens.fragmentviews;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -65,11 +66,16 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setUserVisibleHint(false);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view=  inflater.inflate(R.layout.fragment_landing, container, false);
         mUnbinder = ButterKnife.bind(this, view);
-
         ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.app_title));
         mGeneralPojo = getArguments().getParcelable(LANDING_DATA);
         mPromotionData = getArguments().getParcelable(PROMOTION_DATA);
@@ -192,13 +198,10 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
         FragmentManager childFragMan = getActivity().getSupportFragmentManager();
         FragmentTransaction childFragTrans = childFragMan.beginTransaction();
         PlaceOrderFrag fragB = PlaceOrderFrag.newInstance(index,mGeneralPojo,null);
-        childFragTrans.add(R.id.landing_fragment_id, fragB);
-        childFragTrans.addToBackStack("PlaceOrderFrag");
+        childFragTrans.add(R.id.landing_fragment_id, fragB,"PlaceOrderFrag");
+        childFragTrans.addToBackStack(null);
         childFragTrans.commit();
-        /*setUserVisibleHint(false);
-        fragB.setUserVisibleHint(true);*/
-        /*fragB.setUserVisibleHint(true);
-        this.setUserVisibleHint(false);*/
+        fragB.setUserVisibleHint(true);
     }
 
     @Override
@@ -228,12 +231,30 @@ public class LandingFrag extends Fragment implements LandingHorizontalView.Butto
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart "+TAG);
+    }
+
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG,"onViewStateRestored "+TAG);
+    }
+
+    @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        if(isVisibleToUser){
-            Log.d(TAG,TAG+" is visible");
-        }else{
-            Log.d(TAG,TAG+" is NOT visible");
-        }
         super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG,TAG+"121 setUserVisibleHint called ");
+        if(isVisibleToUser){
+            Log.d(TAG,TAG+"121 is visible");
+            //((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.app_title));
+            try {
+                ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.app_title));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

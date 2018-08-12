@@ -44,11 +44,7 @@ public class BaseActivity extends AppCompatActivity implements View.OnClickListe
     protected void setActionBarTitleInCenter(String title,boolean displayBackButton){
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        /*customActionBarView = View.inflate(getApplicationContext(), R.layout.action_bar_layout, null);
-        ButterKnife.bind(this,customActionBarView);*/
-        /*ButterKnife.bind(this,customActionBarView);*/
-        /*mActionBarTitle=ButterKnife.findById(this,R.id.action_bar_title);*/
-        //View customActionBarView = View.inflate(getApplicationContext(), R.layout.action_bar_layout, null);
+
         actionBar.setCustomView(R.layout.action_bar_layout);
         mActionBarTitle=findViewById(R.id.action_bar_title);
         mActionBarTitle.setText(title);

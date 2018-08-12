@@ -28,6 +28,7 @@ import wash.midest.com.mrwashapp.models.WashTypes;
 import wash.midest.com.mrwashapp.screens.fragmentviews.ContactFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.FAQFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.LandingFrag;
+import wash.midest.com.mrwashapp.screens.fragmentviews.OrderMapFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.myorder.MyOrderFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.MyProfileFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.PriceListFrag;
@@ -87,10 +88,10 @@ public class LandingActivity extends BaseActivity
         FragmentManager fragMan = getSupportFragmentManager();
         FragmentTransaction fragTrans = fragMan.beginTransaction();
         mDirectFragment = LandingFrag.newInstance(mServicesData,mPromotionData);
-        fragTrans.replace(R.id.landing_view, mDirectFragment);
-        fragTrans.addToBackStack("LandingFrag");
+        fragTrans.replace(R.id.landing_view, mDirectFragment,"LandingFrag");
+        fragTrans.addToBackStack(null);
         fragTrans.commit();
-        //mDirectFragment.setUserVisibleHint(true);
+        mDirectFragment.setUserVisibleHint(true);
     }
 
 
@@ -123,8 +124,51 @@ public class LandingActivity extends BaseActivity
                     }
                 }
             }
+
+            try {
+                Fragment fragment =  getActiveFragment();
+                if(fragment instanceof  LandingFrag)
+                {
+                    LandingFrag landingFrag = (LandingFrag)fragment;
+                    landingFrag.setUserVisibleHint(true);
+                    //setFragmentTitle(getString(R.string.app_title));
+                }else if(fragment instanceof PlaceOrderFrag){
+                    PlaceOrderFrag placeOrderFrag = (PlaceOrderFrag)fragment;
+                    placeOrderFrag.setUserVisibleHint(true);
+                    //setFragmentTitle(getString(R.string.place_order_title));
+                }else if(fragment instanceof OrderMapFrag){
+                    OrderMapFrag orderMapFrag = (OrderMapFrag)fragment;
+                    orderMapFrag.setUserVisibleHint(true);
+                    //setFragmentTitle(getString(R.string.place_order_title));
+                }
+            } catch (Exception e) {
+                Log.e(TAG,TAG+" 121 getActiveFragment Error = "+e.toString());
+            }
             super.onBackPressed();
         }
+    }
+
+    public Fragment getActiveFragment() {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 0) {
+            return null;
+        }
+        String tag = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 1).getName();
+        Log.d(TAG," 121 getActiveFragment Name = "+tag);
+
+        String tag_0=null;
+        try {
+            tag_0 = getSupportFragmentManager().getBackStackEntryAt(getSupportFragmentManager().getBackStackEntryCount() - 2).getName();
+            Log.d(TAG," 121 getActiveFragment Name tag_0 = "+tag_0);
+        } catch (Exception e) {
+            Log.e(TAG,TAG+" 121 tag_0 error = "+e.toString());
+        }
+        Fragment fragment=null;
+
+        try {
+            fragment = getSupportFragmentManager().getFragments().get(getSupportFragmentManager().getBackStackEntryCount() - 2);
+        } catch (Exception e) {
+        }
+        return fragment;
     }
 
     private void onExit(){

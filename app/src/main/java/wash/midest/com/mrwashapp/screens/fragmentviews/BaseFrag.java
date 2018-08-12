@@ -10,7 +10,6 @@ import android.widget.Toast;
 
 import wash.midest.com.mrwashapp.appservices.APIConstants;
 import wash.midest.com.mrwashapp.localstorage.AppSharedPreferences;
-import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.uiutility.AlertCallBack;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
@@ -40,42 +39,37 @@ public class BaseFrag extends Fragment implements AlertCallBack{
      * @param negativeBtnText negative button text
      */
     protected void showMessage(String message,int positiveBtnText,int negativeBtnText,final int caseNum){
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
 
-        if(MrWashApp.getMrWashApp().isAppActive()) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-            dialogBuilder.setMessage(message);
-
-            dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    handlePositiveAlertCallBack(caseNum);
-                }
-            });
-            dialogBuilder.setNegativeButton(negativeBtnText, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    handleNegativeAlertCallBack(caseNum);
-                }
-            });
-            mCallBackAlertDialog = dialogBuilder.create();
-            mCallBackAlertDialog.setCancelable(false);
-            mCallBackAlertDialog.show();
-        }
+        dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handlePositiveAlertCallBack(caseNum);
+            }
+        });
+        dialogBuilder.setNegativeButton(negativeBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handleNegativeAlertCallBack(caseNum);
+            }
+        });
+        mCallBackAlertDialog = dialogBuilder.create();
+        mCallBackAlertDialog.setCancelable(false);
+        mCallBackAlertDialog.show();
     }
 
     public void showMessage(String message,int positiveBtnText,final int caseNum){
 
-        if(MrWashApp.getMrWashApp().isAppActive()) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-            dialogBuilder.setMessage(message);
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
 
-            dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    handlePositiveAlertCallBack(caseNum);
-                }
-            });
-            mCallBackAlertDialog = dialogBuilder.create();
-            mCallBackAlertDialog.setCancelable(false);
-            mCallBackAlertDialog.show();
-        }
+        dialogBuilder.setPositiveButton(positiveBtnText, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                handlePositiveAlertCallBack(caseNum);
+            }
+        });
+        mCallBackAlertDialog = dialogBuilder.create();
+        mCallBackAlertDialog.setCancelable(false);
+        mCallBackAlertDialog.show();
     }
     @Override
     public void handleNegativeAlertCallBack(int caseNum) {
@@ -88,40 +82,34 @@ public class BaseFrag extends Fragment implements AlertCallBack{
     }
 
     protected void showToast(final String msg){
-        if(MrWashApp.getMrWashApp().isAppActive()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), msg, Toast.LENGTH_SHORT);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
-            });
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),msg,Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        });
     }
     protected void showToast(final String msg,final int duration){
-        if(MrWashApp.getMrWashApp().isAppActive()) {
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toast toast = Toast.makeText(getActivity().getApplicationContext(), msg, duration);
-                    toast.setGravity(Gravity.CENTER, 0, 0);
-                    toast.show();
-                }
-            });
-        }
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast toast = Toast.makeText(getActivity().getApplicationContext(),msg,duration);
+                toast.setGravity(Gravity.CENTER,0,0);
+                toast.show();
+            }
+        });
     }
 
     protected void showErrorAlert(String message){
-        if(MrWashApp.getMrWashApp().isAppActive()) {
-            AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
-            dialogBuilder.setMessage(message);
-            dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            });
-            AlertDialog alertDialog = dialogBuilder.create();
-            alertDialog.show();
-        }
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity());
+        dialogBuilder.setMessage(message);
+        dialogBuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+            }
+        });
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 }

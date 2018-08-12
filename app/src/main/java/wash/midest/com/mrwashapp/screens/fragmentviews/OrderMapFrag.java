@@ -72,6 +72,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 import static android.app.Activity.RESULT_OK;
@@ -202,7 +203,7 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_order_map, container, false);
         mUnbinder = ButterKnife.bind(this, view);
         mMapView.onCreate(savedInstanceState);
-
+        ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
         setHasOptionsMenu(true);
         mMapView.onResume();
         try {
@@ -482,12 +483,33 @@ public class OrderMapFrag extends BaseFrag implements OnMapReadyCallback {
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
-        if(isVisibleToUser){
-            Log.d(TAG,TAG+" is visible");
-        }else{
-            Log.d(TAG,TAG+" is NOT visible");
-        }
         super.setUserVisibleHint(isVisibleToUser);
+        Log.d(TAG,TAG+"121 setUserVisibleHint called ");
+        if(isVisibleToUser){
+            Log.d(TAG,TAG+"121 is visible");
+            try {
+                ((LandingActivity) getActivity()).setFragmentTitle(getActivity().getString(R.string.place_order_title));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setUserVisibleHint(false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG,"onStart "+TAG);
+    }
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.d(TAG,"onViewStateRestored "+TAG);
     }
 }
 

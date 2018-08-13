@@ -38,7 +38,11 @@ public class OrderDetailFragment extends DialogFragment {
     @BindView(R.id.detailOrderNum)TextView mOrderNumber;
     @BindView(R.id.btnDoneId) Button btnDone;
     final static String DATA="DATA";
+    final static String SERVICE_TYPE="SERVICE_TYPE";
+    final static String ORDER_ID="ORDER_ID";
     private GeneralListDataPojo mDataList;
+    private String mServiceType;
+    private int mOrderId;
 
     @Override
     public void onStart() {
@@ -55,10 +59,12 @@ public class OrderDetailFragment extends DialogFragment {
         // Required empty public constructor
     }
 
-    public static OrderDetailFragment getInstance(GeneralListDataPojo dataList){
+    public static OrderDetailFragment getInstance(GeneralListDataPojo dataList,String serviceType,int orderId){
         OrderDetailFragment orderDetailFragment=new OrderDetailFragment();
         Bundle bundle = new Bundle();
         bundle.putParcelable(DATA, dataList);
+        bundle.putString(SERVICE_TYPE,serviceType);
+        bundle.putInt(ORDER_ID,orderId);
         orderDetailFragment.setArguments(bundle);
         return orderDetailFragment;
     }
@@ -71,6 +77,8 @@ public class OrderDetailFragment extends DialogFragment {
         View root_view =  inflater.inflate(R.layout.fragment_order_detail, container, false);
         mUnbinder=ButterKnife.bind(this,root_view);
         mDataList = getArguments().getParcelable(DATA);
+        mServiceType = getArguments().getString(SERVICE_TYPE);
+        mOrderId = getArguments().getInt(ORDER_ID);
         btnDone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,14 +96,13 @@ public class OrderDetailFragment extends DialogFragment {
     private void populateData(GeneralListDataPojo mDataList ) {
         List<Data> dataList =  mDataList.getData();
         List<ItemDetail> itemDetails= dataList.get(0).getItemDetails();
-        OrderDetail orderDetails = (dataList.get(0).getOrderDetails()).get(0);
-        String orderID =    orderDetails.getOrderId()+"";
-        if(!TextUtils.isEmpty(orderID)){
-            mOrderNumber.setText("Order # "+orderID);
+
+        if(!TextUtils.isEmpty(mServiceType) && mOrderId!=0 ){
+            mOrderNumber.setText(getActivity().getString(R.string.order_number)+mOrderId + "( "+mServiceType+" )");
         }
         if(null != itemDetails){
-            OrderDetailRow detailRowHead = new OrderDetailRow(getActivity(),"Item",
-                    "Count","Price");
+            OrderDetailRow detailRowHead = new OrderDetailRow(getActivity(),getString(R.string.item),
+                    getString(R.string.count),getString(R.string.price));
             mLinearLayout.addView(detailRowHead);
 
             for(int count=0;count<itemDetails.size();count++) {
@@ -107,7 +114,7 @@ public class OrderDetailFragment extends DialogFragment {
             }
             String total = dataList.get(0).getNetAmount()+"";
             OrderDetailRow detailRow = new OrderDetailRow(getActivity(),"",
-                    "Total",total+" QR");
+                    getString(R.string.total),total+getString(R.string.qr_currency));
             mLinearLayout.addView(detailRow);
         }
     }

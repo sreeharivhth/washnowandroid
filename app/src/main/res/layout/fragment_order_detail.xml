@@ -8,14 +8,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@dimen/component_margin_5">
+        android:layout_margin="@dimen/component_margin_10"
+        >
 
         <TextView
             android:id="@+id/detailOrderNum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/component_margin_10"
-            android:text="ABC"
+            android:text=""
             android:textStyle="bold"
             android:textAlignment="center" />
 
@@ -33,7 +34,7 @@
         </ScrollView>
         <Button
             android:layout_marginTop="@dimen/component_margin_10"
-            android:layout_marginRight="@dimen/component_margin_10"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/scrollView"

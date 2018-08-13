@@ -317,6 +317,19 @@ public class Data implements Parcelable {
     @Expose
     private String orderDate;
 
+    @SerializedName("service")
+    @Expose
+    private String service;
+
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
+
     public String getOrderDate() {
         return orderDate;
     }
@@ -402,6 +415,11 @@ public class Data implements Parcelable {
     @Expose
     private Integer netAmount;
 
+    @SerializedName("orderProcessed")
+    @Expose
+    private Integer orderProcessed;
+
+
     @SerializedName("orderDetails")
     @Expose
     private List<OrderDetail> orderDetails = null;
@@ -429,6 +447,16 @@ public class Data implements Parcelable {
     public void setOrderDetails(List<OrderDetail> orderDetails) {
         this.orderDetails = orderDetails;
     }
+
+    public Integer getOrderProcessed() {
+        return orderProcessed;
+    }
+
+    public void setOrderProcessed(Integer orderProcessed) {
+        this.orderProcessed = orderProcessed;
+    }
+
+
 
     /*@SerializedName("categoryName")
     @Expose
@@ -557,6 +585,7 @@ public class Data implements Parcelable {
         dest.writeString(this.code);
         dest.writeTypedList(this.itemDetails);
         dest.writeValue(this.netAmount);
+        dest.writeValue(this.orderProcessed);
         dest.writeTypedList(this.orderDetails);
     }
 
@@ -596,6 +625,7 @@ public class Data implements Parcelable {
         this.code = in.readString();
         this.itemDetails = in.createTypedArrayList(ItemDetail.CREATOR);
         this.netAmount = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.orderProcessed= (Integer) in.readValue(Integer.class.getClassLoader());
         this.orderDetails = in.createTypedArrayList(OrderDetail.CREATOR);
     }
 

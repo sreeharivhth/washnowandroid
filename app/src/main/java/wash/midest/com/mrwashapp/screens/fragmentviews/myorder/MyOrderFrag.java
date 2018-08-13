@@ -47,6 +47,8 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
     private ListAdapter mListAdapter;
     private boolean isVisible;
     private boolean isDetailAPI;
+    private String mOrderId;
+    private String mService;
 
     public MyOrderFrag() {
         // Required empty public constructor
@@ -99,24 +101,16 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
 
                 if(isDetailAPI){
-
                     isDetailAPI=false;
-                    OrderDetailFragment orderDetailFragment=OrderDetailFragment.getInstance((GeneralListDataPojo) responseObj);
-                    FragmentManager fragmentManager=getFragmentManager();
-                    orderDetailFragment.show(fragmentManager,"OrderDetailFragment");
-
-                    /*List<ItemDetail> itemDetail= dataList.get(0).getItemDetails();
-                    for (int count =0;count<itemDetail.size();count++) {
-
-                        Log.d(TAG,"getCategoryName = "+itemDetail.get(count).getCategoryName());
-                        Log.d(TAG,"getProductName = "+itemDetail.get(count).getProductName());
-                        Log.d(TAG,"getCount = "+itemDetail.get(count).getCount());
-                        Log.d(TAG,"getAmount = "+itemDetail.get(count).getAmount());
-                        Log.d(TAG,"==============");
+                    if(dataList.get(0).getOrderProcessed()==1){
+                        OrderDetailFragment orderDetailFragment=
+                                OrderDetailFragment.getInstance((GeneralListDataPojo) responseObj,mService,Integer.valueOf(mOrderId));
+                        FragmentManager fragmentManager=getFragmentManager();
+                        orderDetailFragment.show(fragmentManager,"OrderDetailFragment");
                     }
-
-                    Log.d(TAG,"getNetAmount = "+dataList.get(0).getNetAmount());*/
-
+                    else{
+                        showErrorAlert(getString(R.string.order_under_process));
+                    }
                 }else{
 
                     if(dataList.size()>0){
@@ -124,7 +118,7 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
                         listRecycler.setAdapter(mListAdapter);
                         mListAdapter.notifyDataSetChanged();
                     }else{
-                        showMessage("No orders made till now ",R.string.ok,0);
+                        showMessage(getString(R.string.no_orders_yet),R.string.ok,0);
                     }
                 }
             }else{
@@ -153,23 +147,25 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
         @Override
         public void onBindViewHolder(ListAdapter.ViewHolder holder, final int position)
         {
-            final String orderId = dataList.get(holder.getAdapterPosition()).getOrderId();
-            holder.textOrder_num.setText("Order# : "+orderId);
+            int holderPosition = holder.getAdapterPosition();
+            mOrderId = dataList.get(holderPosition).getOrderId();
+            holder.textOrder_num.setText(getString(R.string.order_number)+mOrderId);
 
-            String time = dataList.get(holder.getAdapterPosition()).getOrderDate();
+            String time = dataList.get(holderPosition).getOrderDate();
             time = getFormatedDate(time);
-            holder.textDate.setText("Order Date : "+time);
+            holder.textDate.setText(getString(R.string.order_date)+time);
 
-            String status = dataList.get(holder.getAdapterPosition()).getStatus();
-            holder.textStatus.setText("Order Status : "+status);
+            String status = dataList.get(holderPosition).getStatus();
+            holder.textStatus.setText(getString(R.string.order_status)+status);
 
+            mService = dataList.get(holderPosition).getService();
             holder.itemView.setOnClickListener(new View.OnClickListener()
             {
                 @Override
                 public void onClick(View v)
                 {
-                    Log.d(TAG,"Clicked orderId ="+orderId);
-                    processDetail(orderId);
+                    Log.d(TAG,"Clicked orderId ="+mOrderId);
+                    processDetail(mOrderId);
                 }
             });
         }
@@ -215,9 +211,9 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
         isDetailAPI=true;
         mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();
-        //requestParams.put(mApiConstants.API_ORDER_ID, orderNum);
+        requestParams.put(mApiConstants.API_ORDER_ID, orderNum);
         //TODO remove below one param , and keep above one
-        requestParams.put(mApiConstants.API_ORDER_ID, "47");
+        //requestParams.put(mApiConstants.API_ORDER_ID, "47");
         requestParams.put(mApiConstants.API_MEMBERID,mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID));
         APIProcessor apiProcessor=new APIProcessor();
         apiProcessor.getOrderDetails(MyOrderFrag.this,requestParams);

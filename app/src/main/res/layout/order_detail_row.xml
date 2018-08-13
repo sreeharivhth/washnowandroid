@@ -11,7 +11,7 @@
         android:layout_weight="0.33"
         android:text="1"
         android:id="@+id/cell_1"
-        android:textAlignment="center"
+        android:textAlignment="viewStart"
         android:textColor="@color/text_color"
         android:layout_margin="@dimen/component_margin_5"
         />
@@ -31,7 +31,7 @@
         android:layout_weight="0.33"
         android:text="3"
         android:id="@+id/cell_3"
-        android:textAlignment="center"
+        android:textAlignment="viewEnd"
         android:textColor="@color/text_color"
         android:layout_margin="@dimen/component_margin_5"
         />

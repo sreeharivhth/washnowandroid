@@ -27,6 +27,7 @@ import wash.midest.com.mrwashapp.appservices.APICallBack;
 import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.myorder.MyOrderFrag;
@@ -75,6 +76,9 @@ public class OfferFrag extends BaseFrag implements APICallBack {
     }
 
     void getOfferData(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         isPromoCodeServiceAction=false;
         if(!mAppUtils.isNetworkConnected(getActivity())){
             showMessage(getString(R.string.network_error),R.string.ok,0);
@@ -88,6 +92,9 @@ public class OfferFrag extends BaseFrag implements APICallBack {
     }
 
     void validateCode(String promoCode,String codeID){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         isPromoCodeServiceAction=true;
         if(!mAppUtils.isNetworkConnected(getActivity())){
             showMessage(getString(R.string.network_error),R.string.ok,0);
@@ -107,7 +114,9 @@ public class OfferFrag extends BaseFrag implements APICallBack {
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        if(isVisible) {
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
             mProgressBar.setVisibility(View.GONE);
             if (isSuccess) {
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
@@ -129,7 +138,6 @@ public class OfferFrag extends BaseFrag implements APICallBack {
                     showMessage(errorMsg, R.string.ok, 0);
                 }
             }
-        }
     }
 
     /**
@@ -195,6 +203,9 @@ public class OfferFrag extends BaseFrag implements APICallBack {
         }
     }
     private void pushOfferFrag(String offerCode){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         ((LandingActivity)getActivity()).pushMyOrderFrag(offerCode);
     }
     @Override

@@ -63,6 +63,7 @@ import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.DateDifference;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 import wash.midest.com.mrwashapp.screens.fragmentviews.OrderMapFrag;
@@ -575,6 +576,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
 
     void pushMapFrag(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if (isLocationEnabled()) {
             FragmentManager childFragMan = getActivity().getSupportFragmentManager();
             FragmentTransaction childFragTrans = childFragMan.beginTransaction();
@@ -702,7 +706,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @OnClick(R.id.placeorder_btn)
     void proceedPlaceOrder() {
-
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if (TextUtils.isEmpty(mTxtLocation.getText().toString())) {
             if (TextUtils.isEmpty(tempLandmark)
                     ||
@@ -823,6 +829,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
 
     void processPlaceOrderAPI() {
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if (!mAppUtils.isNetworkConnected(getActivity())) {
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -854,7 +863,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        if(isVisible){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
             mProgressBar.setVisibility(View.INVISIBLE);
             if (isSuccess) {
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
@@ -876,7 +887,6 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
             } else {
                 showMessage(errorMsg, R.string.ok, CASE_0);
             }
-        }
     }
 
     void pushOrderSuccessFrag(){
@@ -892,6 +902,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
     }
     @Override
     public void handleNegativeAlertCallBack(int caseNum) {
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Log.d(TAG,"handleNegativeAlertCallBack");
         if(caseNum == CASE_1) {
             pushMapFrag();
@@ -900,6 +913,9 @@ public class PlaceOrderFrag extends BaseFrag implements OnMapReadyCallback, Orde
 
     @Override
     public void handlePositiveAlertCallBack(int caseNum) {
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Log.d(TAG,"handlePositiveAlertCallBack");
         if(caseNum == CASE_1){
             mGoogleLocationAdd = mSharedPreference.getPreferenceString(mSharedPreference.ADDRESS);

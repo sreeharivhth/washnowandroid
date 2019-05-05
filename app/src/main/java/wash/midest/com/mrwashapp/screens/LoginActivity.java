@@ -107,6 +107,9 @@ public class LoginActivity extends BaseActivity implements APICallBack{
 
     void proceedWithLogin(){
 
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -185,6 +188,9 @@ public class LoginActivity extends BaseActivity implements APICallBack{
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         alterProgressBar();
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         try {
             if (isSuccess) {
                 GeneralListDataPojo responsePojo = (GeneralListDataPojo) responseObj;
@@ -262,9 +268,9 @@ public class LoginActivity extends BaseActivity implements APICallBack{
                 });
     }
     void doLandingAction(GeneralListDataPojo generalPojo){
-        /*((MrWashApp) getApplication())
-                .getRxEventBus()
-                .send(generalPojo);*/
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent i = new Intent(LoginActivity.this, LandingActivity.class);
         i.putExtra("LandingData",generalPojo);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

@@ -16,6 +16,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 import wash.midest.com.mrwashapp.R;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 
@@ -45,6 +46,9 @@ public class OrderSuccessFrag extends BaseFrag {
 
     @OnClick(R.id.my_order_link)
     void onOrderClick(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         ((LandingActivity)getActivity()).pushOrderDetailsFrag();
     }
     @OnClick(R.id.btn_close)

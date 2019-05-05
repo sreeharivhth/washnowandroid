@@ -35,6 +35,7 @@ import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.PromotionData;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.fragmentviews.offers.OfferFrag;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
@@ -124,12 +125,10 @@ public class SplashActivity extends BaseActivity implements APICallBack{
     }
 
     void postPermissionGranted(){
-
         String isActive = mSharedPreference.getPreferenceString(mSharedPreference.ACTIVE_STATUS);
-
-        /*String memberID = mSharedPreference.getPreferenceString(mSharedPreference.MEMBER_ID);
-        Log.d(TAG,"memberID = "+memberID);*/
-
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!TextUtils.isEmpty(isActive) && isActive.equalsIgnoreCase("1")){
             processServicesAPI();
         }else{
@@ -155,6 +154,9 @@ public class SplashActivity extends BaseActivity implements APICallBack{
     }
 
     void processServicesAPI(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -205,6 +207,9 @@ public class SplashActivity extends BaseActivity implements APICallBack{
     }
 
     void getOfferData(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -223,6 +228,9 @@ public class SplashActivity extends BaseActivity implements APICallBack{
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
         promotionData = new PromotionData();
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if (isSuccess) {
             List<Data>list = ((GeneralListDataPojo) responseObj).getData();
             promotionData.setPromotionData(list);
@@ -231,6 +239,9 @@ public class SplashActivity extends BaseActivity implements APICallBack{
     }
 
     private void doLandingAction(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Log.d(TAG,TAG+" doLandingAction");
         Intent i = new Intent(SplashActivity.this, LandingActivity.class);
         i.putExtra("LandingData",mGeneralPojo);

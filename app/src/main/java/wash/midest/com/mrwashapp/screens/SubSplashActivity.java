@@ -30,13 +30,18 @@ public class SubSplashActivity extends BaseActivity {
 
     @OnClick(R.id.btnRegister)
     void actionRegistration(){
-
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent i = new Intent(SubSplashActivity.this, RegistrationActivity.class);
         startActivity(i);
     }
 
     @OnClick(R.id.btnLogin)
     void actionLogin(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent i = new Intent(SubSplashActivity.this, LoginActivity.class);
         startActivity(i);
     }

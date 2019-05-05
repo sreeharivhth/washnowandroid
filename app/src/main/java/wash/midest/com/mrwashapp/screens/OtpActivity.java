@@ -109,6 +109,9 @@ public class OtpActivity extends BaseActivity {
     }
 
     void proceedAPICall(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -183,7 +186,9 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.resendOTP)
     protected void onResend(){
-
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -241,16 +246,20 @@ public class OtpActivity extends BaseActivity {
 
     @OnClick(R.id.changeEmail)
     protected void onChangeEmail(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent i = new Intent();
         setResult(Activity.RESULT_OK,i);
         finish();
     }
 
     private void doLandingAction(GeneralListDataPojo generalPojo){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Log.d(TAG,TAG+" doLandingAction");
-        /*((MrWashApp) getApplication())
-                .getRxEventBus()
-                .send(generalPojo);*/
+
         Intent i = new Intent(OtpActivity.this, LandingActivity.class);
         i.putExtra("LandingData",generalPojo);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK  | Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -273,6 +282,9 @@ public class OtpActivity extends BaseActivity {
     }
 
     void processServicesAPI(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;

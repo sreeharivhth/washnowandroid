@@ -28,6 +28,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.uiwidgets.PinEntryEditText;
 
 public class ForgotPassActivity extends BaseActivity {
@@ -87,6 +88,9 @@ public class ForgotPassActivity extends BaseActivity {
     }
 
     void proceedAPICall(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         //TODO server returning 500 error for forgot password api
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
@@ -170,6 +174,9 @@ public class ForgotPassActivity extends BaseActivity {
     }
 
     void processVerifyCodeAPI(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -220,6 +227,9 @@ public class ForgotPassActivity extends BaseActivity {
     }
     void showPasswordSet(String memberId){
 
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent i = new Intent(ForgotPassActivity.this,NewPasswordActivity.class);
         i.putExtra("memberId",memberId);
         startActivity(i);

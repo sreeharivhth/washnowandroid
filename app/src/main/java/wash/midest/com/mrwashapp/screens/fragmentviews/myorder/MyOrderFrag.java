@@ -28,6 +28,7 @@ import wash.midest.com.mrwashapp.appservices.APIProcessor;
 import wash.midest.com.mrwashapp.models.Data;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.ItemDetail;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.screens.LandingActivity;
 import wash.midest.com.mrwashapp.screens.fragmentviews.BaseFrag;
 
@@ -81,6 +82,9 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     void getPriceListData(){
         isDetailAPI=false;
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(getActivity())){
             showMessage(getString(R.string.network_error),R.string.ok,0);
             return;
@@ -95,7 +99,9 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     @Override
     public void processedResponse(Object responseObj, boolean isSuccess, String errorMsg) {
-        if(isVisible){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
             mProgressBar.setVisibility(View.GONE);
             if(isSuccess) {
                 List<Data> dataList = ((GeneralListDataPojo) responseObj).getData();
@@ -124,7 +130,6 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
             }else{
                 showMessage(errorMsg,R.string.ok,0);
             }
-        }
     }
 
     /**
@@ -209,6 +214,9 @@ public class MyOrderFrag extends BaseFrag implements APICallBack{
 
     void processDetail(String orderNum){
         isDetailAPI=true;
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         mProgressBar.setVisibility(View.VISIBLE);
         HashMap<String,String> requestParams=new HashMap<>();
         requestParams.put(mApiConstants.API_ORDER_ID, orderNum);

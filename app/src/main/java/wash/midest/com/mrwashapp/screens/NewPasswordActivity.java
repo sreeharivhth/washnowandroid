@@ -25,6 +25,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 
 public class NewPasswordActivity extends BaseActivity {
 
@@ -99,6 +100,9 @@ public class NewPasswordActivity extends BaseActivity {
     }
 
     void proceedAPICall(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
@@ -145,6 +149,9 @@ public class NewPasswordActivity extends BaseActivity {
     }
 
     void showAlert(String message){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
         dialogBuilder.setCancelable(false);
         dialogBuilder.setMessage(message);
@@ -158,6 +165,9 @@ public class NewPasswordActivity extends BaseActivity {
     }
 
     void clearTopActivitiesAndPushLogin(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         Intent intent = new Intent(NewPasswordActivity.this,LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);

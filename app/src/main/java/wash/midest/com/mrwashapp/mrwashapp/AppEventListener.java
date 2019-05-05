@@ -18,7 +18,6 @@ public class AppEventListener implements LifecycleObserver {
     void gotStarted(){
         Log.d(TAG,"AppEventListener Started");
         MrWashApp.getMrWashApp().setAppActive(true);
-
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)

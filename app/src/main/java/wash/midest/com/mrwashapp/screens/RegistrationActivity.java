@@ -35,6 +35,7 @@ import wash.midest.com.mrwashapp.R;
 import wash.midest.com.mrwashapp.appservices.APIServiceFactory;
 import wash.midest.com.mrwashapp.models.GeneralListDataPojo;
 import wash.midest.com.mrwashapp.models.GeneralPojo;
+import wash.midest.com.mrwashapp.mrwashapp.MrWashApp;
 import wash.midest.com.mrwashapp.utils.AppUtils;
 
 public class RegistrationActivity extends BaseActivity {
@@ -186,6 +187,9 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void showOTPScreen(){
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         String name = mFName.getText().toString().trim()+"  "+mLName.getText().toString().trim();
         String email = mEmail.getText().toString().trim();
         String mob =mPhone.getText().toString().trim().substring(4,13);
@@ -223,7 +227,9 @@ public class RegistrationActivity extends BaseActivity {
     }
 
     private void postPermissionGranted(){
-
+        if(!MrWashApp.getMrWashApp().isAppActive()){
+            return;
+        }
         if(!mAppUtils.isNetworkConnected(this)){
             showErrorAlert(getString(R.string.network_error));
             return;
